@@ -13,4 +13,6 @@ var tryResolve = function () {
     return path.resolve('./');
 };
 exports.KIO_PROJECT_ROOT = tryResolve();
+exports.KIO_PROJECT_PACKAGE = require(path.join(exports.KIO_PROJECT_ROOT, 'package.json'));
+exports.KIO_PATHS = exports.KIO_PROJECT_PACKAGE.kio;
 //# sourceMappingURL=constants.js.map
