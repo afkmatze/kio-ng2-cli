@@ -3,6 +3,9 @@
   "version": "0.0.0",
   "description": "",
   "main": "index.js",
+  "bin": {
+    "kio-ng2": "./bin/exec.js"
+  },
   "scripts": {
     "prebuild": "rm -rf ./release",
     "build": "NODE_ENV=production tsc",
