@@ -1,10 +1,14 @@
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var env = require("../../env/constants");
 var shelljs = require("shelljs");
 var path = require("path");
-var STRUCTURE_COMPS = path.join(env.KIO_PROJECT_ROOT, env.KIO_PATHS.components.structure);
-var PUBLICATION_COMPS = path.join(env.KIO_PROJECT_ROOT, env.KIO_PATHS.components.publication);
+//const STRUCTURE_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.structure)
+//const PUBLICATION_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication)
+__export(require("./yargs"));
 var DEFAULT_PATTERN = /.*/;
 var findFiles = function (sourcePath, pattern) {
     if (sourcePath === void 0) { sourcePath = env.KIO_PATHS.root; }

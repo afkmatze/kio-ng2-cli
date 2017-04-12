@@ -17,9 +17,7 @@
     "skipLibCheck": true,
     "outDir": "release",
     "target": "es5",
-    "typeRoots": [
-      "node_modules/@types"
-    ],
+    "typeRoots": [],
     "lib": [
         "es5",
         "es6",
@@ -29,5 +27,8 @@
         "dom"
     ]
   },
-  "files": [ "./src/index.ts" ]
+  "files": [ "./src/index.ts" ],
+  "include": [
+    "./src/**/*.ts"
+  ]
 }

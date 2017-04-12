@@ -2,8 +2,9 @@ import * as env from '../../env/constants'
 import * as shelljs from 'shelljs'
 import * as path from 'path'
 
-const STRUCTURE_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.structure)
-const PUBLICATION_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication)
+//const STRUCTURE_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.structure)
+//const PUBLICATION_COMPS = path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication)
+export * from './yargs'
 
 const DEFAULT_PATTERN = /.*/
 
