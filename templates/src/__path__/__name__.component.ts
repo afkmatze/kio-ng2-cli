@@ -1,23 +1,15 @@
-import { Component, OnInit<% if(viewEncapsulation) { %>, ViewEncapsulation<% }%><% if(changeDetection) { %>, ChangeDetectionStrategy<% }%> } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { <%= classifiedParentComponentName %> } from '<%= pathToStructureComponents %>/<%= dasherizedParentComponentPath %>/<%= dasherizedParentComponentPath %>.component'
 
 @Component({
-  selector: '<%= selector %>',<% if(inlineTemplate) { %>
-  template: `
-    <p>
-      <%= dasherizedModuleName %> Works!
-    </p>
-  `,<% } else { %>
-  templateUrl: './<%= dasherizedModuleName %>.component.html',<% } if(inlineStyle) { %>
-  styles: []<% } else { %>
-  styleUrls: ['./<%= dasherizedModuleName %>.component.<%= styleExt %>']<% } %><% if(viewEncapsulation) { %>,
-  encapsulation: ViewEncapsulation.<%= viewEncapsulation %><% } if (changeDetection) { %>,
-  changeDetection: ChangeDetectionStrategy.<%= changeDetection %><% } %>
+  selector: '<%= selector %>',
+  templateUrl: './<%= dasherizedModuleName %>.component.html',
+  styleUrls: ['./<%= dasherizedModuleName %>.component.scss']
 })
-export class <%= classifiedModuleName %>Component implements OnInit {
+export class <%= classifiedModuleName %>Component extends <%= classifiedParentComponentName %> {
 
-  constructor() { }
-
-  ngOnInit() {
+  onNodeUpdate(){
+    super.onNodeUpdate()    
   }
 
 }
