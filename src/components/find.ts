@@ -14,6 +14,37 @@ export interface FilterFunction {
   ( filepath:string ):boolean
 }
 
+const filterFiles = ( file ) => {
+  //console.log('\x1b[33m%s\x1b[0m', file)
+  if ( path.extname(file) )
+  {
+    //console.log('extension on', file)
+    return false
+  }
+  if ( /^\./.test(path.basename(file)) )
+  {
+    //console.log('basename starts with "."')
+    return false
+  }
+  if ( /^(txt|src|fragment)$/.test(path.basename(file)) )
+  {
+    //console.log('its a txt,src,fragment folder')
+    return false
+  }
+  if ( path.basename(file) === path.basename(KIO_PATHS.components.publication) )
+  {
+    //console.log('is publication components folder')
+    return false
+  }
+  if ( path.basename(file) === path.basename(KIO_PATHS.components.structure) )
+  {
+    //console.log('is structure components folder')
+    return false
+  }
+
+  return true
+}
+
 export const findComponents = ( filter?:ComponentFilter ):Component[] => {
   let searchRoot = KIO_PATHS.components[filter] || KIO_PATHS.root
 
@@ -28,11 +59,11 @@ export const findComponents = ( filter?:ComponentFilter ):Component[] => {
 */
   //console.log('filter searchRoot', searchRoot)
 
-  return find(searchRoot).filter ( item => 
-    !path.extname(item) 
-    && !/^\./.test(path.basename(item)) 
-    && !/txt|src|fragment/.test(path.basename(item))
-    && path.basename(item) !== path.basename(KIO_PATHS.components.publication)
-    && path.basename(item) !== path.basename(KIO_PATHS.components.structure)
-  ).map ( createWithPath )
+  const allFiles = find(searchRoot).filter ( filterFiles )
+  if ( process.env.NODE_ENV === 'debug' )
+  {
+    console.log ( 'search root:' , searchRoot )
+    console.log(allFiles)
+  }
+  return allFiles.map ( createWithPath )
 }

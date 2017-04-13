@@ -27,7 +27,7 @@ export const getContentTypeForPath = ( dir:string ) => {
   return undefined
 }
 
-export const createWithPath = ( dir:string ) => {
+export const createWithPath = ( dir:string ):Component => {
   const componentType = getComponentTypeForPath(dir)
   if ( componentType === ComponentInterfaces.KioComponentType.PublicationComponent )
   {
