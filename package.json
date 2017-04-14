@@ -4,18 +4,27 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "kio-ng2": "./bin/exec.js"
+    "kio-ng2": "./bin/exec.js",
+    "kio-ng2-test": "./bin/test.ts"
   },
   "scripts": {
     "prebuild": "rm -rf ./release",
     "build": "NODE_ENV=production tsc",
-    "preversion": "npm run build"
+    "preversion": "npm run build",
+    "test:cache": "NODE_ENV=test ts-mocha ./src/cache/*.spec.ts",
+    "test:cache:watch": "nodemon -w ./src -e ts --exec \"npm run test:cache\"",
+    "test": "NODE_ENV=debug ts-mocha ./src/api.spec.ts",
+    "test:watch": "nodemon -w ./src -e ts --exec \"npm run test\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/mocha": "^2.2.40",
+    "ceylon": "^0.9.1",
+    "mocha": "^3.2.0",
     "nodemon": "^1.11.0",
+    "ts-mocha": "^1.0.3",
     "tslint": "^5.0.0",
     "typescript": "^2.2.2"
   },

@@ -6,19 +6,26 @@ var pckg = require('../../package.json');
 exports.banner = function () {
     console.log('%s v%s', chalk.yellow(pckg.name), pckg.version);
 };
-exports.log = function (format) {
+var writer = function (prefix) { return function (format) {
     var args = [];
     for (var _i = 1; _i < arguments.length; _i++) {
         args[_i - 1] = arguments[_i];
     }
-    console.log.apply(console, [chalk.dim('[kio-ng2-cli]') + format].concat(args));
-};
+    console.log.apply(console, [chalk.dim(prefix) + format].concat(args));
+}; };
+exports.log = writer('[kio-ng2-cli]');
 exports.logError = function (error, exit) {
     if (exit === void 0) { exit = true; }
     console.log(chalk.red(error.toString()));
     //console.log ( error.stack.replace(/.*\n/,'') ) 
     if (exit) {
         process.exit(1);
+    }
+};
+exports.debug = process.env.NODE_ENV === 'debug' ? writer('[DEBUG:kio-ng2-cli]') : function () {
+    var args = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        args[_i] = arguments[_i];
     }
 };
 exports.request = function (message, callback) {

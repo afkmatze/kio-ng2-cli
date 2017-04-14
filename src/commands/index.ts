@@ -26,11 +26,16 @@ export const exec = ( command:"indexes"|string ) => {
   }*/
 
   const argv = yargs
-    .usage('Usage: $0 <command>')
+    .usage('Usage: $0 <command> [options]')
+    .options('config-file',{
+      type: 'string',
+      description: 'cli config file',
+      default: path.resolve('kio-ng2.config.json')      
+    })
     .command(cmd_component.yargs)
     .command(cmd_indexes.yargs)
     .demand(1)
-    .help()
+    .help('h')
     .argv
 
   //console.log('argv', argv)

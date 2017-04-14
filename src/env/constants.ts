@@ -1,10 +1,16 @@
 import * as path from 'path'
+import { KioComponentsPaths, KioProjectPaths } from './interfaces'
 
 const tryResolve = () => {
   let resolvedPath:string
   try{
     resolvedPath = require.resolve('./')
   }catch(e){}
+
+  if ( /test|debug/.test(process.env.NODE_ENV) )
+  {
+    resolvedPath = process.env.DEV_LATEST
+  }
 
   if ( resolvedPath )
   {
@@ -14,25 +20,38 @@ const tryResolve = () => {
   return path.resolve('./')
 }
 
-export interface KioComponentsPaths {
-  /**
-   * path to structure components
-   * @type {string}
-   */
-  structure:string;
+export * from './interfaces'
 
-  /**
-   * path to publication components
-   * @type {string}
-   */
-  publication:string;
-}
-
-export interface KioProjectPaths {
-  root:string;
-  components:KioComponentsPaths;
-}
-
+// target project root directory
 export const KIO_PROJECT_ROOT = tryResolve()
+// content of target project`s package.json
 export const KIO_PROJECT_PACKAGE = require(path.join(KIO_PROJECT_ROOT,'package.json'))
-export const KIO_PATHS:KioProjectPaths = KIO_PROJECT_PACKAGE.kio
+
+/**
+ * @brief      resolves path in target project
+ *
+ * @param      projectPath  path to resolve in project
+ *
+ * @return     resolved path
+ */
+export const resolve = ( projectPath:string ) => {
+  return path.resolve(path.join(KIO_PROJECT_ROOT,projectPath))
+}
+
+export const relative = ( absProjectPath:string ) => {
+  const kioRoot = KIO_PATHS.root
+  return './'+path.relative(kioRoot,absProjectPath)
+}
+
+export const KIO_PROJECT_CACHE = resolve('.kio-ng2-cache')
+
+export const KIO_PATHS:KioProjectPaths = {
+  root: resolve(KIO_PROJECT_PACKAGE.kio.root),
+  components: {
+    publication: resolve(KIO_PROJECT_PACKAGE.kio.components.publication),
+    structure: resolve(KIO_PROJECT_PACKAGE.kio.components.structure),
+    navigation: resolve(KIO_PROJECT_PACKAGE.kio.components.navigation)
+  }
+}
+
+export const TEMPLATES = path.resolve(__dirname,'../../templates')

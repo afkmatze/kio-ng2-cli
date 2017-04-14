@@ -4,7 +4,6 @@ var fs = require("fs");
 var console_1 = require("../../console");
 var path = require("path");
 var env = require("../../env/constants");
-var stringUtils = require("../../utils/string");
 var find_1 = require("../../components/find");
 var renderComponentIndex = function (indexPath, indexName, files) {
     var componentNames = [];
@@ -13,6 +12,22 @@ var renderComponentIndex = function (indexPath, indexName, files) {
         return "import { " + fileComponent.name + "Component } from './" + path.relative(indexPath, fileComponent.dir) + "/" + fileComponent.dasherizedName + ".component'";
     });
     return singleImports.join('\n') + "\n\nexport { " + componentNames.join(', ') + " }\nexport const " + indexName + " = [ " + componentNames.join(', ') + " ]\n  ";
+};
+var renderFixtureIndex = function (indexPath, indexName, files) {
+    var componentNames = [];
+    var singleImports = files.map(function (fileComponent) {
+        componentNames.push(fileComponent.name);
+        return "import { Fixture as " + fileComponent.name + " } from './" + path.relative(indexPath, fileComponent.dir) + "/" + fileComponent.dasherizedName + ".component.cquery.fixture'";
+    });
+    return singleImports.join('\n') + "\n\nexport { " + componentNames.join(', ') + " }\n  ";
+};
+var renderCriteriaIndex = function (indexPath, indexName, files) {
+    var componentNames = [];
+    var singleImports = files.map(function (fileComponent) {
+        componentNames.push(fileComponent.name);
+        return "import { Criteria as " + fileComponent.name + " } from './" + path.relative(indexPath, fileComponent.dir) + "/" + fileComponent.dasherizedName + ".component.cquery.fixture'";
+    });
+    return singleImports.join('\n') + "\n\nexport { " + componentNames.join(', ') + " }\n  ";
 };
 var writeComponentsToIndex = function (indexPath, indexName, files) {
     var indexFileName = path.join(indexPath, indexName + '.generated.ts');
@@ -25,11 +40,11 @@ exports.yargs = {
     describe: 'Updates index files in ' + env.KIO_PATHS.root,
     builder: function (argv) {
         return argv
-            .usage('Usage: $0 index [publication|structure]')
+            .usage('Usage: $0 index [publication|structure|fixture|criteria]')
             .option('filter', {
             alias: 'f',
-            choices: ['publication', 'structure'],
-            default: ['publication', 'structure'],
+            choices: ['publication', 'structure', 'fixture', 'criteria'],
+            default: ['publication', 'structure', 'fixture', 'criteria'],
             demand: true
         });
     },
@@ -37,7 +52,8 @@ exports.yargs = {
         var command = args._[0];
         args.filter.forEach(function (filterValue) {
             var files = find_1.findComponents(filterValue);
-            writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT, env.KIO_PATHS.root), stringUtils.classify(filterValue + 'Components'), files);
+            console.log('files for %s', filterValue, files.join(','));
+            //writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.root),stringUtils.classify(filterValue+'Components'),files)
         });
         //console.log('files',args)
     }

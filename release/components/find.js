@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var shelljs_1 = require("shelljs");
 var path = require("path");
+var logger = require("../console");
 var constants_1 = require("../env/constants");
 var create_1 = require("./create");
 var filterFiles = function (file) {
@@ -29,22 +30,10 @@ var filterFiles = function (file) {
     return true;
 };
 exports.findComponents = function (filter) {
-    var searchRoot = constants_1.KIO_PATHS.components[filter] || constants_1.KIO_PATHS.root;
-    /*if ( isKioComponentType(filter) )
-    {
-      searchRoot = filter === KioComponentType.PublicationComponent ? KIO_PATHS.components.publication : KIO_PATHS.components.structure
-    }
-    else if ( isKioContentType(filter) )
-    {
-      searchRoot = path.join(KIO_PATHS.components.publication,<string>filter)
-    }
-  */
-    //console.log('filter searchRoot', searchRoot)
+    var searchRoot = constants_1.KIO_PATHS.components[filter];
+    logger.debug('KIO_PROJECT_ROOT', constants_1.KIO_PROJECT_ROOT);
+    logger.debug('search root:', searchRoot);
     var allFiles = shelljs_1.find(searchRoot).filter(filterFiles);
-    if (process.env.NODE_ENV === 'debug') {
-        console.log('search root:', searchRoot);
-        console.log(allFiles);
-    }
     return allFiles.map(create_1.createWithPath);
 };
 //# sourceMappingURL=find.js.map
