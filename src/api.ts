@@ -1,7 +1,12 @@
 import * as cache from './cache'
 import * as env from './env/constants'
+import * as path from 'path'
+import * as fs from 'fs'
 import { KioComponentFilter, KioComponentType, findComponents, PublicationComponent, Component } from './components'
 import { IndexName, IndexType, ComponentIndex } from './indexes/interfaces'
+import { dataForIndex } from './indexes/template'
+import * as template from './template'
+
 import * as logger from './console'
 
 const componentTypeForFilter = ( filter:KioComponentFilter ) => {
@@ -50,6 +55,16 @@ export const componentFilterForIndexType = ( indexType:IndexType ):KioComponentF
   return undefined
 } 
 
+export const IndexFileMap:Map<IndexName,string> = new Map()
+
+IndexFileMap.set("publication",path.join(env.KIO_PATHS.root,"PublicationComponents.generated.ts"))
+IndexFileMap.set("navigation",path.join(env.KIO_PATHS.root,"NavigationComponents.generated.ts"))
+IndexFileMap.set("structure",path.join(env.KIO_PATHS.root,"StructureComponents.generated.ts"))
+IndexFileMap.set("fixture",path.join(env.KIO_PATHS.root,"PublicationFixtures.generated.ts"))
+IndexFileMap.set("criteria",path.join(env.KIO_PATHS.root,"PublicationCriterias.generated.ts"))
+
+export const getIndexFilePath = ( indexName:IndexName ) => IndexFileMap.get(indexName)
+
 export const getIndex = ( indexName:IndexName, fromCache:boolean=true ):ComponentIndex => {
   const indexType:IndexType = IndexType[indexName]
   const filter = componentFilterForIndexType(indexType)
@@ -59,6 +74,14 @@ export const getIndex = ( indexName:IndexName, fromCache:boolean=true ):Componen
   }
 }
 
-export const writeComponents = ( components:ComponentModel[] ) => {
+export const renderIndex = ( indexName:IndexName, fromCache:boolean=true ):string => {
+  const componentIndex:ComponentIndex = getIndex(indexName,fromCache)
+  const indexData = dataForIndex(componentIndex)
+  return template.renderIndex(indexData)[0]
+}
 
+export const writeIndex = ( indexName:IndexName, fromCache:boolean=true ) => {
+  const source = renderIndex(indexName,fromCache)
+  const filename = getIndexFilePath(indexName)
+  return fs.writeFileSync(filename,source,{encoding: 'utf8'})
 }

@@ -1,5 +1,6 @@
-import expect from 'ceylon';
+import { expect } from './extension';
 
+import * as assertFs from './fs'
 /*declare global {
   namespace Chai {
     interface Assertion {
@@ -26,5 +27,10 @@ chai.use((chaiApi,utils:any)=>{
   })
 })*/
 
+export * from './shell'
+
+export * from './fs'
+
+export * from './extension'
 
 export default expect

@@ -1,5 +1,6 @@
 import 'mocha'
-import expect from 'ceylon';
+import expect, { assertExists } from './assert';
+import assertFs from './assert/fs';
 import { Component, PublicationComponent } from './components'
 import * as logger from './console'
 import * as api from './api'
@@ -9,12 +10,19 @@ import * as env from './env/constants'
 import * as cache from './cache'
 
 import { dataForIndex } from './indexes/template'
+import { IndexName } from './indexes/interfaces'
 import * as template from './template'
 
-const NUM_PUBLICATION_COMPONENTS = fs.readdirSync(cache.resolve('components','publication')).filter(item=>/^\./.test(item)===false).length
-const NUM_STRUCTURE_COMPONENTS = fs.readdirSync(cache.resolve('components','structure')).filter(item=>/^\./.test(item)===false).length
-const NUM_NAVIGATION_COMPONENTS = fs.readdirSync(cache.resolve('components','navigation')).filter(item=>/^\./.test(item)===false).length
+let NUM_PUBLICATION_COMPONENTS // = fs.readdirSync(cache.resolve('components','publication')).filter(item=>/^\./.test(item)===false).length
+let NUM_STRUCTURE_COMPONENTS // = fs.readdirSync(cache.resolve('components','structure')).filter(item=>/^\./.test(item)===false).length
+let NUM_NAVIGATION_COMPONENTS // = fs.readdirSync(cache.resolve('components','navigation')).filter(item=>/^\./.test(item)===false).length
 
+
+const readCounts = () =>{
+  NUM_PUBLICATION_COMPONENTS = fs.readdirSync(cache.resolve('components','publication')).filter(item=>/^\./.test(item)===false).length
+  NUM_STRUCTURE_COMPONENTS = fs.readdirSync(cache.resolve('components','structure')).filter(item=>/^\./.test(item)===false).length
+  NUM_NAVIGATION_COMPONENTS = fs.readdirSync(cache.resolve('components','navigation')).filter(item=>/^\./.test(item)===false).length
+}
 
 const assertComponentType = ( componentType:string ) => {
   if ( componentType === 'structure' || componentType === 'navigation' )
@@ -29,23 +37,71 @@ const assertComponentType = ( componentType:string ) => {
     }
 }
 
+const assertIndex = ( indexName:IndexName ) => {
+  describe(indexName+' index',()=>{
+
+        const index = api.getIndex(indexName)
+        const exportName = indexName.slice(0,1).toUpperCase()+indexName.slice(1)
+        const indexFilename = api.getIndexFilePath(indexName)
+
+         it('renders index "' + exportName + '"',()=>{
+           const result = api.renderIndex(indexName)
+           expect(result).toContain("export const "+exportName)
+           //logger.log('rendered template: \n' , result.join('\n'))           
+         })
+
+         it(`writes index to "${indexFilename}"`,()=>{           
+           api.writeIndex(indexName)
+           assertFs(indexFilename).toBeAFile()
+         })
+
+      })
+}
+
 describe('test api',() => {
+
+  describe('cache',()=>{
+
+    it('is reset',()=>{
+      cache.clear()
+      assertFs(env.KIO_PROJECT_CACHE).toNotBeDirectory()
+    })
+
+    describe('components cache',()=>{
+
+      it('is created',()=>{
+        return cache.create("components")
+          .then ( items => {
+            assertFs(env.KIO_PROJECT_ROOT).toBeADirectory()
+          } )
+      })
+
+    })
+
+  })
+
+  before(()=>{
+    return cache.create("components")
+      .then (()=>{
+        return readCounts()
+      })
+  })
 
   describe('find components',()=>{
 
-    it(`has ${NUM_STRUCTURE_COMPONENTS} structure components`,()=>{
+    it(`has structure components`,()=>{
       const comps = api.getComponents('structure')
       expect(comps.length).toEqual(NUM_STRUCTURE_COMPONENTS)
       comps.forEach(assertComponentType('structure'))
     })
 
-    it(`has ${NUM_NAVIGATION_COMPONENTS} navigation components`,()=>{
+    it(`has navigation components`,()=>{
       const comps = api.getComponents('navigation')
       expect(comps.length).toEqual(NUM_NAVIGATION_COMPONENTS)
       comps.forEach(assertComponentType('navigation'))
     })
 
-    it(`has ${NUM_PUBLICATION_COMPONENTS} publication components`,()=>{
+    it(`has publication components`,()=>{
       const comps = api.getComponents('publication')
       expect(comps.length).toEqual(NUM_PUBLICATION_COMPONENTS)
       comps.forEach(assertComponentType('publication'))
@@ -146,35 +202,34 @@ describe('test api',() => {
   describe('template rendering',()=>{
 
     describe('index templates',()=>{
+/*
+      describe('navigation components',()=>{
 
-      describe('publication components',()=>{
-
-        const index = api.getIndex('publication')
+        const index = api.getIndex('navigation')
 
          it('renders index',()=>{
-           const data = dataForIndex(index)
-           const result = template.renderIndex(data)
-           expect(result).toHaveLength(1)
+           const result = api.renderIndex('navigation')
+           expect(result).toMatch(/export const NavigationComponents/)
+           //logger.log('rendered template: \n' , result.join('\n'))           
+         })
+
+         it('writes index',()=>{
+
          })
 
       })
 
+*/
+      assertIndex('navigation')
+      assertIndex('structure')
+      assertIndex('publication')
+      assertIndex('fixture')
+      assertIndex('criteria')
 
-      describe('fixture components',()=>{
-
-        const index = api.getIndex('fixture')
-
-         it('renders index',()=>{
-           const data = dataForIndex(index)
-           const result = template.renderIndex(data)
-           console.log('result %s',result)
-           expect(result).toHaveLength(1)
-         })
-
-      })
 
     })
 
   })
 
 })
+

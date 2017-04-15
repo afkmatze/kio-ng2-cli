@@ -1,4 +1,4 @@
-import * as path from 'path'
+import * as path from './path'
 import { KioComponentsPaths, KioProjectPaths } from './interfaces'
 
 const tryResolve = () => {
@@ -9,7 +9,7 @@ const tryResolve = () => {
 
   if ( /test|debug/.test(process.env.NODE_ENV) )
   {
-    resolvedPath = process.env.DEV_LATEST
+    resolvedPath = process.env.DEV_LATEST || process.env.AFKM_LATEST
   }
 
   if ( resolvedPath )
@@ -34,8 +34,14 @@ export const KIO_PROJECT_PACKAGE = require(path.join(KIO_PROJECT_ROOT,'package.j
  *
  * @return     resolved path
  */
-export const resolve = ( projectPath:string ) => {
+const resolveRoot = ( projectPath:string ) => {
   return path.resolve(path.join(KIO_PROJECT_ROOT,projectPath))
+}
+
+export const resolve = ( componentType:string, projectPath?:string ) => {
+  if ( !projectPath )
+    return resolveRoot ( componentType )
+  return path.join(KIO_PATHS.components[componentType],projectPath)
 }
 
 export const relative = ( absProjectPath:string ) => {
@@ -46,11 +52,11 @@ export const relative = ( absProjectPath:string ) => {
 export const KIO_PROJECT_CACHE = resolve('.kio-ng2-cache')
 
 export const KIO_PATHS:KioProjectPaths = {
-  root: resolve(KIO_PROJECT_PACKAGE.kio.root),
+  root: resolveRoot(KIO_PROJECT_PACKAGE.kio.root),
   components: {
-    publication: resolve(KIO_PROJECT_PACKAGE.kio.components.publication),
-    structure: resolve(KIO_PROJECT_PACKAGE.kio.components.structure),
-    navigation: resolve(KIO_PROJECT_PACKAGE.kio.components.navigation)
+    publication: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.publication),
+    structure: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.structure),
+    navigation: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.navigation)
   }
 }
 
