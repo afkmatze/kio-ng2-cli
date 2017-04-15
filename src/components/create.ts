@@ -3,8 +3,7 @@ import { KIO_PATHS, KIO_PROJECT_ROOT, KIO_PROJECT_PACKAGE } from '../env/constan
 import * as path from 'path'
 import * as logger from '../console'
 
-import { Component } from './classes/Component.class'
-import { PublicationComponent } from './classes/PublicationComponent.class'
+import { Component, PublicationComponent, ComponentModel } from './classes'
 
 const PATH_TO_PUBLICATION = path.join(KIO_PATHS.components.publication)
 const PATH_TO_STRUCTURE = path.join(KIO_PATHS.components.structure)
@@ -34,7 +33,7 @@ export const getContentTypeForPath = ( dir:string ) => {
   return undefined
 }
 
-export const createWithData = ( data:ComponentInterfaces.KioPublicationComponent|ComponentInterfaces.KioComponent ) => {
+export const createWithData = ( data:ComponentInterfaces.KioPublicationComponent|ComponentInterfaces.KioComponent ):ComponentModel => {
   if ( data.componentType === ComponentInterfaces.KioComponentType.PublicationComponent )
     return new PublicationComponent(<ComponentInterfaces.KioPublicationComponent>data)
   return new Component(data)

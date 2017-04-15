@@ -133,10 +133,6 @@ export const expectFile = ( filepath:string ) => {
   const _expect = expect(filepath)
 }
 
-export const assertFs = ( filepath:string ):FSAssertion => {
-
-}
-
 export default ( filepath:string ) => {
 
   const assertionScope = {

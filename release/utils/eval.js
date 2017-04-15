@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var shelljs = require("shelljs");
-var path = require("path");
+var path = require("../env/path");
 var env = require("../env/constants");
 var childprocess = require("child_process");
 exports.shellCheck = function (testFlag, value) {
-    return shelljs.exec("[[ " + testFlag + " " + value + " ]]").code === 0;
+    return shelljs.exec("[[ " + testFlag + " \"" + value + "\" ]]").code === 0;
 };
 var compileTarget = function (filename) {
     var tmpFile = 'tmp' + Date.now() + '.' + path.basename(filename);
@@ -19,17 +19,37 @@ exports.evalProject = function (recompile) {
     var tsconf = require(env.resolve('./tsconfig.json'));
     var compilerOpts = tsconf.compilerOptions;
     var outpath = env.resolve(compilerOpts.outDir);
-    if (recompile || !exports.shellCheck('-d ', outpath)) {
-        childprocess.execSync('tsc', {
-            cwd: env.resolve('./')
+    var tmp_outpath = path.resolve(env.KIO_PROJECT_CACHE, 'tsc-out');
+    if (recompile || !exports.shellCheck('-d ', tmp_outpath)) {
+        var cp = shelljs.exec("tsc --outDir \"" + tmp_outpath + "\"", {
+            cwd: env.KIO_PROJECT_ROOT,
+            async: false
         });
+        if (cp.stderr) {
+            throw Error(cp.stderr.toString());
+        }
     }
-    return outpath;
+    return tmp_outpath;
 };
 exports.evalFile = function (filename, pwd) {
+    /*const relFilepath:string = env.relative(filename).replace(/\.ts$/,'')
+    const tname = 'eval '+path.basename(filename)
+    console.time(tname)
+    const cmd = `ts-node -p "JSON.stringify(require('./${relFilepath}'),null,'  ')"`
+    const tsEval = shelljs.exec(cmd,{
+      cwd: env.KIO_PROJECT_ROOT
+    }).stdout
+    const data = JSON.parse(<string>tsEval)
+    console.timeEnd(tname)
+    return data*/
+    filename = env.relative(filename);
     var outpath = exports.evalProject();
-    var compiledFile = path.join(outpath, filename.replace(env.KIO_PROJECT_ROOT, '.')).replace(/\.ts$/, '.js');
+    /*childprocess.execSync(`tsc "${env.resolve(filename)}" --outDir "${outpath}"`,{
+      cwd: env.KIO_PROJECT_ROOT
+    })*/
+    var compiledFile = path.resolve(outpath, filename).replace(/\.ts$/, '.js');
     var moduleData = require(compiledFile);
+    //shelljs.rm('-rf',outpath)
     return moduleData;
 };
 //# sourceMappingURL=eval.js.map

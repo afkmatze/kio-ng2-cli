@@ -5,6 +5,19 @@ var constants_1 = require("../../env/constants");
 var path = require("path");
 var stringUtils = require("../../utils/string");
 var shjs = require("shelljs");
+var fileTypePatterns = {
+    "component": /\.component\.ts$/,
+    "spec": /\.component\.spec\.ts$/,
+    "template": /\.component\.html$/,
+    "style": /\.component\.[s]?css$/,
+    "criteria": /\.component\.cquery\.criteria\.ts$/,
+    "fixture": /\.component\.cquery\.fixture\.ts$/,
+    "querytest": /\.component\.cquery\.spec\.ts$/
+};
+var matchFileType = function (fileType) {
+    var regex = fileTypePatterns[fileType];
+    return function (filename) { return regex.test(filename); };
+};
 var Component = (function () {
     function Component(data) {
         this.data = data;
@@ -58,11 +71,25 @@ var Component = (function () {
         enumerable: true,
         configurable: true
     });
+    Component.prototype.relativeTo = function (toPathname) {
+        return path.relative(this.dir, toPathname);
+    };
+    Component.prototype.relativeFrom = function (fromPathname) {
+        return path.relative(fromPathname, this.dir);
+    };
     Component.prototype.getFiles = function () {
-        return shjs.find(this.dir).filter(function (item) { return !!path.extname(item); });
+        //logger.trace('getFiles at %s',this.dir)
+        var files = shjs.find(this.dir);
+        return Array.isArray(files) ? files.filter(function (item) { return !!path.extname(item); }) : [];
+    };
+    Component.prototype.getFile = function (fileType) {
+        return this.getFiles().find(matchFileType(fileType));
     };
     Component.prototype.toString = function () {
         return "[" + this.name + " " + this.typeName + "]";
+    };
+    Component.prototype.toJSON = function () {
+        return this.data;
     };
     return Component;
 }());

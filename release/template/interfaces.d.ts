@@ -1,8 +1,8 @@
 import { KioContentType } from 'kio-ng2';
 export interface TemplateData {
     [key: string]: any;
-    filename: string;
 }
+export declare type TemplateName = "index" | "src" | "fragment" | "txt";
 export interface ComponentTemplateData extends TemplateData {
     contentType: KioContentType;
     modifiers: string[];
@@ -22,4 +22,14 @@ export interface ComponentImport {
 export interface IndexTemplateData extends TemplateData {
     exportName: string;
     components: ComponentImport[];
+}
+export interface TemplateFile {
+    filename: string;
+    source?: string;
+    rendered?: string;
+}
+export interface TemplateFiles {
+    templateName: string;
+    targetDir: string;
+    files: TemplateFile[];
 }

@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var kio_component_1 = require("../../interfaces/kio-component");
+var components_1 = require("../../components");
 var path = require("path");
 var env = require("../../env/constants");
 var stringUtils = require("../../utils/string");
-var render_1 = require("./render");
+var api = require("../../api");
 exports.yargs = {
     command: 'createComponent',
     aliases: ['create'],
@@ -32,14 +32,17 @@ exports.yargs = {
     handler: function (args) {
         var _a = args._, command = _a[0], componentName = _a[1];
         var options = {
-            componentType: kio_component_1.KioComponentType.PublicationComponent,
+            componentType: components_1.KioComponentType.PublicationComponent,
             contentType: args.contentType,
             name: componentName,
             modifiers: args.modifiers || [],
             childTypes: args.childTypes || [],
             dir: path.join(env.KIO_PATHS.components.publication, args.contentType, stringUtils.dasherize(componentName || ''))
         };
-        render_1.renderType(options);
+        /*
+            renderType(options)*/
+        var component = components_1.createWithData(options);
+        api.renderPublicationComponent(component);
     }
 };
 //# sourceMappingURL=yargs.js.map

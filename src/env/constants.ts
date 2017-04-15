@@ -1,6 +1,19 @@
 import * as path from './path'
 import { KioComponentsPaths, KioProjectPaths } from './interfaces'
 
+const MACHINE_ROOT = path.resolve('/')
+
+export const resolveLink = ( filepath:string ) => {
+
+  const comps:string[] = filepath.split('/')
+
+  let p = MACHINE_ROOT
+  comps.forEach(comp=>{
+    
+  })
+
+}
+
 const tryResolve = () => {
   let resolvedPath:string
   try{
@@ -14,7 +27,7 @@ const tryResolve = () => {
 
   if ( resolvedPath )
   {
-    return resolvedPath
+    return path.resolveFull(resolvedPath)
   }
 
   return path.resolve('./')
@@ -35,7 +48,7 @@ export const KIO_PROJECT_PACKAGE = require(path.join(KIO_PROJECT_ROOT,'package.j
  * @return     resolved path
  */
 const resolveRoot = ( projectPath:string ) => {
-  return path.resolve(path.join(KIO_PROJECT_ROOT,projectPath))
+  return path.resolveFull(path.join(KIO_PROJECT_ROOT,projectPath))
 }
 
 export const resolve = ( componentType:string, projectPath?:string ) => {
@@ -45,8 +58,9 @@ export const resolve = ( componentType:string, projectPath?:string ) => {
 }
 
 export const relative = ( absProjectPath:string ) => {
-  const kioRoot = KIO_PATHS.root
-  return './'+path.relative(kioRoot,absProjectPath)
+  //if ( !absProjectPath.startsWith(process.env.HOME) )
+  const relPath = path.relative(KIO_PROJECT_ROOT,path.resolveFull(absProjectPath))
+  return relPath
 }
 
 export const KIO_PROJECT_CACHE = resolve('.kio-ng2-cache')

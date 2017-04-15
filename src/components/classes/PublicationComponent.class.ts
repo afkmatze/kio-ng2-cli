@@ -13,6 +13,8 @@ export class PublicationComponent extends Component {
 
   constructor(data:KioPublicationComponent){
     super(data)
+    this._modifiers = data.modifiers
+    this._childTypes = data.childTypes
   }
 
   private _modifiers:string[]

@@ -16,8 +16,6 @@ describe('test component find',() => {
     components.forEach(component=>{
       expect(component).toBeA(PublicationComponent)
       expect(component.getFiles()).toHaveLength(7)
-      console.log('modifiers',component.modifiers)
-      console.log('childTypes',component.childTypes)
     })
   })
 

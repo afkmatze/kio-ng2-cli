@@ -27,25 +27,54 @@ describe('env constants',()=>{
     expect(constants).toContainKey('TEMPLATES')
   })
 
+
   describe('KIO_PATHS',()=>{
     it('KIO_PATHS is set',()=>{
       expect(constants).toContainKey('KIO_PATHS')
     })
 
-    it('KIO_PATHS.root exists',()=>{
-      assertExists(constants.KIO_PATHS.root)
+    describe('KIO_PATHS.root',()=>{
+      it('exists',()=>{
+        assertExists(constants.KIO_PATHS.root)
+      })
+
+      it('is absolute path',()=>{
+        expect(constants.KIO_PATHS.root).toMatch(/^\//)
+      })
+      
     })
 
-    it('KIO_PATHS.components.publication exists',()=>{
-      assertExists(constants.KIO_PATHS.components.publication)
+    describe('KIO_PATHS.components.publication',()=>{
+      it('exists',()=>{
+        assertExists(constants.KIO_PATHS.components.publication)
+      })
+
+      it('is absolute path',()=>{
+        expect(constants.KIO_PATHS.components.publication).toMatch(/^\//)
+      })
+      
     })
 
-    it('KIO_PATHS.components.navigation exists',()=>{
-      assertExists(constants.KIO_PATHS.components.navigation)
+    describe('KIO_PATHS.components.navigation',()=>{
+      it('exists',()=>{
+        assertExists(constants.KIO_PATHS.components.navigation)
+      })
+
+      it('is absolute path',()=>{
+        expect(constants.KIO_PATHS.components.navigation).toMatch(/^\//)
+      })
+      
     })
 
-    it('KIO_PATHS.components.structure exists',()=>{
-      assertExists(constants.KIO_PATHS.components.structure)
+    describe('KIO_PATHS.components.structure',()=>{
+      it('exists',()=>{
+        assertExists(constants.KIO_PATHS.components.structure)
+      })
+
+      it('is absolute path',()=>{
+        expect(constants.KIO_PATHS.components.structure).toMatch(/^\//)
+      })
+      
     })
   })
 

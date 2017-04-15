@@ -15,7 +15,7 @@ const writeFile = ( filename:string, data:string ) => new Promise((resolve,rejec
   })
 })
 
-
+/*
 
 const renderComponentIndex = ( ) => {
   const componentNames:string[] = []
@@ -56,3 +56,4 @@ const renderCriteriaIndex = ( indexPath:string, indexName:string , files:Compone
 export { ${componentNames.join(', ')} }
   `
 }
+*/

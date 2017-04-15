@@ -1,17 +1,24 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var path = require("path");
+var path = require("./path");
+var MACHINE_ROOT = path.resolve('/');
+exports.resolveLink = function (filepath) {
+    var comps = filepath.split('/');
+    var p = MACHINE_ROOT;
+    comps.forEach(function (comp) {
+    });
+};
 var tryResolve = function () {
     var resolvedPath;
     try {
         resolvedPath = require.resolve('./');
     }
     catch (e) { }
-    if (process.env.NODE_ENV === 'debug') {
-        resolvedPath = process.env.DEV_LATEST;
+    if (/test|debug/.test(process.env.NODE_ENV)) {
+        resolvedPath = process.env.DEV_LATEST || process.env.AFKM_LATEST;
     }
     if (resolvedPath) {
-        return resolvedPath;
+        return path.resolveFull(resolvedPath);
     }
     return path.resolve('./');
 };
@@ -26,16 +33,26 @@ exports.KIO_PROJECT_PACKAGE = require(path.join(exports.KIO_PROJECT_ROOT, 'packa
  *
  * @return     resolved path
  */
-exports.resolve = function (projectPath) {
-    return path.resolve(path.join(exports.KIO_PROJECT_ROOT, projectPath));
+var resolveRoot = function (projectPath) {
+    return path.resolveFull(path.join(exports.KIO_PROJECT_ROOT, projectPath));
+};
+exports.resolve = function (componentType, projectPath) {
+    if (!projectPath)
+        return resolveRoot(componentType);
+    return path.join(exports.KIO_PATHS.components[componentType], projectPath);
+};
+exports.relative = function (absProjectPath) {
+    //if ( !absProjectPath.startsWith(process.env.HOME) )
+    var relPath = path.relative(exports.KIO_PROJECT_ROOT, path.resolveFull(absProjectPath));
+    return relPath;
 };
 exports.KIO_PROJECT_CACHE = exports.resolve('.kio-ng2-cache');
 exports.KIO_PATHS = {
-    root: exports.resolve(exports.KIO_PROJECT_PACKAGE.kio.root),
+    root: resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.root),
     components: {
-        publication: exports.resolve(exports.KIO_PROJECT_PACKAGE.kio.components.publication),
-        structure: exports.resolve(exports.KIO_PROJECT_PACKAGE.kio.components.structure),
-        navigation: exports.resolve(exports.KIO_PROJECT_PACKAGE.kio.components.navigation)
+        publication: resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.publication),
+        structure: resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.structure),
+        navigation: resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.navigation)
     }
 };
 exports.TEMPLATES = path.resolve(__dirname, '../../templates');

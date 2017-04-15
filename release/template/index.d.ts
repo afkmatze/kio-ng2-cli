@@ -1,0 +1,10 @@
+import { IndexTemplateData, ComponentTemplateData, TemplateFiles } from './interfaces';
+export * from './read';
+export * from './interfaces';
+export * from './render';
+export declare const createTemplate: (templateName: string, targetDir: string) => TemplateFiles;
+export declare const readTemplate: (templateFiles: TemplateFiles) => TemplateFiles;
+export declare const renderTemplate: (templateFiles: TemplateFiles, data: ComponentTemplateData | IndexTemplateData) => TemplateFiles;
+export declare const writeTemplate: (templateFiles: TemplateFiles) => TemplateFiles;
+export declare const renderIndex: (index: IndexTemplateData) => any;
+export declare const renderPublicationComponent: (data: ComponentTemplateData) => any;

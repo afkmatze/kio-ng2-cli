@@ -3,6 +3,7 @@ import { KIO_PATHS, KIO_PROJECT_ROOT } from '../../env/constants'
 import * as path from 'path'
 import * as stringUtils from '../../utils/string'
 import * as shjs from 'shelljs'
+import * as logger from '../../console'
 
 import { KioComponentType, KioComponentFileType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../interfaces'
 
@@ -60,8 +61,18 @@ export class Component {
     return (<KioPublicationComponent>this.data).contentType
   }
 
+  relativeTo(toPathname:string){
+    return path.relative(this.dir,toPathname)
+  }
+
+  relativeFrom(fromPathname:string){
+    return path.relative(fromPathname,this.dir)
+  }
+
   getFiles(){
-    return shjs.find(this.dir).filter(item => !!path.extname(item))
+    //logger.trace('getFiles at %s',this.dir)
+    const files = shjs.find(this.dir)
+    return Array.isArray(files) ? files.filter(item => !!path.extname(item)) : []
   }
 
   getFile(fileType:KioComponentFileType){

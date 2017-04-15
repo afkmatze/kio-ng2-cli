@@ -16,7 +16,10 @@ var eval_1 = require("../../utils/eval");
 var PublicationComponent = (function (_super) {
     __extends(PublicationComponent, _super);
     function PublicationComponent(data) {
-        return _super.call(this, data) || this;
+        var _this = _super.call(this, data) || this;
+        _this._modifiers = data.modifiers;
+        _this._childTypes = data.childTypes;
+        return _this;
     }
     Object.defineProperty(PublicationComponent.prototype, "modifiers", {
         get: function () {
@@ -40,9 +43,17 @@ var PublicationComponent = (function (_super) {
     });
     PublicationComponent.prototype.update = function () {
         var criteriaFile = this.getFiles().find(function (filename) { return /criteria\.ts$/.test(filename); });
+        if (!criteriaFile)
+            throw Error("No criteria file for component " + this.toString());
         var Criteria = eval_1.evalFile(criteriaFile, path.dirname(criteriaFile)).Criteria;
         this._modifiers = Criteria.modifiers;
         this._childTypes = Criteria.childTypes;
+    };
+    PublicationComponent.prototype.toJSON = function () {
+        var json = _super.prototype.toJSON.call(this);
+        json.modifiers = this.modifiers;
+        json.childTypes = this.childTypes;
+        return json;
     };
     return PublicationComponent;
 }(Component_class_1.Component));

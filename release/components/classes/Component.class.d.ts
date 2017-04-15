@@ -11,6 +11,10 @@ export declare class Component {
     readonly childTypes: string[];
     readonly modifiers: string[];
     readonly contentType: string;
+    relativeTo(toPathname: string): string;
+    relativeFrom(fromPathname: string): string;
     getFiles(): string[];
+    getFile(fileType: KioComponentFileType): string;
     toString(): string;
+    toJSON(): ComponentInterfaces.KioComponent;
 }

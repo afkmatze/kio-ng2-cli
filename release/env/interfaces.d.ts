@@ -1,3 +1,6 @@
+export interface KioPath extends String {
+    join(...args: string[]): KioPath;
+}
 export interface KioComponentsPaths {
     /**
      * path to structure components

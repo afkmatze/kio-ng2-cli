@@ -6,8 +6,5 @@ export declare class Component {
     readonly dir: string;
     readonly name: string;
     readonly dasherizedName: string;
-    readonly childTypes: string[];
-    readonly modifiers: string[];
-    readonly contentType: string;
     toString(): string;
 }

@@ -4,8 +4,7 @@ var ComponentInterfaces = require("./interfaces");
 var constants_1 = require("../env/constants");
 var path = require("path");
 var logger = require("../console");
-var Component_class_1 = require("./classes/Component.class");
-var PublicationComponent_class_1 = require("./classes/PublicationComponent.class");
+var classes_1 = require("./classes");
 var PATH_TO_PUBLICATION = path.join(constants_1.KIO_PATHS.components.publication);
 var PATH_TO_STRUCTURE = path.join(constants_1.KIO_PATHS.components.structure);
 var PATH_TO_NAVIGATION = path.join(constants_1.KIO_PATHS.components.navigation);
@@ -26,6 +25,11 @@ exports.getContentTypeForPath = function (dir) {
         return dir.replace(PATH_TO_PUBLICATION + '/', '').split('/')[0];
     }
     return undefined;
+};
+exports.createWithData = function (data) {
+    if (data.componentType === ComponentInterfaces.KioComponentType.PublicationComponent)
+        return new classes_1.PublicationComponent(data);
+    return new classes_1.Component(data);
 };
 /**
  * @brief      Creates a Component with path.
@@ -48,7 +52,7 @@ exports.createWithPath = function (dir) {
             name: path.basename(dir),
             contentType: contentType
         };
-        return new PublicationComponent_class_1.PublicationComponent(data);
+        return new classes_1.PublicationComponent(data);
     }
     else if (componentType === ComponentInterfaces.KioComponentType.StructureComponent) {
         var data = {
@@ -56,7 +60,7 @@ exports.createWithPath = function (dir) {
             componentType: componentType,
             name: path.basename(dir)
         };
-        return new Component_class_1.Component(data);
+        return new classes_1.Component(data);
     }
     else if (componentType === ComponentInterfaces.KioComponentType.NavigationComponent) {
         var data = {
@@ -64,7 +68,7 @@ exports.createWithPath = function (dir) {
             componentType: componentType,
             name: path.basename(dir)
         };
-        return new Component_class_1.Component(data);
+        return new classes_1.Component(data);
     }
     throw Error('Invalid component type at dir: ' + dir);
 };

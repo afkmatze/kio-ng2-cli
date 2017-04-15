@@ -1,12 +1,13 @@
 import { KioContentType } from 'kio-ng2'
 import { CommandModule } from 'yargs'
-import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../../interfaces/kio-component'
+import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent, PublicationComponent, createWithData } from '../../components'
 import { logError, log } from '../../console'
 import * as path from 'path'
 import * as env from '../../env/constants'
 import * as stringUtils from '../../utils/string'
 
 import { renderType } from './render'
+import * as api from '../../api'
 
 
 export const yargs:CommandModule = {
@@ -43,7 +44,10 @@ export const yargs:CommandModule = {
       childTypes: args.childTypes || [],
       dir: path.join(env.KIO_PATHS.components.publication,args.contentType,stringUtils.dasherize(componentName||''))      
     }
+/*
+    renderType(options)*/
 
-    renderType(options)
+    const component = createWithData(options)
+    api.renderPublicationComponent(<PublicationComponent>component)
   }
 }

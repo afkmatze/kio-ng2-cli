@@ -1,4 +1,5 @@
-<% for( let i=0; i<components.length; i++) { %>
-import { <% if ( components[i].importAlias ) { %> <%= components[i].importAlias %> as <%}%><%= components[i].importName %> } from '<%= components[i].importPath %>'<% } %>
+<% for( let i=0; i<indexItems.length; i++) { %>
+import { <% if ( indexItems[i].importAlias ) { %> <%= indexItems[i].importAlias %> as <%}%><%= indexItems[i].importName %> } from '<%= indexItems[i].importPath %>'<% } %>
 
-export const <%= exportName %> = [ <%= components.map((component)=>component.importName).join(', ') %> ]
+export { <%= indexItems.map((indexItem)=>indexItem.importName).join(', ') %> }
+export const <%= exportName %> = [ <%= indexItems.map((indexItem)=>indexItem.importName).join(', ') %> ]

@@ -1,6 +1,7 @@
 import * as chalk from 'chalk'
 import * as path from 'path'
 import * as readline from 'readline'
+import { formatter } from './format'
 
 const pckg = require('../../package.json')
 
@@ -11,7 +12,9 @@ export const banner = () => {
 }
 
 const writer = ( prefix:string ) => ( format:string, ...args:any[] ):void => {
-  console.log ( chalk.dim(prefix) + format, ...args )  
+  const out = formatter.printf(format,...args)
+  //console.log ( chalk.dim(prefix) + format, ...args )  
+  console.log ( chalk.dim(prefix) + out )  
 }
 
 export const log = writer('[kio-ng2-cli] ')
@@ -32,9 +35,9 @@ export const getStack = () => {
     const rx_name = /at\ ([\w|\.]+)/
     const rx_alias = /as\ (\w+)/
     const rx_filepath = /\(([\w|\D]+)\:(\d+)\:(\d+)\)$/
-    const [ name_src, name ] = traceRoute.match ( rx_name )  || []
-    const [ alias_src, alias ] = traceRoute.match ( rx_alias ) || []
-    const [ filepath_src, filepath, line, column ] = traceRoute.match ( rx_filepath ) || []
+    const [ name_src=undefined, name=undefined ] = traceRoute.match ( rx_name )  || []
+    const [ alias_src=undefined, alias=undefined ] = traceRoute.match ( rx_alias ) || []
+    const [ filepath_src=undefined, filepath=undefined, line=undefined, column=undefined ] = traceRoute.match ( rx_filepath ) || []
     return {
       name, 
       alias, 

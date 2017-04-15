@@ -1,1 +1,2 @@
-export declare const resolve: (cachePath: "components") => string;
+export declare const ensure: (...args: string[]) => string;
+export declare const resolve: (...args: string[]) => string;

@@ -17,7 +17,7 @@ var Component = (function () {
     });
     Object.defineProperty(Component.prototype, "dir", {
         get: function () {
-            return path.resolve(constants_1.KIO_PROJECT_ROOT, this.data.dir);
+            return path.join(constants_1.KIO_PROJECT_ROOT, this.data.dir);
         },
         enumerable: true,
         configurable: true
@@ -32,27 +32,6 @@ var Component = (function () {
     Object.defineProperty(Component.prototype, "dasherizedName", {
         get: function () {
             return stringUtils.dasherize(this.data.name);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Component.prototype, "childTypes", {
-        get: function () {
-            return this.data.childTypes;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Component.prototype, "modifiers", {
-        get: function () {
-            return this.data.modifiers;
-        },
-        enumerable: true,
-        configurable: true
-    });
-    Object.defineProperty(Component.prototype, "contentType", {
-        get: function () {
-            return this.data.contentType;
         },
         enumerable: true,
         configurable: true

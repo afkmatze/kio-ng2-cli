@@ -1,0 +1,11 @@
+import { PublicationComponent } from './components';
+import { IndexName } from './indexes/interfaces';
+import { TemplateFiles, TemplateName, TemplateData } from './template';
+import { ComponentModel, getComponents } from './components';
+export { ComponentModel, getComponents };
+export declare const targetDirForTemplate: (templateName: "fragment" | "txt" | "src" | "index") => string;
+export declare type TemplateArg = TemplateFiles | TemplateName;
+export declare const render: (templateName: TemplateArg, data: TemplateData) => TemplateFiles;
+export declare const renderIndex: (indexName: IndexName, fromCache?: boolean) => string;
+export declare const writeIndex: (indexName: IndexName, fromCache?: boolean) => void;
+export declare const renderPublicationComponent: (publicationComponent: PublicationComponent) => TemplateFiles;

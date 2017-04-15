@@ -4,6 +4,7 @@ import { IndexTemplateData, ComponentImport } from '../template'
 import { ComponentModel } from '../components'
 import * as stringUtils from '../utils/string'
 import * as env from '../env/constants'
+import * as path from 'path'
 
 // TODO: map fixture and criteria
 
@@ -15,9 +16,10 @@ mapIndexNameToFileType.set("navigation","component")
 mapIndexNameToFileType.set("structure","component")
 
 const mapComponentToComponentImport = (fileType:KioComponentFileType) => ( component:ComponentModel ):ComponentImport => {
+  const filePath = component.getFile(fileType)
   const componentImport:ComponentImport = {
     importName: component.name+'Component',
-    importPath: env.relative(component.getFile(fileType)).replace(/\.\w+$/,'')
+    importPath: './'+path.relative(env.KIO_PATHS.root,component.getFile(fileType)).replace(/\.\w+$/,'')
   }
   return componentImport
 }

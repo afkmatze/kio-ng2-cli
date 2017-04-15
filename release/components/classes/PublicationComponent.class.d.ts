@@ -9,4 +9,5 @@ export declare class PublicationComponent extends Component {
     readonly modifiers: string[];
     readonly childTypes: string[];
     update(): void;
+    toJSON(): KioPublicationComponent;
 }

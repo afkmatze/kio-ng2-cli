@@ -1,7 +1,7 @@
 import 'mocha'
 import expect, { assertExists } from './assert';
 import assertFs from './assert/fs';
-import { Component, PublicationComponent } from './components'
+import { Component, PublicationComponent, KioPublicationComponent, KioComponentType, createWithData } from './components'
 import * as logger from './console'
 import * as api from './api'
 import * as fs from 'fs'
@@ -12,10 +12,29 @@ import * as cache from './cache'
 import { dataForIndex } from './indexes/template'
 import { IndexName } from './indexes/interfaces'
 import * as template from './template'
+import * as stringUtils from './utils/string'
 
 let NUM_PUBLICATION_COMPONENTS // = fs.readdirSync(cache.resolve('components','publication')).filter(item=>/^\./.test(item)===false).length
 let NUM_STRUCTURE_COMPONENTS // = fs.readdirSync(cache.resolve('components','structure')).filter(item=>/^\./.test(item)===false).length
 let NUM_NAVIGATION_COMPONENTS // = fs.readdirSync(cache.resolve('components','navigation')).filter(item=>/^\./.test(item)===false).length
+
+const mockComponent = () =>{
+  const TEST_COMP_NAME = 'test-chapter'
+  const options:KioPublicationComponent = {
+    componentType: KioComponentType.PublicationComponent,
+    contentType: 'fragment',
+    name: TEST_COMP_NAME,
+    modifiers: ['chapter'],
+    childTypes: ['txt','txt','src'],
+    dir: env.resolve("publication",'fragment/'+stringUtils.dasherize(TEST_COMP_NAME))
+  }
+/*
+    renderType(options)*/
+
+    const component = createWithData(options)
+    //api.renderPublicationComponent(<PublicationComponent>component)
+    return component
+}
 
 
 const readCounts = () =>{
@@ -45,27 +64,33 @@ const assertIndex = ( indexName:IndexName ) => {
         const indexFilename = api.getIndexFilePath(indexName)
 
          it('renders index "' + exportName + '"',()=>{
-           const result = api.renderIndex(indexName)
-           expect(result).toContain("export const "+exportName)
+           const result = api.renderTemplate('index',index)
+           expect(result.files).toBeAn(Array)
+           expect(result.files).toHaveLength(1)
+           result.files.forEach(item=>{
+             expect(item.rendered).toContain("export const "+exportName)
+           })
            //logger.log('rendered template: \n' , result.join('\n'))           
          })
 
-         it(`writes index to "${indexFilename}"`,()=>{           
+         /*it(`writes index to "${indexFilename}"`,()=>{           
            api.writeIndex(indexName)
            assertFs(indexFilename).toBeAFile()
-         })
+         })*/
 
       })
 }
 
 describe('test api',() => {
 
-  describe('cache',()=>{
+  xdescribe('cache',function(){
+    this.timeout(30 * 1000)
 
     it('is reset',()=>{
       cache.clear()
       assertFs(env.KIO_PROJECT_CACHE).toNotBeDirectory()
     })
+
 
     describe('components cache',()=>{
 
@@ -80,16 +105,18 @@ describe('test api',() => {
 
   })
 
-  before(()=>{
-    return cache.create("components")
+  before(function(){
+    //this.timeout(30 * 1000)
+    readCounts()
+    /*return cache.create("components")
       .then (()=>{
         return readCounts()
-      })
+      })*/
   })
 
-  describe('find components',()=>{
-
+  xdescribe('find components',()=>{
     it(`has structure components`,()=>{
+      //assertFs(api.getIndexFilePath('structure')).toBeAFile()
       const comps = api.getComponents('structure')
       expect(comps.length).toEqual(NUM_STRUCTURE_COMPONENTS)
       comps.forEach(assertComponentType('structure'))
@@ -109,7 +136,7 @@ describe('test api',() => {
     
   })
 
-  describe('compose index',()=>{
+  xdescribe('compose index',()=>{
 
     describe('publication',()=>{
 
@@ -167,7 +194,7 @@ describe('test api',() => {
 
     })
 
-    describe('structure',()=>{
+    xdescribe('structure',()=>{
 
       const structureIndex = api.getIndex('structure')
 
@@ -182,7 +209,7 @@ describe('test api',() => {
 
     })
 
-    describe('navigation',()=>{
+    xdescribe('navigation',()=>{
 
       const navigationIndex = api.getIndex('navigation')
 
@@ -226,6 +253,34 @@ describe('test api',() => {
       assertIndex('fixture')
       assertIndex('criteria')
 
+
+    })
+
+    describe('component template rendering',()=>{
+
+      let component
+      let componentTemplate:template.TemplateFiles
+
+      before(()=>{
+        component = mockComponent()
+      })
+
+      it('create template',()=>{
+        componentTemplate = template.createTemplate("publication",env.resolve(env.KIO_PATHS.components.publication))
+        expect(componentTemplate).toContainKeys(['files','templateName','targetDir'])
+        logger.log('componentTemplate',componentTemplate)
+      })
+
+      it('find template files',()=>{
+        componentTemplate = template.readTemplate(componentTemplate)
+        expect(componentTemplate.files.length).toNotBe(0)
+        logger.log('componentTemplate',componentTemplate)
+      })
+
+      it('component renders',()=>{
+        const result = api.renderPublicationComponent(component)
+        console.log('result',result)
+      })
 
     })
 
