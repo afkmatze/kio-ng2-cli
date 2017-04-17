@@ -3,10 +3,12 @@ import {
   PublicationComponentTemplateData, PublicationComponentTemplateDataItem
 } from './interfaces'
 
-import * as indexType from './index/index'
-import * as publicationType from './publication'
+export * from './interfaces'
 
-export const Types:TemplatePluginMap = {
+import * as indexType from './index/index'
+import {plugin as publicationType} from './publication'
+
+export const Types:any = {
   "index": indexType,
   "publication": publicationType
 }

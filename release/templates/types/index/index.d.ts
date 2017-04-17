@@ -1,2 +1,1 @@
-export * from './create';
-export * from './map';
+export declare const indexPlugin: any;

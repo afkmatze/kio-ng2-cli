@@ -2,6 +2,10 @@ import * as path from 'path'
 import * as env from '../env'
 export * from './interfaces'
 
+import * as stream from './stream'
+
+export { stream }
+
 import { IndexName, IndexType, ComponentIndex } from './interfaces'
 import { KioComponentFilter, KioComponentType, findComponents, PublicationComponent, getComponents, Component } from '../components'
 import { dataForIndex } from './template'
@@ -41,8 +45,18 @@ export const getIndex = ( indexName:IndexName, fromCache:boolean=true ):Componen
   const filter = componentFilterForIndexType(indexType)
   return {
     name: indexName,
+    indexType: indexType,
     components: getComponents(filter,fromCache)
   }
+}
+
+export const getIndexByType = ( indexType:IndexType, fromCache:boolean=true ):ComponentIndex => {
+  const filter = componentFilterForIndexType(indexType)
+  return {
+    indexType,
+    name: IndexType[indexType],
+    components: getComponents(filter,fromCache)
+  } 
 }
 
 export const getIndexData = ( indexName:IndexName, fromCache:boolean=true ):any => {

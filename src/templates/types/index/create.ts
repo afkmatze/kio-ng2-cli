@@ -1,5 +1,6 @@
 import { IndexTemplate, TemplateName, TemplateFile, TemplateSource, Template, TemplateData } from '../../interfaces'
 import { Types } from '../../types'
+import { IndexTemplateData } from '../interfaces'
 import { resolveTargetWithName } from '../../resolveTarget'
 import { findTemplateSourceFiles } from '../../files'
 
@@ -23,7 +24,7 @@ export const createTemplateByName = ( templateName:TemplateName ):IndexTemplate 
   return template
 }
 
-export const createTemplate = ( source:TemplateSource, data:TemplateData<"index">, targetRoot:string ):IndexTemplate => {
+export const createTemplate = ( source:TemplateSource, data:IndexTemplateData|TemplateData, targetRoot:string ):IndexTemplate => {
   const template:IndexTemplate = {
     source,
     data,

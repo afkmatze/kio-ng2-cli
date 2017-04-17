@@ -1,7 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var rxjs_1 = require("rxjs");
 var path = require("path");
+var rxfs = require("../../utils/rx/fs");
 var fs = require("fs");
+var env = require("../../env");
 var shelljs_1 = require("shelljs");
 var store_1 = require("../store");
 var logger = require("../../console");
@@ -36,5 +39,15 @@ exports.readComponentsCache = function (targetDir) {
     return exports.readCache(targetDir)
         .map(function (data) { return components_1.createWithData(data); });
 };
+var readJSON = function (filepath) {
+    return rxjs_1.Observable.fromPromise(new Promise(function (resolve, reject) {
+        fs.readFile(filepath, 'utf8', function (error, result) {
+            error ? reject(error) : resolve(result);
+        });
+    }).then(JSON.parse), rxjs_1.Scheduler.async);
+};
+exports.Components = function () { return rxfs.readdir(path.join(env.KIO_PROJECT_CACHE, 'components'))
+    .filter(function (filename) { return path.extname(filename) === '.json'; })
+    .flatMap(function (filename) { return readJSON(filename); }, 1).concat().map(function (data) { return components_1.createWithData(data); }); };
 exports.default = exports.createComponentsCache;
 //# sourceMappingURL=components.js.map

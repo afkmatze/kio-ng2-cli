@@ -1,8 +1,11 @@
 "use strict";
-function __export(m) {
-    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
-}
 Object.defineProperty(exports, "__esModule", { value: true });
-__export(require("./create"));
-__export(require("./map"));
+var map_1 = require("./map");
+var create_1 = require("./create");
+exports.indexPlugin = {
+    mapTemplateData: map_1.mapTemplateData,
+    createTemplate: create_1.createTemplate,
+    createTemplateSource: create_1.createTemplateSource,
+    createTemplateByName: create_1.createTemplateByName
+};
 //# sourceMappingURL=index.js.map

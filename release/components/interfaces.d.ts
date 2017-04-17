@@ -15,10 +15,13 @@ export interface KioComponent {
 }
 export interface KioStructureComponent extends KioComponent {
 }
+export interface KioNavigationComponent extends KioComponent {
+}
 export interface KioPublicationComponent extends KioComponent {
     contentType: KioContentType;
     modifiers?: string[];
     childTypes?: KioContentType[];
 }
+export declare type ComponentType = KioPublicationComponent | KioStructureComponent | KioNavigationComponent;
 export declare type KioComponentFilter = "structure" | "publication" | "navigation";
 export declare type KioIndexTarget = KioComponentFilter | "criteria" | "fixture";

@@ -1,8 +1,8 @@
 import * as ComponentInterfaces from './interfaces';
-import { Component, ComponentModel } from './classes';
+import { Component, PublicationComponent } from './classes';
 export declare const getComponentTypeForPath: (dir: string) => ComponentInterfaces.KioComponentType;
 export declare const getContentTypeForPath: (dir: string) => string;
-export declare const createWithData: (data: ComponentInterfaces.KioComponent | ComponentInterfaces.KioPublicationComponent) => ComponentModel;
+export declare const createWithData: (data: ComponentInterfaces.KioComponent | ComponentInterfaces.KioPublicationComponent) => Component | PublicationComponent;
 /**
  * @brief      Creates a Component with path.
  *

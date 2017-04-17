@@ -19,12 +19,14 @@ export interface KioComponent {
 }
 
 export interface KioStructureComponent extends KioComponent {}
-
+export interface KioNavigationComponent extends KioComponent {}
 export interface KioPublicationComponent extends KioComponent {
   contentType:KioContentType
   modifiers?:string[]
   childTypes?:KioContentType[]
 }
+
+export type ComponentType = KioPublicationComponent|KioStructureComponent|KioNavigationComponent
 
 
 export type KioComponentFilter = "structure"|"publication"|"navigation"

@@ -14,11 +14,21 @@ export const resolveLink = ( filepath:string ) => {
 
 }
 
+const isInstalled = () => {
+  if ( process && process.argv && /\/kio\-ng2$/.test(process.argv[1]||"") )
+    return true
+}
+
 const tryResolve = () => {
   let resolvedPath:string
   try{
     resolvedPath = require.resolve('./')
   }catch(e){}
+
+  if ( isInstalled() )
+  {
+    resolvedPath = process.argv[1].replace(/\/node_modules*/gm,'\n').split('\n')[0]
+  }
 
   if ( /test|debug/.test(process.env.NODE_ENV) )
   {

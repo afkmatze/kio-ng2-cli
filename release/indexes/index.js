@@ -6,6 +6,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("path");
 var env = require("../env");
 __export(require("./interfaces"));
+var stream = require("./stream");
+exports.stream = stream;
 var interfaces_1 = require("./interfaces");
 var components_1 = require("../components");
 var template_1 = require("./template");
@@ -36,6 +38,16 @@ exports.getIndex = function (indexName, fromCache) {
     var filter = exports.componentFilterForIndexType(indexType);
     return {
         name: indexName,
+        indexType: indexType,
+        components: components_1.getComponents(filter, fromCache)
+    };
+};
+exports.getIndexByType = function (indexType, fromCache) {
+    if (fromCache === void 0) { fromCache = true; }
+    var filter = exports.componentFilterForIndexType(indexType);
+    return {
+        indexType: indexType,
+        name: interfaces_1.IndexType[indexType],
         components: components_1.getComponents(filter, fromCache)
     };
 };

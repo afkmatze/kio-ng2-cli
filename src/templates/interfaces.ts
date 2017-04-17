@@ -1,8 +1,17 @@
-import { TemplateData, TemplateDataType } from './source/interfaces'
+import { KioContentType } from 'kio-ng2'
+import { TemplateType } from './types.enum'
+//import { TemplateName } from './names.enum'
 
-export { TemplateData, TemplateDataType }
+export * from './types.enum'
+//export * from './names.enum'
 
-export type TemplateName = "index"|"fragment"|"src"|"txt"
+export type TemplateDataType = 'publication'|'index'
+
+export interface TemplateData {
+  [key:string]: any;
+}
+
+export type TemplateName = "index"|KioContentType
 
 export interface TemplateFile {
   filename:string;
@@ -15,11 +24,21 @@ export interface TemplateSource {
   files?:TemplateFile[];
 }
 
-export interface Template<TemplateDataType> {
-  source:TemplateSource;
-  data?:TemplateData<TemplateDataType>;
-  targetRoot:string; 
+export interface Template {
+  /*source:TemplateSource;
+  data?:TemplateData;
+  targetRoot:string; */
 }
 
-export interface PublicationTemplate extends Template<"publication"> {}
-export interface IndexTemplate extends Template<"index"> {}
+export interface PublicationTemplate extends Template {
+  [key:string]: any;
+}
+
+export interface IndexTemplate extends Template {
+  [key:string]: any;
+}
+
+
+export interface IndexFileNameMapper {
+  ( templateFile:TemplateFile ): TemplateFile
+}

@@ -1,3 +1,3 @@
-import { ComponentTemplateData } from '../template';
+import { TemplateData } from '../templates';
 import { PublicationComponent } from './classes';
-export declare const dataForTemplate: (publicationComponent: PublicationComponent) => ComponentTemplateData;
+export declare const dataForTemplate: (publicationComponent: PublicationComponent) => TemplateData;

@@ -11,8 +11,6 @@ var __extends = (this && this.__extends) || (function () {
 })();
 Object.defineProperty(exports, "__esModule", { value: true });
 var Component_class_1 = require("./Component.class");
-var path = require("path");
-var eval_1 = require("../../utils/eval");
 var PublicationComponent = (function (_super) {
     __extends(PublicationComponent, _super);
     function PublicationComponent(data) {
@@ -23,37 +21,58 @@ var PublicationComponent = (function (_super) {
     }
     Object.defineProperty(PublicationComponent.prototype, "modifiers", {
         get: function () {
-            if (!this._modifiers) {
-                this.update();
-            }
-            return this._modifiers;
+            /*if ( !this._modifiers )
+            {
+              this.update()
+            }*/
+            return this._modifiers || [];
+        },
+        set: function (mods) {
+            /*if ( !this._modifiers )
+            {
+              this.update()
+            }*/
+            this._modifiers = mods;
         },
         enumerable: true,
         configurable: true
     });
     Object.defineProperty(PublicationComponent.prototype, "childTypes", {
         get: function () {
-            if (!this._childTypes) {
-                this.update();
-            }
-            return this._childTypes;
+            /*if ( !this._childTypes )
+            {
+              this.update()
+            }*/
+            return this._childTypes || [];
+        },
+        set: function (childTypes) {
+            /*if ( !this._childTypes )
+            {
+              this.update()
+            }*/
+            this._childTypes = childTypes;
         },
         enumerable: true,
         configurable: true
     });
     PublicationComponent.prototype.update = function () {
-        var criteriaFile = this.getFiles().find(function (filename) { return /criteria\.ts$/.test(filename); });
-        if (!criteriaFile)
-            throw Error("No criteria file for component " + this.toString());
-        var Criteria = eval_1.evalFile(criteriaFile, path.dirname(criteriaFile)).Criteria;
-        this._modifiers = Criteria.modifiers;
-        this._childTypes = Criteria.childTypes;
+        /*const criteriaFile = this.getFiles().find(filename => /criteria\.ts$/.test(filename) )
+        if ( !criteriaFile )
+          throw Error (`No criteria file for component ${this.toString()}`)
+        const Criteria = evalFile(criteriaFile,path.dirname(criteriaFile)).Criteria
+        this._modifiers = Criteria.modifiers
+        this._childTypes = Criteria.childTypes*/
     };
     PublicationComponent.prototype.toJSON = function () {
-        var json = _super.prototype.toJSON.call(this);
-        json.modifiers = this.modifiers;
-        json.childTypes = this.childTypes;
-        return json;
+        var _a = _super.prototype.toJSON.call(this), name = _a.name, dir = _a.dir, componentType = _a.componentType;
+        return {
+            name: name,
+            dir: dir,
+            contentType: this.contentType,
+            componentType: componentType,
+            modifiers: this.modifiers,
+            childTypes: this.childTypes
+        };
     };
     return PublicationComponent;
 }(Component_class_1.Component));

@@ -6,8 +6,8 @@ export declare class PublicationComponent extends Component {
     constructor(data: KioPublicationComponent);
     private _modifiers;
     private _childTypes;
-    readonly modifiers: string[];
-    readonly childTypes: string[];
+    modifiers: any;
+    childTypes: any;
     update(): void;
     toJSON(): KioPublicationComponent;
 }

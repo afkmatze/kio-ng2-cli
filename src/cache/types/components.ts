@@ -1,5 +1,8 @@
+import { Observable, Scheduler } from 'rxjs'
 import * as path from 'path'
+import * as rxfs from '../../utils/rx/fs'
 import * as fs from 'fs'
+import * as env from '../../env'
 import { echo, find, cat } from 'shelljs'
 import { ensure, resolve } from '../store'
 import * as logger from '../../console'
@@ -48,5 +51,18 @@ export const readComponentsCache = ( targetDir:string ) => {
   return readCache(targetDir)
         .map ( (data:any) => createWithData(data) )
 }
+
+const readJSON = (filepath:string):Observable<any> => {
+  return Observable.fromPromise(new Promise((resolve,reject)=>{
+    fs.readFile(filepath,'utf8',(error,result)=>{
+      error ? reject(error) : resolve(result)
+    })    
+  }).then(JSON.parse),Scheduler.async)
+}
+
+
+export const Components = () => rxfs.readdir(path.join(env.KIO_PROJECT_CACHE,'components'))
+                                .filter(filename=>path.extname(filename)==='.json')
+                                .flatMap(filename => readJSON(filename),1).concat().map(data=>createWithData(data))
 
 export default createComponentsCache

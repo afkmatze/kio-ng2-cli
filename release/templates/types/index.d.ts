@@ -1,2 +1,2 @@
-import { TemplatePluginMap } from './interfaces';
-export declare const Types: TemplatePluginMap;
+export * from './interfaces';
+export declare const Types: any;

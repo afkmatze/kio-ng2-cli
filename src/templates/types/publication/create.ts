@@ -1,4 +1,5 @@
 import { PublicationTemplate, TemplateName, TemplateFile, TemplateSource, Template, TemplateData } from '../../interfaces'
+import { PublicationComponentTemplateData } from '../interfaces'
 import { Types } from '../../types'
 import { resolveTargetWithName } from '../../resolveTarget'
 import { findTemplateSourceFiles } from '../../files'
@@ -33,13 +34,14 @@ export const createTemplateByName = ( templateName:TemplateName ):PublicationTem
 
   const template:PublicationTemplate = {
     source: createTemplateSource(templateName),
-    targetRoot: resolveTargetWithName(templateName)
+    targetRoot: resolveTargetWithName(templateName),
+    name: 'publication'
   }
 
   return template
 }
 
-export const createTemplate = ( source:TemplateSource, data:TemplateData<"publication">, targetRoot:string ) => {
+export const createTemplate = ( source:TemplateSource, data:PublicationComponentTemplateData, targetRoot:string ) => {
   const template:PublicationTemplate = {
     source,
     data,

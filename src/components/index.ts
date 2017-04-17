@@ -2,6 +2,7 @@ export * from './interfaces'
 export * from './find'
 export * from './create'
 export * from './classes'
+import { Observable, Scheduler } from 'rxjs'
 import * as cache from '../cache'
 import {PublicationComponent, Component} from './classes'
 import { findComponents } from './find'
@@ -36,3 +37,6 @@ export const getComponents = ( filter:KioComponentFilter, fromCache:boolean=true
   return components
 }
 
+
+
+export const components = () => Observable.from(cache.cachedComponents(),Scheduler.async).repeat()

@@ -17,39 +17,64 @@ export class PublicationComponent extends Component {
     this._childTypes = data.childTypes
   }
 
-  private _modifiers:string[]
-  private _childTypes:string[]
+  private _modifiers:any
+  private _childTypes:any
 
-  get modifiers():string[] {
-    if ( !this._modifiers )
+  get modifiers():any {
+    /*if ( !this._modifiers )
     {
       this.update()
-    }
-    return this._modifiers
+    }*/
+    return this._modifiers || []
   }
   
-  get childTypes():string[] {
-    if ( !this._childTypes )
+  get childTypes():any {
+    /*if ( !this._childTypes )
     {
       this.update()
-    }
-    return this._childTypes
+    }*/
+    return this._childTypes || []
+  }
+
+ set modifiers(mods:any) {
+    /*if ( !this._modifiers )
+    {
+      this.update()
+    }*/
+    this._modifiers = mods
+  }
+  
+  set childTypes(childTypes:any) {
+    /*if ( !this._childTypes )
+    {
+      this.update()
+    }*/
+    this._childTypes = childTypes
   }
 
   update(){
-    const criteriaFile = this.getFiles().find(filename => /criteria\.ts$/.test(filename) )
+    /*const criteriaFile = this.getFiles().find(filename => /criteria\.ts$/.test(filename) )
     if ( !criteriaFile )
       throw Error (`No criteria file for component ${this.toString()}`) 
     const Criteria = evalFile(criteriaFile,path.dirname(criteriaFile)).Criteria
     this._modifiers = Criteria.modifiers
-    this._childTypes = Criteria.childTypes
+    this._childTypes = Criteria.childTypes*/
   }
 
   toJSON():KioPublicationComponent{
-    const json:KioPublicationComponent = <KioPublicationComponent>super.toJSON()
-    json.modifiers = this.modifiers
-    json.childTypes = this.childTypes
-    return json
+    const {
+      name,
+      dir,
+      componentType
+    } = super.toJSON()
+    return {
+      name,
+      dir,
+      contentType: this.contentType,
+      componentType,
+      modifiers: this.modifiers,
+      childTypes: this.childTypes
+    }
   }
 
 }

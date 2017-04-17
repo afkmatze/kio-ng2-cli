@@ -16,7 +16,7 @@ export const mapDataKey = ( key:DataKeyType, component:PublicationComponent ):an
       return component.contentType
 
     case "styles":
-      return component.relativeFrom(path.join(env.KIO_PROJECT_ROOT,'src','scss'))
+      return component.relativeTo(path.join(env.KIO_PROJECT_ROOT,'src','scss'))
 
     case "modifiers":
         return component.modifiers
@@ -31,7 +31,7 @@ export const mapDataKey = ( key:DataKeyType, component:PublicationComponent ):an
         return stringUtils.classify(component.name)
 
     case "classifiedParentComponentName":
-        return stringUtils.classify(['kio','abstract',component.contentType].join('-'))
+        return stringUtils.classify(['kio','abstract',component.contentType,'component'].join('-'))
 
     case "pathToStructureComponents":
         return component.relativeTo(env.KIO_PATHS.components.structure)

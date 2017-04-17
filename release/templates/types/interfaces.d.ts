@@ -1,27 +1,26 @@
-import { PublicationTemplate, TemplateSource, TemplateName, IndexTemplate, TemplateData, TemplateFile } from '../interfaces';
+import { PublicationTemplate, Template, TemplateSource, TemplateName, IndexTemplate, TemplateData, TemplateFile } from '../interfaces';
 import { DataKeyType as IndexDataKeyType, DataKeys as IndexDataKeys } from './index/keys';
 import { DataKeyType as PublicationDataKeyType, DataKeys as PublicationDataKeys } from './publication/keys';
-import { ComponentIndex } from '../../indexes';
 import { PublicationComponent } from '../../components';
 export { TemplateData, PublicationTemplate, IndexTemplate };
 export { IndexDataKeyType, IndexDataKeys, PublicationDataKeyType, PublicationDataKeys };
-export interface TemplateDataMapper<T> {
-    mapTemplateData(data: any): TemplateData<T>;
-    mapTemplateFile(file: TemplateFile, data: TemplateData<T>): TemplateFile;
-    mapTemplateFile(file: TemplateFile, data: TemplateData<T>, replaceRoot: string): TemplateFile;
+export interface TemplateDataMapper {
+    mapTemplateData(data: any): TemplateData;
+    mapTemplateFile(file: TemplateFile, data: TemplateData): TemplateFile;
+    mapTemplateFile(file: TemplateFile, data: TemplateData, replaceRoot: string): TemplateFile;
 }
 export interface TemplateValueMapper {
     (dataKey: string, data: any): any;
 }
 export interface TemplateFactory {
-    createTemplate(source: TemplateSource, data: IndexTemplateData, targetRoot: string): IndexTemplate;
-    createTemplate(source: TemplateSource, data: PublicationComponentTemplateData, targetRoot: string): PublicationTemplate;
+    createTemplate(source: TemplateSource, data: Template, targetRoot: string): IndexTemplate;
+    createTemplate(source: TemplateSource, data: Template, targetRoot: string): PublicationTemplate;
     createTemplateSource(templateName: TemplateName, files?: TemplateFile[]): TemplateSource;
-    createTemplateByName(templateName: TemplateName, files?: TemplateFile[]): TemplateSource;
+    createTemplateByName(templateName: TemplateName, files?: TemplateFile[]): TemplateData;
 }
 export interface TemplateMapper {
-    mapTemplateData(data: ComponentIndex): IndexTemplateData;
-    mapTemplateDataKey?(key: string, data: ComponentIndex): IndexTemplateData;
+    mapTemplateData(data: any): IndexTemplateData;
+    mapTemplateDataKey?(key: string, data: any): IndexTemplateData;
     mapTemplateData(data: PublicationComponent): PublicationComponentTemplateData;
     mapTemplateDataKey?(key: string, data: PublicationComponent): PublicationComponentTemplateData;
 }
@@ -30,14 +29,14 @@ export interface TemplatePlugin extends TemplateFactory, TemplateMapper {
 export interface TemplatePluginMap {
     [key: string]: TemplatePlugin;
 }
-export interface TemplateTypeMapper<T> {
-    [key: string]: TemplateDataMapper<T>;
+export interface TemplateTypeMapper {
+    [key: string]: TemplateDataMapper;
 }
-export interface PublicationTemplateDataMapper extends TemplateDataMapper<"publication"> {
+export interface PublicationTemplateDataMapper extends TemplateDataMapper {
 }
-export interface IndexTemplateDataMapper extends TemplateDataMapper<"index"> {
+export interface IndexTemplateDataMapper extends TemplateDataMapper {
 }
-export interface PublicationComponentTemplateDataItem extends PublicationTemplate {
+export interface PublicationComponentTemplateDataItem {
     importName: string;
     importAlias?: string;
     importPath: string;
@@ -50,7 +49,7 @@ export interface PublicationComponentTemplateData extends PublicationTemplate {
     classifiedParentComponentName: string;
     dasherizedParentComponentName: string;
 }
-export interface IndexTemplateDataItem extends IndexTemplate {
+export interface IndexTemplateDataItem {
     importName: string;
     importAlias?: string;
     importPath: string;

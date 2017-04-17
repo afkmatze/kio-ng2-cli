@@ -8,6 +8,7 @@ export declare enum IndexType {
     criteria = 4,
 }
 export interface ComponentIndex {
-    name: IndexName;
+    indexType: IndexType;
+    name: string;
     components: ComponentModel[];
 }

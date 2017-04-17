@@ -11,4 +11,5 @@ exports.readCache = function (cacheType) {
     var cachePath = store_1.ensure.apply(void 0, [cacheType].concat(pathNames));
     return components_1.readComponentsCache(cachePath);
 };
+exports.cachedComponents = function () { return components_1.Components(); };
 //# sourceMappingURL=read.js.map

@@ -10,7 +10,6 @@ import * as env from '../env'
 import * as templates from './'
 import * as indexes from '../indexes'
 import * as create from './create'
-import * as render from './render'
 
 
 const mockComponent = () =>{
@@ -49,58 +48,6 @@ describe('test templates',()=>{
   templateNames.forEach(templateName=>{
     describe(`test type ${templateName}`,()=>{
 
-      describe('test misc',()=>{
-        it(`resolves target for ${templateName}`,()=>{
-
-          const target = templates.resolveTargetWithName(templateName)
-          expect(target).toEqual(EXPECTED_TEMPLATE_PATH[templateName])
-          //console.log('target "%s"',templateName,target)
-
-        })
-
-        it('finds template source files',()=>{
-
-          const files = templates.findTemplateSourceFiles(templateName)
-        })
-
-        it(`creates template for ${templateName}`,()=>{
-          const t = templates.createTemplateByName(templateName)
-          console.log('template "%s"', templateName)
-          console.log(t)
-          expect(t).toContainKeys(['source','targetRoot'])
-  /*        t.source.files.forEach(file=>{
-            const targetFilepath = env.path.join(t.targetRoot,file.filename)
-            console.log('targetFilepath: %s',targetFilepath)  
-          })
-
-  */        
-         const comp = mockComponent()
-          t.data = templates.Types["fragment"].mapTemplateData(comp)
-          templates.renderTemplate(t)
-          
-        })
-
-      })
-
-      describe('test create "index"',()=>{
-
-        let templateSource:templates.TemplateSource
-        let template:templates.Template
-
-        before(()=>{
-          templateSource = create.createTemplateSource("index")
-
-        })
-
-        it('creates',()=>{
-
-        })
-
-      })
-
-      describe('test render',()=>{
-
-      })
       
     })
       

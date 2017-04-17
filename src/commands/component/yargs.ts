@@ -2,9 +2,13 @@ import { KioContentType } from 'kio-ng2'
 import { CommandModule } from 'yargs'
 import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent, PublicationComponent, createWithData } from '../../components'
 import { logError, log } from '../../console'
+import * as chalk from 'chalk'
 import * as path from 'path'
-import * as env from '../../env/constants'
+import * as env from '../../env'
 import * as stringUtils from '../../utils/string'
+
+import cmdCreateComponent from './exec'
+import cmdBuildIndexes from '../indexes/exec'
 
 import { renderType } from './render'
 import * as api from '../../api'
@@ -34,20 +38,17 @@ export const yargs:CommandModule = {
         type: 'array'
       })
   },  
-  handler: (args:any) => {
-    const [ command, componentName ] = args._
-    const options:KioPublicationComponent = {
-      componentType: KioComponentType.PublicationComponent,
-      contentType: args.contentType,
-      name: componentName,
-      modifiers: args.modifiers || [],
-      childTypes: args.childTypes || [],
-      dir: path.join(env.KIO_PATHS.components.publication,args.contentType,stringUtils.dasherize(componentName||''))      
-    }
-/*
-    renderType(options)*/
+  handler: (args:any|env.CommandConfigCreateComponent) => {
+    const [ command, componentName ] = args._    
+    env.config.update({...args, command, componentName})
 
-    const component = createWithData(options)
-    api.renderPublicationComponent(<PublicationComponent>component)
+    cmdCreateComponent(<any>env.config.data).toPromise()
+      .then ( (result:PublicationComponent) => {
+        log('created %s at %s', chalk.blue.bold(`${result}`), path.relative(env.KIO_PATHS.root,result.dir) )
+        return cmdBuildIndexes().toPromise().then ( files => {
+          log('wrote %s index files', files.length)
+        } )
+      } )
+      .catch ( console.error)
   }
 }

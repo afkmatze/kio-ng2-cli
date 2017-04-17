@@ -6,6 +6,8 @@ import * as path from 'path'
 
 export const mapTemplateData = ( indexData:ComponentIndex ):IndexTemplateData => {
   const data:IndexTemplateData = {
+    source: undefined,
+    targetRoot: resolveTargetWithName("index"),
     exportName: indexData.name,
     indexItems: indexData.components.map(comp=>{
       return {
@@ -19,15 +21,9 @@ export const mapTemplateData = ( indexData:ComponentIndex ):IndexTemplateData =>
 
 export const mapTemplateFile = ( file:TemplateFile, data:IndexTemplateData ):TemplateFile => {
   const root = file.absoluteFilepath.replace(file.filename,'')
-  const filename = file.filename.replace(/\_\_(\w+)\_\_/gm,(src:string,key:string) => {
-    if ( key === 'path' )
-      return data.dasherizedComponentName
-    if ( key === 'name' )
-      return data.dasherizedComponentName
-    return src
-  })
+  console.log('index template file',file.filename)
   return {
-    filename,
-    absoluteFilepath: path.join(root,filename)
+    filename: file.filename,
+    absoluteFilepath: path.join(root,file.filename)
   }
 }

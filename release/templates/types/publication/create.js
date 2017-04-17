@@ -27,7 +27,8 @@ exports.createTemplateByName = function (templateName) {
     var type = types_1.Types[templateName];
     var template = {
         source: exports.createTemplateSource(templateName),
-        targetRoot: resolveTarget_1.resolveTargetWithName(templateName)
+        targetRoot: resolveTarget_1.resolveTargetWithName(templateName),
+        name: 'publication'
     };
     return template;
 };

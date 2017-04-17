@@ -1,10 +1,10 @@
-import { ComponentTemplateData } from '../template'
+import { TemplateData } from '../templates'
 import { PublicationComponent } from './classes'
 import * as path from 'path'
 import * as env from '../env/constants'
 import * as stringUtils from '../utils/string'
 
-export const dataForTemplate = ( publicationComponent:PublicationComponent ):ComponentTemplateData => {
+export const dataForTemplate = ( publicationComponent:PublicationComponent ):TemplateData => {
   const moduleName = stringUtils.classify(publicationComponent.name)
   const componentName = stringUtils.classify(publicationComponent.name+'-component')
   const parentModuleName = ['kio','abstract',publicationComponent.contentType].join('-')
@@ -12,7 +12,7 @@ export const dataForTemplate = ( publicationComponent:PublicationComponent ):Com
   const parentComponentFilepath = publicationComponent.relativeTo(path.join(env.KIO_PATHS.components.structure,parentModuleName,parentComponentName
     ))
 
-  const data:ComponentTemplateData = {
+  const data:TemplateData = {
     contentType: publicationComponent.contentType,
     modifiers: publicationComponent.modifiers,
     childTypes: publicationComponent.childTypes,

@@ -36,7 +36,7 @@ var Formatter = (function () {
     Formatter.prototype.formatValue = function (value) {
         var formatter = this.getValueFormatter(value);
         if (!formatter) {
-            console.warn('no formatter for value', value);
+            //console.warn('no formatter for value',value)
         }
         else {
             value = formatter.formatValue(value);

@@ -1,1 +1,0 @@
-{"version":3,"file":"write.js","sourceRoot":"","sources":["../../../src/template/index/write.ts"],"names":[],"mappings":";;AACA,iDAA0D;AAO7C,QAAA,KAAK,GAAG,UAAE,YAAmB,EAAE,IAAsB;IAChE,IAAM,UAAU,GAAG,YAAY,CAAC,OAAO,CAAC,WAAW,EAAC,IAAI,CAAC,QAAQ,CAAC,CAAC,OAAO,CAAC,qBAAS,EAAC,qBAAS,CAAC,UAAU,CAAC,WAAW,CAAC,CAAA;IACtH,IAAM,cAAc,GACtB,AADwB,CAAA;AACxB,CAAC,CAAA"}

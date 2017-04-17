@@ -11,6 +11,7 @@ export enum IndexType {
 }
 
 export interface ComponentIndex {
-  name:IndexName;
+  indexType:IndexType;
+  name:string;
   components:ComponentModel[];  
 }

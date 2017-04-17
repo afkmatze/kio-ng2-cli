@@ -33,7 +33,7 @@ export const getContentTypeForPath = ( dir:string ) => {
   return undefined
 }
 
-export const createWithData = ( data:ComponentInterfaces.KioPublicationComponent|ComponentInterfaces.KioComponent ):ComponentModel => {
+export const createWithData = ( data:ComponentInterfaces.KioPublicationComponent|ComponentInterfaces.KioComponent ):PublicationComponent|Component => {
   if ( data.componentType === ComponentInterfaces.KioComponentType.PublicationComponent )
     return new PublicationComponent(<ComponentInterfaces.KioPublicationComponent>data)
   return new Component(data)

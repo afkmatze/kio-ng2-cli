@@ -7,6 +7,7 @@ __export(require("./interfaces"));
 __export(require("./find"));
 __export(require("./create"));
 __export(require("./classes"));
+var rxjs_1 = require("rxjs");
 var cache = require("../cache");
 var find_1 = require("./find");
 var interfaces_1 = require("./interfaces");
@@ -31,4 +32,5 @@ exports.getComponents = function (filter, fromCache) {
     }
     return components;
 };
+exports.components = function () { return rxjs_1.Observable.from(cache.cachedComponents(), rxjs_1.Scheduler.async).repeat(); };
 //# sourceMappingURL=index.js.map

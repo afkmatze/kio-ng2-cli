@@ -4,6 +4,8 @@ var resolveTarget_1 = require("../../resolveTarget");
 var path = require("path");
 exports.mapTemplateData = function (indexData) {
     var data = {
+        source: undefined,
+        targetRoot: resolveTarget_1.resolveTargetWithName("index"),
         exportName: indexData.name,
         indexItems: indexData.components.map(function (comp) {
             return {
@@ -16,16 +18,10 @@ exports.mapTemplateData = function (indexData) {
 };
 exports.mapTemplateFile = function (file, data) {
     var root = file.absoluteFilepath.replace(file.filename, '');
-    var filename = file.filename.replace(/\_\_(\w+)\_\_/gm, function (src, key) {
-        if (key === 'path')
-            return data.dasherizedComponentName;
-        if (key === 'name')
-            return data.dasherizedComponentName;
-        return src;
-    });
+    console.log('index template file', file.filename);
     return {
-        filename: filename,
-        absoluteFilepath: path.join(root, filename)
+        filename: file.filename,
+        absoluteFilepath: path.join(root, file.filename)
     };
 };
 //# sourceMappingURL=map.js.map

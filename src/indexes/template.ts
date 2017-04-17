@@ -1,6 +1,6 @@
 import { IndexName, IndexType, ComponentIndex } from './interfaces'
 import { KioComponentFileType } from '../components/interfaces'
-import { IndexTemplateData, ComponentImport } from '../template'
+import { IndexTemplateData, IndexTemplateDataItem } from '../templates'
 import { ComponentModel } from '../components'
 import * as stringUtils from '../utils/string'
 import * as env from '../env/constants'
@@ -8,16 +8,16 @@ import * as path from 'path'
 
 // TODO: map fixture and criteria
 
-const mapIndexNameToFileType:Map<IndexName,KioComponentFileType> = new Map()
-mapIndexNameToFileType.set("fixture","fixture")
-mapIndexNameToFileType.set("criteria","criteria")
-mapIndexNameToFileType.set("publication","component")
-mapIndexNameToFileType.set("navigation","component")
-mapIndexNameToFileType.set("structure","component")
+const mapIndexNameToFileType:Map<IndexType,KioComponentFileType> = new Map()
+mapIndexNameToFileType.set(IndexType.fixture,"fixture")
+mapIndexNameToFileType.set(IndexType.criteria,"criteria")
+mapIndexNameToFileType.set(IndexType.publication,"component")
+mapIndexNameToFileType.set(IndexType.navigation,"component")
+mapIndexNameToFileType.set(IndexType.structure,"component")
 
-const mapComponentToComponentImport = (fileType:KioComponentFileType) => ( component:ComponentModel ):ComponentImport => {
+const mapComponentToComponentImport = (fileType:KioComponentFileType) => ( component:ComponentModel ):IndexTemplateDataItem => {
   const filePath = component.getFile(fileType)
-  const componentImport:ComponentImport = {
+  const componentImport = {
     importName: component.name+'Component',
     importPath: './'+path.relative(env.KIO_PATHS.root,component.getFile(fileType)).replace(/\.\w+$/,'')
   }
@@ -29,7 +29,9 @@ export const dataForIndex = ( componentIndex:ComponentIndex ):IndexTemplateData 
 
   const data:IndexTemplateData = {
     exportName: stringUtils.classify([componentIndex.name,'components'].join('-')),
-    components: componentIndex.components.map ( mapComponentToComponentImport(mapIndexNameToFileType.get(componentIndex.name)))
+    source: undefined,
+    targetRoot: undefined,
+    indexItems: componentIndex.components.map ( mapComponentToComponentImport(mapIndexNameToFileType.get(componentIndex.indexType)))
   }
   if ( componentIndex.name === "fixture" )
   {

@@ -1,7 +1,12 @@
 export * from './resolveTarget';
 export * from './interfaces';
-import { Types } from './types';
-export { Types };
-export * from './render';
+import { TemplateType } from './types.enum';
+import { TemplatePlugin } from './types/interfaces';
+import * as index from './types/index/index';
+import * as publication from './types/publication';
+export * from './types';
 export * from './files';
-export * from './create';
+export * from './types.enum';
+export declare const template: (templateName: string) => TemplatePlugin;
+export declare const getType: (typeValue: any) => TemplateType;
+export declare const byType: (templateType: TemplateType) => typeof index | typeof publication;
