@@ -33,13 +33,16 @@ exports.yargs = {
     handler: function (args) {
         var command = args._[0];
         env.config.update(__assign({}, args, { command: command }));
-        exec_1.default(args)
-            .toPromise()
-            .then(function (files) {
-            console_1.log('wrote %s index files', files.length);
-        }).catch(function (error) {
+        var subscr = exec_1.default(args).subscribe(function (indexFile) {
+            console_1.log('updated "%s"', indexFile);
+        }, function (error) {
             console.log('failed with "%s"', error);
             console.error(error);
+        }, function () {
+            if (subscr) {
+                subscr.unsubscribe();
+                subscr = null;
+            }
         });
         /*args.filter.forEach ( filterValue => {
           api.writeIndex(filterValue,args["no-cache"]===false)

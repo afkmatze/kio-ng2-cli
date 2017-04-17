@@ -41,6 +41,7 @@ exports.async = {
     stat: promisify(fs.stat),
     mkdir: function (filepath, p) { return Promise.resolve(p ? shelljs_1.mkdir('-p', filepath) : shelljs_1.mkdir(filepath)); },
     readFile: promisify(fs.readFile),
+    unlink: promisify(fs.unlink),
     writeFile: promisify(fs.writeFile),
     readdir: promisify(fs.readdir)
 };
@@ -83,5 +84,6 @@ exports.readDir = function (filename) {
     return rxjs_1.Observable.fromPromise(exports.async.readdir(filename));
 };
 exports.readstats = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.stat(filepath)); };
+exports.unlink = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.unlink(filepath).then(function () { return true; })); };
 exports.mkdir = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.mkdir(filepath).then(function () { return filepath; })); };
 //# sourceMappingURL=fs.js.map

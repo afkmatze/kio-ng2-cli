@@ -2,6 +2,7 @@ import { Observable, Scheduler } from 'rxjs'
 import { ComponentSource, PublicationComponent, Component, ComponentModel } from '../interfaces'
 import { KioComponent, KioPublicationComponent, KioStructureComponent, KioComponentType, ComponentType } from '../../interfaces'
 import { createWithData } from '../../create'
+import * as logger from '../../../console'
 
 
 import { path, KIO_PROJECT_CACHE, KIO_PROJECT_ROOT, KIO_PATHS } from '../../../env'
@@ -31,7 +32,16 @@ const resolveComponentsCache = ( componentType:KioComponentType|string, ...args:
 
 export const fetch = () => readdir(path.join(KIO_PROJECT_CACHE,'components'))
            .filter(item => path.extname(item) === '.json' )
-           .flatMap( filename => readfile(filename,true).map(value => JSON.parse(value)) )
+           .distinct(item=>`${item}`)
+           .mergeMap( filename => {
+               //logger.log('merge map file "%s"', filename )
+               return readfile(filename,true)
+                      .map(value => ({
+                          filename ,
+                          data: JSON.parse(value)
+                        }) 
+                      )
+             } )
 
 
 export class CacheStream implements ComponentSource {
@@ -41,18 +51,80 @@ export class CacheStream implements ComponentSource {
   exists(name:string="components"){
     return rxfs.existsSync(path.join(KIO_PROJECT_CACHE,name))
   }
-  
-  fetch():Observable<ComponentModel> {
-    return fetch()
-        .map ( createWithData )
-        .flatMap ( component => Observable.of(component,Scheduler.async) )
-        .concat()
+
+  private cachedFetch:Observable<any>
+
+  private _fetch(){
+    if ( !this.cachedFetch )
+    {
+      this.cachedFetch  = fetch()
+    }
+    return this.cachedFetch
+  }
+
+  protected removeDeleted(){
+    const filtered = this._fetch().filter( (item,idx) => {
+      return !rxfs.existsSync(item.data.dir)
+    } )
+
+    return filtered.mergeMap((item,idx) => {
+      //logger.log('item #%s', idx)
+      //return rxfs.unlink(item.filename).map ( () => item )
+      return Observable.of(item)
+    })
   }
   
+  protected fetchExisting():Observable<ComponentModel>{
+    return this.removeDeleted().mergeMap ( items => {
+      console.log('removed deleted items',items)
+      return this._fetch().filter( item => {
+        return !!rxfs.existsSync(item.data.dir)
+      }).map(item => createWithData(item.data))
+    } )
+  }
+
+  protected processCachedComponent(componentData){
+    if ( !rxfs.existsSync(componentData.data.dir) && !componentData.deleted )
+    {
+      logger.log("Component %s does not exist", componentData.filename)
+      return rxfs.unlink(componentData.filename).map ( value => {
+        return {
+          ...componentData,
+          deleted: true
+        }
+      } )
+    }
+    return Observable.of(createWithData(componentData.data))
+  }
+
+  fetch():Observable<ComponentModel> {
+    return fetch().flatMap ( item => {
+      return this.processCachedComponent(item) 
+    },1)
+    /*return fetch().filter( item => {
+        return !!rxfs.existsSync(item.data.dir)
+      } )
+    .map ( item => item.data )
+    .map ( createWithData )
+    .flatMap ( component => Observable.of(component,Scheduler.async) )
+    .concat()*/
+  }
+
   prepare():Observable<string> {
     return Observable.of('')
   }
 
+  deleteComponent(component:Component):Observable<boolean>{
+    const cacheDir = resolveComponentsCache(component.typeName)
+    const cachePath = resolveComponentsCache(component.typeName, component.name+'.json')
+    const exists = rxfs.existsSync(cachePath)
+    let source = Observable.of(false)
+    if ( exists )
+    {
+      source = rxfs.unlink(cachePath)
+    }
+    return source
+  }
 
   write(component:PublicationComponent):Observable<string>{
     const cacheDir = resolveComponentsCache(component.typeName)

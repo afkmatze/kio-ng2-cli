@@ -1,8 +1,17 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var interfaces_1 = require("../../interfaces");
 var create_1 = require("../../create");
+var logger = require("../../../console");
 var env_1 = require("../../../env");
 var fs_1 = require("../../../utils/rx/fs");
 var rxfs = require("../../../utils/rx/fs");
@@ -28,7 +37,15 @@ var resolveComponentsCache = function (componentType) {
 };
 exports.fetch = function () { return fs_1.readdir(env_1.path.join(env_1.KIO_PROJECT_CACHE, 'components'))
     .filter(function (item) { return env_1.path.extname(item) === '.json'; })
-    .flatMap(function (filename) { return fs_1.readfile(filename, true).map(function (value) { return JSON.parse(value); }); }); };
+    .distinct(function (item) { return "" + item; })
+    .mergeMap(function (filename) {
+    //logger.log('merge map file "%s"', filename )
+    return fs_1.readfile(filename, true)
+        .map(function (value) { return ({
+        filename: filename,
+        data: JSON.parse(value)
+    }); });
+}); };
 var CacheStream = (function () {
     function CacheStream() {
         this.isWritable = true;
@@ -37,14 +54,65 @@ var CacheStream = (function () {
         if (name === void 0) { name = "components"; }
         return rxfs.existsSync(env_1.path.join(env_1.KIO_PROJECT_CACHE, name));
     };
+    CacheStream.prototype._fetch = function () {
+        if (!this.cachedFetch) {
+            this.cachedFetch = exports.fetch();
+        }
+        return this.cachedFetch;
+    };
+    CacheStream.prototype.removeDeleted = function () {
+        var filtered = this._fetch().filter(function (item, idx) {
+            return !rxfs.existsSync(item.data.dir);
+        });
+        return filtered.mergeMap(function (item, idx) {
+            //logger.log('item #%s', idx)
+            //return rxfs.unlink(item.filename).map ( () => item )
+            return rxjs_1.Observable.of(item);
+        });
+    };
+    CacheStream.prototype.fetchExisting = function () {
+        var _this = this;
+        return this.removeDeleted().mergeMap(function (items) {
+            console.log('removed deleted items', items);
+            return _this._fetch().filter(function (item) {
+                return !!rxfs.existsSync(item.data.dir);
+            }).map(function (item) { return create_1.createWithData(item.data); });
+        });
+    };
+    CacheStream.prototype.processCachedComponent = function (componentData) {
+        if (!rxfs.existsSync(componentData.data.dir) && !componentData.deleted) {
+            logger.log("Component %s does not exist", componentData.filename);
+            return rxfs.unlink(componentData.filename).map(function (value) {
+                return __assign({}, componentData, { deleted: true });
+            });
+        }
+        return rxjs_1.Observable.of(create_1.createWithData(componentData.data));
+    };
     CacheStream.prototype.fetch = function () {
-        return exports.fetch()
-            .map(create_1.createWithData)
-            .flatMap(function (component) { return rxjs_1.Observable.of(component, rxjs_1.Scheduler.async); })
-            .concat();
+        var _this = this;
+        return exports.fetch().flatMap(function (item) {
+            return _this.processCachedComponent(item);
+        }, 1);
+        /*return fetch().filter( item => {
+            return !!rxfs.existsSync(item.data.dir)
+          } )
+        .map ( item => item.data )
+        .map ( createWithData )
+        .flatMap ( component => Observable.of(component,Scheduler.async) )
+        .concat()*/
     };
     CacheStream.prototype.prepare = function () {
         return rxjs_1.Observable.of('');
+    };
+    CacheStream.prototype.deleteComponent = function (component) {
+        var cacheDir = resolveComponentsCache(component.typeName);
+        var cachePath = resolveComponentsCache(component.typeName, component.name + '.json');
+        var exists = rxfs.existsSync(cachePath);
+        var source = rxjs_1.Observable.of(false);
+        if (exists) {
+            source = rxfs.unlink(cachePath);
+        }
+        return source;
     };
     CacheStream.prototype.write = function (component) {
         var cacheDir = resolveComponentsCache(component.typeName);

@@ -7,5 +7,6 @@ export interface ComponentSource {
   prepare():Observable<string>
   fetch():Observable<ComponentModel>
   isWritable:boolean;
+  deleteComponent?(component:PublicationComponent):Observable<boolean>;
   writeComponent?(component:PublicationComponent):Observable<string>;
 }

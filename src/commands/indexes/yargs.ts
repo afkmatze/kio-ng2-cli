@@ -37,14 +37,18 @@ export const yargs:CommandModule = {
   handler: (args:any) => {
     const [ command ] = args._
     env.config.update({...args, command})
-    exec(args)
-    .toPromise()
-      .then ((files) => {
-        log('wrote %s index files', files.length)
-      }).catch(error => {
-        console.log('failed with "%s"', error)
-        console.error(error)
-      })
+    let subscr = exec(args).subscribe((indexFile) => {
+      log('updated "%s"', indexFile )
+    },error => {
+      console.log('failed with "%s"', error)
+      console.error(error)
+    },() => {
+      if ( subscr )
+      {
+        subscr.unsubscribe()
+        subscr = null
+      }
+    })
     /*args.filter.forEach ( filterValue => {
       api.writeIndex(filterValue,args["no-cache"]===false)
       //writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.root),stringUtils.classify(filterValue+'Components'),files)

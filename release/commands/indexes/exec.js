@@ -34,7 +34,7 @@ var applyFilter = function (filter) {
     if (filter === void 0) { filter = []; }
     if (filter && !Array.isArray(filter))
         filter = [filter];
-    return function (component) {
+    return function (component, idx) {
         if (filter.length === 0 || !filter) {
             return true;
         }
@@ -53,16 +53,6 @@ var applyFilter = function (filter) {
         }
         return false;
     };
-};
-exports.selectSource = function (cached) {
-    if (cached === void 0) { cached = true; }
-    if (cached === false || !componentSource.cache.exists('components')) {
-        logger.log('cache not existing');
-        return componentSource.tsc.fetch().flatMap(function (component) {
-            return componentSource.cache.write(component).map(function (filename) { return component; });
-        });
-    }
-    return componentSource.cache.fetch();
 };
 var mapComponentToIndexItem = function (indexType, component) {
     var indexName = interfaces_1.IndexType[indexType];
@@ -135,6 +125,16 @@ var defaultConfig = {
     filter: ["publication", "navigation", "structure", "fixture", "criteria"],
     noCache: false
 };
+exports.selectSource = function (cached) {
+    if (cached === void 0) { cached = true; }
+    if (cached === false || !componentSource.cache.exists('components')) {
+        logger.log('cache not existing');
+        return componentSource.tsc.fetch().flatMap(function (component) {
+            return componentSource.cache.write(component).map(function (filename) { return component; });
+        });
+    }
+    return componentSource.cache.fetch();
+};
 exports.default = function (config) {
     if (config === void 0) { config = defaultConfig; }
     var filter = config.filter || defaultConfig.filter;
@@ -142,20 +142,49 @@ exports.default = function (config) {
         filter = [filter];
     var indexTemplate = templateCreate.createTemplateByName("index");
     indexTemplate.source = templateCreate.createTemplateSource("index");
-    var cb = exports.selectSource(!config.noCache).filter(applyFilter(filter));
-    var filters = rxjs_1.Observable.from(filter).flatMap(function (indexName) {
-        var indexType = interfaces_1.IndexType[indexName];
-        return cb.filter(applyFilter(indexName)).toArray()
-            .flatMap(function (components) {
-            return exports.writeComponentsToIndexTemplate(indexType, components).map(function (filename) {
-                return filename;
-            });
+    /*
+      const filters = Observable.from(filter,Scheduler.async).flatMap(val => {
+        console.log('select ', val , 'of', filter)
+        return selectSource().filter(applyFilter(val))
+      })
+    */
+    return rxjs_1.Observable.from(filter, rxjs_1.Scheduler.asap)
+        .flatMap(function (filter) {
+        //logger.log('find components for filter "%s"', filter )
+        return exports.selectSource().filter(applyFilter(filter)).toArray()
+            .map(function (components) {
+            return {
+                filter: filter,
+                components: components
+            };
         });
-    })
-        .catch(function (error) {
-        logger.logError(error, false);
-        return rxjs_1.Observable.throw(error);
+    }, 1)
+        .concatMap(function (result) {
+        //logger.log('%s-filtered components: %s', result.filter, result.components)
+        return exports.writeComponentsToIndexTemplate(interfaces_1.IndexType[result.filter], result.components).map(function (filename) {
+            return filename;
+        });
     });
-    return filters.toArray();
+    //const cb = selectSource(!config.noCache).filter(applyFilter(filter))
+    /*
+      const filters = Observable.from(filter).mergeMap((indexName:IndexName,idx) => {
+        const indexType = IndexType[indexName]
+        return selectSource(!config.noCache).filter(applyFilter(indexName)).toArray()
+                .concatMap(components => {
+                  logger.log('%s-filtered components: %s', indexName, components)
+                  return writeComponentsToIndexTemplate(indexType,components).map (
+                    ( filename ) => {
+                      return filename
+                    }
+                  )
+                })
+      })
+      .catch( error => {
+        logger.logError(error,false)
+        return Observable.throw(error)
+      })
+    
+      return filters.toArray()
+    */
 };
 //# sourceMappingURL=exec.js.map

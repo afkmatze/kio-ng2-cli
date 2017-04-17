@@ -40,6 +40,7 @@ export const async = {
   stat: promisify(fs.stat),
   mkdir: (filepath:string,p?:boolean) => Promise.resolve(p ? mkd('-p',filepath) : mkd(filepath)),
   readFile: promisify(fs.readFile),
+  unlink: promisify(fs.unlink),
   writeFile: promisify(fs.writeFile),
   readdir: promisify(fs.readdir)
 }
@@ -84,5 +85,8 @@ export const readDir = ( filename:string ):Observable<string> => {
 
 export const readstats = ( filepath:string ):Observable<fs.Stats> => Observable.fromPromise(async.stat(filepath))
 
+export const unlink = ( filepath:string ):Observable<boolean> => Observable.fromPromise(
+  async.unlink(filepath).then ( () => true )
+)
 
 export const mkdir = ( filepath:string ):Observable<string> => Observable.fromPromise(async.mkdir(filepath).then(()=>filepath))

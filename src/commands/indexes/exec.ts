@@ -42,7 +42,8 @@ const applyFilter = ( filter:BuildIndexFilterArg|BuildIndexFilterArg[]=[] ) => {
   if ( filter && !Array.isArray(filter) )
     filter = [filter]
 
-  return (component:ComponentModel) => {   
+  return (component:ComponentModel,idx) => {   
+    
     if ( filter.length === 0 || !filter )
     {
       return true
@@ -67,17 +68,6 @@ const applyFilter = ( filter:BuildIndexFilterArg|BuildIndexFilterArg[]=[] ) => {
     return false
 
   }
-}
-
-export const selectSource = ( cached:boolean=true ) => {
-  if ( cached === false || !componentSource.cache.exists('components') )
-  {
-    logger.log('cache not existing')    
-    return componentSource.tsc.fetch().flatMap((component:any) => {
-      return componentSource.cache.write(component).map ( filename => component )
-    })
-  }
-  return componentSource.cache.fetch()
 }
 
 const mapComponentToIndexItem = ( indexType:IndexType, component:ComponentModel ):IndexTemplateDataItem => {
@@ -166,6 +156,19 @@ const defaultConfig = {
   noCache: false
 }
 
+
+export const selectSource = ( cached:boolean=true ) => {
+
+  if ( cached === false || !componentSource.cache.exists('components') )
+  {
+    logger.log('cache not existing')    
+    return componentSource.tsc.fetch().flatMap((component:any) => {
+      return componentSource.cache.write(component).map ( filename => component )
+    })
+  }
+  return componentSource.cache.fetch()
+}
+
 export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
   
   let filter:BuildIndexFilterArg|BuildIndexFilterArg[] = config.filter || defaultConfig.filter
@@ -175,13 +178,42 @@ export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
 
   const indexTemplate = templateCreate.createTemplateByName("index")
   indexTemplate.source = templateCreate.createTemplateSource("index")
+/*
+  const filters = Observable.from(filter,Scheduler.async).flatMap(val => {
+    console.log('select ', val , 'of', filter)
+    return selectSource().filter(applyFilter(val))
+  })
+*/
+  return Observable.from(filter,Scheduler.asap)
+      .flatMap( filter => {
+        //logger.log('find components for filter "%s"', filter )
+        return selectSource().filter(applyFilter(filter)).toArray()
+          .map(
+            components => {
+              return {
+                filter,
+                components
+              }
+            }
+          )
+      }, 1 )
+      //.toArray()
+      .concatMap(result => {
+          //logger.log('%s-filtered components: %s', result.filter, result.components)
+          return writeComponentsToIndexTemplate(IndexType[result.filter],result.components).map (
+            ( filename ) => {
+              return filename
+            }
+          )
+        })
 
-  const cb = selectSource(!config.noCache).filter(applyFilter(filter))
-
-  const filters = Observable.from(filter).flatMap((indexName:IndexName) => {
+  //const cb = selectSource(!config.noCache).filter(applyFilter(filter))
+/*
+  const filters = Observable.from(filter).mergeMap((indexName:IndexName,idx) => {
     const indexType = IndexType[indexName]
-    return cb.filter(applyFilter(indexName)).toArray()
-            .flatMap(components => {
+    return selectSource(!config.noCache).filter(applyFilter(indexName)).toArray()
+            .concatMap(components => {
+              logger.log('%s-filtered components: %s', indexName, components)
               return writeComponentsToIndexTemplate(indexType,components).map (
                 ( filename ) => {
                   return filename
@@ -195,5 +227,5 @@ export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
   })
 
   return filters.toArray()
-
+*/
 }
