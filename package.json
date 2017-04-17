@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "bin": {
-    "kio-ng2": "./bin/exec.js",
-    "kio-ng2-test": "./bin/test.ts"
+    "kio-ng2": "./bin/exec.js"
   },
   "scripts": {
     "prebuild": "rm -rf ./release",
