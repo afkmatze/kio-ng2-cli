@@ -6,6 +6,7 @@ import { templateFiles, TemplateFile, TemplateData, IndexTemplateData, IndexTemp
 import * as index from '../../indexes'
 import * as logger from '../../console'
 import * as rxfs from '../../utils/rx/fs'
+import * as stringUtils from '../../utils/string'
 import { CommandConfigBuildIndexes, BuildIndexFilterArg, BuildIndexArgs, path, KIO_PATHS, KIO_PROJECT_ROOT } from '../../env'
 
 import * as templateCreate from '../../templates/types/index/create'
@@ -156,6 +157,57 @@ const defaultConfig = {
   noCache: false
 }
 
+export const findUncachedComponents = () => {
+  return Observable.concat(['publication','structure','navigation'])
+        .flatMap ( componentType => {
+          return Observable.concat(
+              componentSource.tsc.scan (componentType).map ( files => files.map ( file => path.basename(file) ) ) ,
+              componentSource.cache.scan ( componentType ).map ( files => files.map ( file => stringUtils.dasherize(file.replace('.json','')) ) ) 
+            )
+            .toArray()
+            .map ( ([tscResults,cacheResults]) => {
+                console.log ( 'tsc result', tscResults )
+                console.log ( 'cache result', cacheResults )
+                return tscResults.filter ( tscFile => {
+                    return cacheResults.indexOf ( tscFile ) === -1
+                  } )
+            } )
+            .map ( files => {
+              console.log ( 'uncached %s files', componentType, files )
+              return files
+            } )
+          })
+}
+
+export const refreshSource = () => {
+
+  return findUncachedComponents()
+
+  // return Observable.concat(['publication','structure','navigation'])
+  //   .flatMap ( componentType => {
+  //     logger.log('read "%s"', componentType)
+  //     return Observable.merge(
+  //       componentSource.tsc.scan (componentType).map ( result => ({
+  //         source: 'tsc',
+  //         files: result
+  //       }) ) ,
+  //       componentSource.cache.scan ( componentType ).map ( result => ({
+  //         source: 'cache',
+  //         files: result
+  //       }) ) ,
+  //     ).toArray().map ( (items,idx) => {
+  //       //console.log( '%s = %s -> %s items', componentType,idx, items.length )
+  //       return {
+  //         componentType,
+  //         items
+  //       }
+  //     } )
+  //   } )
+  //   .map ( result => {
+  //     console.log ( '%s: ', result.componentType, result.items )
+  //     return result
+  //   } )
+}
 
 export const selectSource = ( cached:boolean=true ) => {
 
@@ -184,28 +236,31 @@ export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
     return selectSource().filter(applyFilter(val))
   })
 */
-  return Observable.from(filter,Scheduler.asap)
-      .flatMap( filter => {
-        //logger.log('find components for filter "%s"', filter )
-        return selectSource().filter(applyFilter(filter)).toArray()
-          .map(
-            components => {
-              return {
-                filter,
-                components
+  return refreshSource().toArray().flatMap ( list => {
+    console.log ('refreshed source', list)
+    return Observable.from(filter,Scheduler.asap)
+        .flatMap( filter => {
+          //logger.log('find components for filter "%s"', filter )
+          return selectSource().filter(applyFilter(filter)).toArray()
+            .map(
+              components => {
+                return {
+                  filter,
+                  components
+                }
               }
-            }
-          )
-      }, 1 )
-      //.toArray()
-      .concatMap(result => {
-          //logger.log('%s-filtered components: %s', result.filter, result.components)
-          return writeComponentsToIndexTemplate(IndexType[result.filter],result.components).map (
-            ( filename ) => {
-              return filename
-            }
-          )
-        })
+            )
+        }, 1 )
+        //.toArray()
+        .concatMap(result => {
+            //logger.log('%s-filtered components: %s', result.filter, result.components)
+            return writeComponentsToIndexTemplate(IndexType[result.filter],result.components).map (
+              ( filename ) => {
+                return filename
+              }
+            )
+          })
+  } )
 
   //const cb = selectSource(!config.noCache).filter(applyFilter(filter))
 /*

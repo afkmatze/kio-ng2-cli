@@ -13,6 +13,7 @@ export declare class CacheStream implements ComponentSource {
     protected fetchExisting(): Observable<ComponentModel>;
     protected processCachedComponent(componentData: any): Observable<any>;
     fetch(): Observable<ComponentModel>;
+    scan(pathname: string): Observable<string[]>;
     prepare(): Observable<string>;
     deleteComponent(component: Component): Observable<boolean>;
     write(component: PublicationComponent): Observable<string>;

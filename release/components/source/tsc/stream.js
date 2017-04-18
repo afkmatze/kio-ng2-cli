@@ -65,6 +65,14 @@ var TSCStream = (function () {
         var targetPath = env_1.path.join(TSC_OUT, relpath).replace(/\.ts$/, '.js');
         return fs_1.evalJS(targetPath);
     };
+    TSCStream.prototype.scan = function (pathname) {
+        var targetPath = env_1.KIO_PATHS.components[pathname];
+        return fs_1.find(targetPath).map(function (filepath) { return env_1.path.relative(targetPath, filepath); })
+            .filter(function (filepath) { return !!env_1.path.dirname(filepath) && /^\./.test(filepath) === false; })
+            .map(function (filepath) { return env_1.path.dirname(filepath); }).distinct()
+            .filter(function (filepath) { return /^\./.test(filepath) === false && ['src', 'fragment', 'txt'].indexOf(filepath) === -1; })
+            .toArray();
+    };
     TSCStream.prototype.findComponentDirs = function () {
         return rxjs_1.Observable.from(Object.keys(env_1.KIO_PATHS.components).map(function (key) { return env_1.KIO_PATHS.components[key]; }))
             .flatMap(function (filepath) {

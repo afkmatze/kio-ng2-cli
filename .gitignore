@@ -2,4 +2,5 @@ dev-target
 node_modules
 
 test/
+documentation/
 typedoc

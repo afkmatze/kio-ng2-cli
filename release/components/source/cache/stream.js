@@ -101,6 +101,16 @@ var CacheStream = (function () {
         .flatMap ( component => Observable.of(component,Scheduler.async) )
         .concat()*/
     };
+    CacheStream.prototype.scan = function (pathname) {
+        //const targetPath:string = KIO_PATHS.components[pathname]
+        var targetPath = env_1.path.join(env_1.KIO_PROJECT_CACHE, 'components', pathname);
+        logger.log('targetPath: %s', targetPath);
+        return rxfs.readDir(targetPath)
+            .catch(function (error) {
+            return rxjs_1.Observable.of([]);
+        })
+            .distinct();
+    };
     CacheStream.prototype.prepare = function () {
         return rxjs_1.Observable.of('');
     };

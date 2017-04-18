@@ -11,6 +11,7 @@ export declare class TSCStream implements ComponentSource {
     private compiles;
     protected compile(): Observable<string>;
     protected evalComponentFile(component: ComponentModel, filename: string): Observable<any>;
+    scan(pathname: string): Observable<string[]>;
     protected findComponentDirs(): Observable<string>;
     protected readComponent(componentPath: string): Observable<ComponentModel>;
     prepare(): Observable<string>;

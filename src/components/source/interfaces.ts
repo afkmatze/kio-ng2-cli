@@ -7,6 +7,8 @@ export interface ComponentSource {
   prepare():Observable<string>
   fetch():Observable<ComponentModel>
   isWritable:boolean;
+  // scan path in cache to compare its contents
+  scan(pathname:string):Observable<string[]>
   deleteComponent?(component:PublicationComponent):Observable<boolean>;
   writeComponent?(component:PublicationComponent):Observable<string>;
 }

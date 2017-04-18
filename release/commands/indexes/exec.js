@@ -7,6 +7,7 @@ var componentSource = require("../../components/source");
 var templates_1 = require("../../templates");
 var logger = require("../../console");
 var rxfs = require("../../utils/rx/fs");
+var stringUtils = require("../../utils/string");
 var env_1 = require("../../env");
 var templateCreate = require("../../templates/types/index/create");
 var templateRender = require("../../templates/types/index/render");
@@ -127,6 +128,52 @@ var defaultConfig = {
     filter: ["publication", "navigation", "structure", "fixture", "criteria"],
     noCache: false
 };
+exports.findUncachedComponents = function () {
+    return rxjs_1.Observable.concat(['publication', 'structure', 'navigation'])
+        .flatMap(function (componentType) {
+        return rxjs_1.Observable.concat(componentSource.tsc.scan(componentType).map(function (files) { return files.map(function (file) { return env_1.path.basename(file); }); }), componentSource.cache.scan(componentType).map(function (files) { return files.map(function (file) { return stringUtils.dasherize(file.replace('.json', '')); }); }))
+            .toArray()
+            .map(function (_a) {
+            var tscResults = _a[0], cacheResults = _a[1];
+            console.log('tsc result', tscResults);
+            console.log('cache result', cacheResults);
+            return tscResults.filter(function (tscFile) {
+                return cacheResults.indexOf(tscFile) === -1;
+            });
+        })
+            .map(function (files) {
+            console.log('uncached %s files', componentType, files);
+            return files;
+        });
+    });
+};
+exports.refreshSource = function () {
+    return exports.findUncachedComponents();
+    // return Observable.concat(['publication','structure','navigation'])
+    //   .flatMap ( componentType => {
+    //     logger.log('read "%s"', componentType)
+    //     return Observable.merge(
+    //       componentSource.tsc.scan (componentType).map ( result => ({
+    //         source: 'tsc',
+    //         files: result
+    //       }) ) ,
+    //       componentSource.cache.scan ( componentType ).map ( result => ({
+    //         source: 'cache',
+    //         files: result
+    //       }) ) ,
+    //     ).toArray().map ( (items,idx) => {
+    //       //console.log( '%s = %s -> %s items', componentType,idx, items.length )
+    //       return {
+    //         componentType,
+    //         items
+    //       }
+    //     } )
+    //   } )
+    //   .map ( result => {
+    //     console.log ( '%s: ', result.componentType, result.items )
+    //     return result
+    //   } )
+};
 exports.selectSource = function (cached) {
     if (cached === void 0) { cached = true; }
     if (cached === false || !componentSource.cache.exists('components')) {
@@ -150,21 +197,24 @@ exports.default = function (config) {
         return selectSource().filter(applyFilter(val))
       })
     */
-    return rxjs_1.Observable.from(filter, rxjs_1.Scheduler.asap)
-        .flatMap(function (filter) {
-        //logger.log('find components for filter "%s"', filter )
-        return exports.selectSource().filter(applyFilter(filter)).toArray()
-            .map(function (components) {
-            return {
-                filter: filter,
-                components: components
-            };
-        });
-    }, 1)
-        .concatMap(function (result) {
-        //logger.log('%s-filtered components: %s', result.filter, result.components)
-        return exports.writeComponentsToIndexTemplate(interfaces_1.IndexType[result.filter], result.components).map(function (filename) {
-            return filename;
+    return exports.refreshSource().toArray().flatMap(function (list) {
+        console.log('refreshed source', list);
+        return rxjs_1.Observable.from(filter, rxjs_1.Scheduler.asap)
+            .flatMap(function (filter) {
+            //logger.log('find components for filter "%s"', filter )
+            return exports.selectSource().filter(applyFilter(filter)).toArray()
+                .map(function (components) {
+                return {
+                    filter: filter,
+                    components: components
+                };
+            });
+        }, 1)
+            .concatMap(function (result) {
+            //logger.log('%s-filtered components: %s', result.filter, result.components)
+            return exports.writeComponentsToIndexTemplate(interfaces_1.IndexType[result.filter], result.components).map(function (filename) {
+                return filename;
+            });
         });
     });
     //const cb = selectSource(!config.noCache).filter(applyFilter(filter))

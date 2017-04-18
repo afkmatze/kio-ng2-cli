@@ -5,6 +5,8 @@ import { IndexTemplateData } from '../../templates';
 import { BuildIndexArgs } from '../../env';
 export declare const createIndexTemplateData: (indexType: IndexType, components: (Component | PublicationComponent)[]) => IndexTemplateData;
 export declare const writeComponentsToIndexTemplate: (indexType: IndexType, components: (Component | PublicationComponent)[] | Observable<Component | PublicationComponent>) => any;
+export declare const findUncachedComponents: () => Observable<string[]>;
+export declare const refreshSource: () => Observable<string[]>;
 export declare const selectSource: (cached?: boolean) => Observable<any>;
 declare var _default: (config?: BuildIndexArgs) => Observable<string[]>;
 export default _default;

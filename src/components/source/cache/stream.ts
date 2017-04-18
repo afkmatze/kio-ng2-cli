@@ -110,6 +110,22 @@ export class CacheStream implements ComponentSource {
     .concat()*/
   }
 
+  scan(pathname:string):Observable<string[]> {
+    //const targetPath:string = KIO_PATHS.components[pathname]
+    const targetPath:string = path.join(KIO_PROJECT_CACHE,'components',pathname)
+    logger.log('targetPath: %s',targetPath)
+    return rxfs.readDir(targetPath)
+      .catch ( error => {
+        return Observable.of([])
+      } )
+      //.map ( filepath => path.relative ( targetPath, filepath ) )
+      //.map ( logMap )
+      //.filter ( filepath => /^\./.test(filepath) === false )
+      //.map ( filepath => path.basename(filepath,'.json') )
+      //.filter ( filepath => /^\./.test(filepath) === false && ['src','fragment','txt'].indexOf(filepath) === -1 )
+      .distinct()
+  }
+
   prepare():Observable<string> {
     return Observable.of('')
   }

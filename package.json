@@ -8,9 +8,11 @@
   },
   "scripts": {
     "prebuild": "rm -rf ./release",
+    "prebuild:production": "rm -rf ./release; npm run doc",
     "build": "NODE_ENV=production tsc",
-    "doc": "typedoc",
-    "preversion": "npm run build",
+    "build:production": "NODE_ENV=production tsc",
+    "doc": "typedoc --out documentation",
+    "preversion": "npm run build:production",
     "test:rxfs": "NODE_ENV=test ts-mocha ./src/utils/rx/fs.spec.ts",
     "test:rxfs:watch": "nodemon -w ./src -e ts --exec \"npm run test:rxfs\"",
     "test:index:stream": "NODE_ENV=test ts-mocha ./src/indexes/stream.spec.ts",

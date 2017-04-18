@@ -4,7 +4,7 @@ import { KioComponent, KioPublicationComponent, KioStructureComponent, KioCompon
 import { createWithData, createWithPath, getComponentTypeForPath } from '../../create'
 
 import { path, KIO_PROJECT_CACHE, KIO_PROJECT_ROOT, KIO_PATHS } from '../../../env'
-import { readdir, readfile, readstats, findFiles, exec, evalJS } from '../../../utils/rx/fs'
+import { readdir, readfile, readstats, findFiles, find, exec, evalJS } from '../../../utils/rx/fs'
 import * as logger from '../../../console'
 
 
@@ -87,6 +87,14 @@ export class TSCStream implements ComponentSource {
     return evalJS(targetPath)
   }
 
+  scan(pathname:string):Observable<string[]> {
+    const targetPath:string = KIO_PATHS.components[pathname]
+    return find(targetPath).map ( filepath => path.relative ( targetPath, filepath ) )
+      .filter ( filepath => !!path.dirname(filepath) && /^\./.test(filepath) === false )
+      .map ( filepath => path.dirname(filepath) ).distinct()
+      .filter ( filepath => /^\./.test(filepath) === false && ['src','fragment','txt'].indexOf(filepath) === -1 )
+      .toArray()
+  }
 
   protected findComponentDirs(){
     return Observable.from(Object.keys(KIO_PATHS.components).map (key=>KIO_PATHS.components[key]))
