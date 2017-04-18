@@ -58,7 +58,7 @@ var mapComponentToIndexItem = function (indexType, component) {
     var indexName = interfaces_1.IndexType[indexType];
     var rootPath = env_1.path.join(env_1.KIO_PATHS.root);
     var importAlias = mapImportAlias[indexName] || '';
-    var suffix = importAlias ? '.cquery.' + indexName : '';
+    var suffix = importAlias ? '.' + indexName : '';
     return {
         importName: component.name + (!importAlias ? 'Component' : ''),
         importPath: './' + env_1.path.join(component.relativeFrom(env_1.KIO_PATHS.root), component.dasherizedName + '.component' + suffix),
@@ -76,18 +76,20 @@ var mapImportAlias = {
     "fixture": "Fixture",
     "criteria": "Criteria"
 };
-exports.createIndexSource = function (indexType, components) {
-    var indexName = interfaces_1.IndexType[indexType];
-    return templateRender.renderFilesIndex({
-        exportName: mapExportNames[indexName],
-        indexItems: components.map(function (component) {
-            return mapComponentToIndexItem(indexType, component);
-        })
-    }).map(function (source) { return ({
-        name: interfaces_1.IndexType[indexType],
-        source: source
-    }); });
-};
+/*
+export const createIndexSource = ( indexType:IndexType, components:ComponentModel[] ) => {
+  const indexName = IndexType[indexType]
+  return templateRender.renderFilesIndex({
+    exportName: mapExportNames[indexName],
+    indexItems: components.map ( component => {
+      return mapComponentToIndexItem ( indexType, component )
+    } )
+  }).map ( source => ({
+      name: IndexType[indexType],
+      source
+    } )
+  )
+}*/
 exports.createIndexTemplateData = function (indexType, components) {
     var indexName = interfaces_1.IndexType[indexType];
     var templateData = {
