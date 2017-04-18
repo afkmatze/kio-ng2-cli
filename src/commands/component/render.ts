@@ -7,7 +7,7 @@ import * as fs from 'fs'
 
 import { find, cat, echo, mkdir } from 'shelljs'
 
-import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../../interfaces/kio-component'
+import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../../components/interfaces'
 import { KioContentType } from 'kio-ng2'
 
 const TEMPLATES = path.resolve(__dirname,'../../../templates')

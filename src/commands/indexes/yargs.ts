@@ -1,36 +1,19 @@
 import { KioContentType } from 'kio-ng2'
 import { CommandModule } from 'yargs'
 import * as fs from 'fs'
-import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../../interfaces/kio-component'
+import { KioComponentType, KioComponent, KioStructureComponent, KioPublicationComponent } from '../../components/interfaces'
 import { logError, log } from '../../console'
 import * as path from 'path'
-import * as env from '../../env/constants'
+import * as env from '../../env'
 import * as stringUtils from '../../utils/string'
 
 import { findComponents } from '../../components/find'
-import { Component } from '../../components/Component.class'
+import { Component } from '../../components/classes'
+import * as templates from '../../templates'
 
+import exec from './exec'
 
-
-const renderComponentIndex = ( indexPath:string, indexName:string , files:Component[] ) => {
-  const componentNames:string[] = []
-  const singleImports = files.map ( fileComponent => {
-    componentNames.push ( fileComponent.name+'Component' )
-    return `import { ${fileComponent.name}Component } from './${path.relative(indexPath,fileComponent.dir)}/${fileComponent.dasherizedName}.component'`
-  } )
-
-  return `${singleImports.join('\n')}
-
-export { ${componentNames.join(', ')} }
-export const ${indexName} = [ ${componentNames.join(', ')} ]
-  `
-}
-
-const writeComponentsToIndex = ( indexPath:string, indexName:string, files:Component[] ) => {
-  const indexFileName = path.join(indexPath,indexName+'.generated.ts')
-  log('Write index for %s at "%s"' , indexName , indexFileName )
-  fs.writeFileSync(indexFileName,renderComponentIndex(indexPath,indexName,files),{encoding: 'utf8'})
-}
+import * as api from '../../api'
 
 export const yargs:CommandModule = {
   command: 'buildIndexes',
@@ -38,21 +21,38 @@ export const yargs:CommandModule = {
   describe: 'Updates index files in ' + env.KIO_PATHS.root,
   builder: ( argv ) => {
     return argv
-      .usage('Usage: $0 index [publication|structure]')
+      .usage('Usage: $0 index [publication|structure|fixture|criteria]')
+      .option('no-cache',{
+        type: 'boolean',
+        default: false,
+        describe: 'prevent reading from cache'
+      })
       .option('filter',{
         alias: 'f',
-        choices: ['publication','structure'],
-        default: ['publication','structure'],
+        choices: ['publication','navigation','structure','fixture','criteria'],
+        default: ['publication','navigation','structure','fixture','criteria'],
         demand: true
       })
   },  
   handler: (args:any) => {
     const [ command ] = args._
-    
-    args.filter.forEach ( filterValue => {
-      const files = findComponents(filterValue)
-      writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.root),stringUtils.classify(filterValue+'Components'),files)
-    } )
+    env.config.update({...args, command})
+    let subscr = exec(args).subscribe((indexFile) => {
+      log('updated "%s"', indexFile )
+    },error => {
+      console.log('failed with "%s"', error)
+      console.error(error)
+    },() => {
+      if ( subscr )
+      {
+        subscr.unsubscribe()
+        subscr = null
+      }
+    })
+    /*args.filter.forEach ( filterValue => {
+      api.writeIndex(filterValue,args["no-cache"]===false)
+      //writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.root),stringUtils.classify(filterValue+'Components'),files)
+    } )*/
     //console.log('files',args)
   }
 }

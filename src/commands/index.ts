@@ -1,8 +1,11 @@
+import { Observable, Scheduler } from 'rxjs'
 import * as env from '../env/constants'
 import * as cmd_indexes from './indexes'
 import * as cmd_component from './component'
 import * as path from 'path'
 import { log, logError, banner } from '../console'
+import * as logger from '../console'
+import { selectSource } from './indexes/exec'
 import * as yargs from 'yargs'
 
 export const BUILD_INDEXES:string = "indexes"
@@ -25,12 +28,46 @@ export const exec = ( command:"indexes"|string ) => {
     logError(Error("Command required."))
   }*/
 
+  const all_filter = ['publication','navigation','structure']
+
   const argv = yargs
-    .usage('Usage: $0 <command>')
+    .usage('Usage: $0 <command> [options]')
+    .options('config-file',{
+      type: 'string',
+      description: 'cli config file',
+      default: path.resolve('kio-ng2.config.json')      
+    })
     .command(cmd_component.yargs)
     .command(cmd_indexes.yargs)
+    .command("ls","List components",(argv)=>{
+      return argv.options({
+        filter: {
+          alias: 'f',
+          type: 'array',
+          choices: all_filter,
+          default: all_filter
+        }
+      })
+    },(args)=>{
+      
+      args.filter = args.filter || all_filter
+      const filter = args.filter.length > 0 ? args.filter : all_filter
+      const indexSourceStream = selectSource(!args.noCache)
+
+      const obs = Observable.concat(filter).flatMap((filterValue:string) => {
+        return indexSourceStream.filter(component => component.typeName.toLowerCase().indexOf(filterValue) > -1).toArray ().map ( components => {
+          logger.log('%s %s components', components.length, filterValue )
+          components.forEach((component,idx) => logger.log('[component:%s/%s]: %s',idx+1,components.length,component))
+          return {
+            filter,
+            components
+          }
+        } )
+      })
+      return obs.toPromise()
+    })
     .demand(1)
-    .help()
+    .help('h')
     .argv
 
   //console.log('argv', argv)

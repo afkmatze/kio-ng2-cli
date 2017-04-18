@@ -1,0 +1,10 @@
+export * from './interfaces';
+export * from './find';
+export * from './create';
+export * from './classes';
+import { Observable } from 'rxjs';
+import { PublicationComponent, Component } from './classes';
+import { KioComponentFilter } from './interfaces';
+export declare type ComponentModel = PublicationComponent | Component;
+export declare const getComponents: (filter: KioComponentFilter, fromCache?: boolean) => (Component | PublicationComponent)[];
+export declare const components: () => Observable<Component | PublicationComponent>;

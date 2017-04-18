@@ -1,49 +1,16 @@
 import * as chalk from 'chalk'
+import * as path from 'path'
 import * as readline from 'readline'
+import { formatter } from './format'
 
-const pckg = require('../../package.json')
+import * as api from './api'
+import * as operators from './operators'
 
-export const banner = () => {
-  console.log( '%s v%s', chalk.yellow(pckg.name), pckg.version )
-}
 
-export const log = ( format:string, ...args:any[] ):void => {
-  console.log ( chalk.dim('[kio-ng2-cli]') + format, ...args )  
-}
+export * from './api'
+import {LogOperatorPlugin,LogOperator} from './interfaces'
+export * from './interfaces'
+//export * from './operators'
 
-export const logError = ( error:Error, exit:boolean=true ) => {
-  console.log ( chalk.red(error.toString()) )
-  //console.log ( error.stack.replace(/.*\n/,'') ) 
-  if ( exit ) { process.exit(1) }
-}
-
-export interface RequestCallback {
-  (answer:string):string
-}
-
-export const request = ( message:string, callback:RequestCallback ):Promise<any> => {
-  const options:readline.ReadLineOptions = {
-    input: process.stdin,
-    output: process.stdout,
-    terminal: true
-  }
-  const rl = readline.createInterface(options)
-
-  return new Promise((resolve,reject)=>{
-
-    const validateAnswer = ( answer:string ) => {
-      const error = callback(answer)
-      if ( !error )
-      {
-        resolve ( answer )
-      }
-      else 
-      {
-        logError ( Error(error), false )
-        rl.question(message,validateAnswer)
-      }
-    }
-
-    rl.question(message,validateAnswer)
-  })
-}
+export const map:LogOperator = operators.map
+export const keys:LogOperator = operators.keys

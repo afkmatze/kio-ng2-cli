@@ -1,14 +1,16 @@
 import { find } from 'shelljs'
 import * as path from 'path'
+import * as logger from '../console'
+
 import { KioContentType } from 'kio-ng2'
 import { KioComponentType, isKioContentType, isKioComponentType } from './interfaces'
 
 import { KIO_PROJECT_ROOT, KIO_PATHS } from '../env/constants'
 
-import { Component } from './Component.class'
+import { Component } from './classes/Component.class'
 import { createWithPath } from './create'
 
-export type ComponentFilter = string|KioContentType|KioComponentType
+import { KioComponentFilter } from './interfaces'
 
 export interface FilterFunction {
   ( filepath:string ):boolean
@@ -45,25 +47,10 @@ const filterFiles = ( file ) => {
   return true
 }
 
-export const findComponents = ( filter?:ComponentFilter ):Component[] => {
-  let searchRoot = KIO_PATHS.components[filter] || KIO_PATHS.root
-
-  /*if ( isKioComponentType(filter) )
-  {
-    searchRoot = filter === KioComponentType.PublicationComponent ? KIO_PATHS.components.publication : KIO_PATHS.components.structure
-  }
-  else if ( isKioContentType(filter) )
-  {
-    searchRoot = path.join(KIO_PATHS.components.publication,<string>filter)
-  }
-*/
-  //console.log('filter searchRoot', searchRoot)
-
-  const allFiles = find(searchRoot).filter ( filterFiles )
-  if ( process.env.NODE_ENV === 'debug' )
-  {
-    console.log ( 'search root:' , searchRoot )
-    console.log(allFiles)
-  }
+export const findComponents = ( filter?:KioComponentFilter ):Component[] => {
+  let searchRoot = KIO_PATHS.components[filter]
+  logger.debug('KIO_PROJECT_ROOT',KIO_PROJECT_ROOT)
+  logger.debug ( 'search root:' , searchRoot )
+  const allFiles = find(searchRoot).filter( filterFiles )
   return allFiles.map ( createWithPath )
 }

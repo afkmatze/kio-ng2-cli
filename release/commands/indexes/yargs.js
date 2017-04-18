@@ -1,44 +1,53 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var fs = require("fs");
 var console_1 = require("../../console");
-var path = require("path");
-var env = require("../../env/constants");
-var stringUtils = require("../../utils/string");
-var find_1 = require("../../components/find");
-var renderComponentIndex = function (indexPath, indexName, files) {
-    var componentNames = [];
-    var singleImports = files.map(function (fileComponent) {
-        componentNames.push(fileComponent.name + 'Component');
-        return "import { " + fileComponent.name + "Component } from './" + path.relative(indexPath, fileComponent.dir) + "/" + fileComponent.dasherizedName + ".component'";
-    });
-    return singleImports.join('\n') + "\n\nexport { " + componentNames.join(', ') + " }\nexport const " + indexName + " = [ " + componentNames.join(', ') + " ]\n  ";
-};
-var writeComponentsToIndex = function (indexPath, indexName, files) {
-    var indexFileName = path.join(indexPath, indexName + '.generated.ts');
-    console_1.log('Write index for %s at "%s"', indexName, indexFileName);
-    fs.writeFileSync(indexFileName, renderComponentIndex(indexPath, indexName, files), { encoding: 'utf8' });
-};
+var env = require("../../env");
+var exec_1 = require("./exec");
 exports.yargs = {
     command: 'buildIndexes',
     aliases: ['index'],
     describe: 'Updates index files in ' + env.KIO_PATHS.root,
     builder: function (argv) {
         return argv
-            .usage('Usage: $0 index [publication|structure]')
+            .usage('Usage: $0 index [publication|structure|fixture|criteria]')
+            .option('no-cache', {
+            type: 'boolean',
+            default: false,
+            describe: 'prevent reading from cache'
+        })
             .option('filter', {
             alias: 'f',
-            choices: ['publication', 'structure'],
-            default: ['publication', 'structure'],
+            choices: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
+            default: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
             demand: true
         });
     },
     handler: function (args) {
         var command = args._[0];
-        args.filter.forEach(function (filterValue) {
-            var files = find_1.findComponents(filterValue);
-            writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT, env.KIO_PATHS.root), stringUtils.classify(filterValue + 'Components'), files);
+        env.config.update(__assign({}, args, { command: command }));
+        var subscr = exec_1.default(args).subscribe(function (indexFile) {
+            console_1.log('updated "%s"', indexFile);
+        }, function (error) {
+            console.log('failed with "%s"', error);
+            console.error(error);
+        }, function () {
+            if (subscr) {
+                subscr.unsubscribe();
+                subscr = null;
+            }
         });
+        /*args.filter.forEach ( filterValue => {
+          api.writeIndex(filterValue,args["no-cache"]===false)
+          //writeComponentsToIndex(path.join(env.KIO_PROJECT_ROOT,env.KIO_PATHS.root),stringUtils.classify(filterValue+'Components'),files)
+        } )*/
         //console.log('files',args)
     }
 };

@@ -4,6 +4,7 @@ var KioComponentType;
 (function (KioComponentType) {
     KioComponentType[KioComponentType["StructureComponent"] = 0] = "StructureComponent";
     KioComponentType[KioComponentType["PublicationComponent"] = 1] = "PublicationComponent";
+    KioComponentType[KioComponentType["NavigationComponent"] = 2] = "NavigationComponent";
 })(KioComponentType = exports.KioComponentType || (exports.KioComponentType = {}));
 exports.isKioContentType = function (value) { return /fragment|src|txt/.test(value); };
 exports.isKioComponentType = function (value) { return KioComponentType[value] !== undefined; };

@@ -1,11 +1,13 @@
 import * as ComponentInterfaces from './interfaces'
-import { KIO_PATHS, KIO_PROJECT_ROOT } from '../env/constants'
+import { KIO_PATHS, KIO_PROJECT_ROOT, KIO_PROJECT_PACKAGE } from '../env/constants'
 import * as path from 'path'
+import * as logger from '../console'
 
-import { Component } from './Component.class'
+import { Component, PublicationComponent, ComponentModel } from './classes'
 
 const PATH_TO_PUBLICATION = path.join(KIO_PATHS.components.publication)
 const PATH_TO_STRUCTURE = path.join(KIO_PATHS.components.structure)
+const PATH_TO_NAVIGATION = path.join(KIO_PATHS.components.navigation)
 
 export const getComponentTypeForPath = ( dir:string ):ComponentInterfaces.KioComponentType => {
   if ( dir.indexOf(PATH_TO_PUBLICATION) > -1 )
@@ -15,6 +17,10 @@ export const getComponentTypeForPath = ( dir:string ):ComponentInterfaces.KioCom
   else if ( dir.indexOf(PATH_TO_STRUCTURE) > -1 )
   {
     return ComponentInterfaces.KioComponentType.StructureComponent
+  }
+  else if ( dir.indexOf(PATH_TO_NAVIGATION) > -1 )
+  {
+    return ComponentInterfaces.KioComponentType.NavigationComponent
   }
   return undefined
 }
@@ -27,7 +33,21 @@ export const getContentTypeForPath = ( dir:string ) => {
   return undefined
 }
 
+export const createWithData = ( data:ComponentInterfaces.KioPublicationComponent|ComponentInterfaces.KioComponent ):PublicationComponent|Component => {
+  if ( data.componentType === ComponentInterfaces.KioComponentType.PublicationComponent )
+    return new PublicationComponent(<ComponentInterfaces.KioPublicationComponent>data)
+  return new Component(data)
+}
+
+/**
+ * @brief      Creates a Component with path.
+ *
+ * @param      dir   The component`s directory
+ *
+ * @return     Component
+ */
 export const createWithPath = ( dir:string ):Component => {
+  logger.debug('create with path "%s"' , dir)
   const componentType = getComponentTypeForPath(dir)
   if ( componentType === ComponentInterfaces.KioComponentType.PublicationComponent )
   {
@@ -43,8 +63,16 @@ export const createWithPath = ( dir:string ):Component => {
       name: path.basename(dir),
       contentType
     }
-    return new Component(data)
+    return new PublicationComponent(data)
   }else if ( componentType === ComponentInterfaces.KioComponentType.StructureComponent )
+  {    
+    const data:ComponentInterfaces.KioStructureComponent = {
+      dir ,
+      componentType ,
+      name: path.basename(dir)
+    }
+    return new Component(data)
+  }else if ( componentType === ComponentInterfaces.KioComponentType.NavigationComponent )
   {    
     const data:ComponentInterfaces.KioStructureComponent = {
       dir ,
