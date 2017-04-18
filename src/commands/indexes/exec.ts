@@ -74,7 +74,7 @@ const mapComponentToIndexItem = ( indexType:IndexType, component:ComponentModel 
   const indexName = IndexType[indexType]
   let rootPath:string = path.join(KIO_PATHS.root)
   const importAlias = mapImportAlias[indexName] || ''
-  const suffix = importAlias ? '.cquery.'+indexName : ''
+  const suffix = importAlias ? '.'+indexName : ''
   return {
     importName: component.name+(!importAlias?'Component':''),
     importPath: './'+path.join(component.relativeFrom(KIO_PATHS.root),component.dasherizedName+'.component'+suffix),
@@ -94,7 +94,7 @@ const mapImportAlias = {
   "fixture": "Fixture",
   "criteria": "Criteria"
 }
-
+/*
 export const createIndexSource = ( indexType:IndexType, components:ComponentModel[] ) => {
   const indexName = IndexType[indexType]  
   return templateRender.renderFilesIndex({
@@ -107,7 +107,7 @@ export const createIndexSource = ( indexType:IndexType, components:ComponentMode
       source
     } )
   )
-}
+}*/
 
 export const createIndexTemplateData = ( indexType:IndexType, components:ComponentModel[] ):IndexTemplateData => {
   const indexName = IndexType[indexType]  
