@@ -4,3 +4,5 @@ node_modules
 test/
 documentation/
 typedoc
+
+kio-ng2-cli\.sublime-workspace
