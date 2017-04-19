@@ -1,7 +1,7 @@
 {
   "name": "kio-ng2-cli",
   "version": "0.0.5",
-  "description": "",
+  "description": "cli tool for kio ng2 projects",
   "main": "index.js",
   "bin": {
     "kio-ng2": "./bin/exec.js"
@@ -66,5 +66,13 @@
     "rxjs": "^5.3.0",
     "shelljs": "^0.7.7",
     "yargs": "^7.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/afkmatze/kio-ng2-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/afkmatze/kio-ng2-cli/issues"
+  },
+  "homepage": "https://github.com/afkmatze/kio-ng2-cli#readme"
 }
