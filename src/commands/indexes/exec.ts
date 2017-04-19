@@ -2,6 +2,8 @@ import { Observable, Scheduler } from 'rxjs'
 import { KioComponentType, ComponentModel, Component, PublicationComponent } from '../../components'
 import { IndexName, IndexType, ComponentIndex } from '../../indexes/interfaces'
 import * as componentSource from '../../components/source'
+//export { SourceFolder, ComponentSource } from '../../components/source/interfaces'
+import { SourceFolder, ComponentSource } from '../../components/source/interfaces'
 import { templateFiles, TemplateFile, TemplateData, IndexTemplateData, IndexTemplateDataItem } from '../../templates'
 import * as index from '../../indexes'
 import * as logger from '../../console'
@@ -158,25 +160,14 @@ const defaultConfig = {
 }
 
 export const findUncachedComponents = () => {
-  return Observable.concat(['publication','structure','navigation'])
-        .flatMap ( componentType => {
-          return Observable.concat(
-              componentSource.tsc.scan (componentType).map ( files => files.map ( file => path.basename(file) ) ) ,
-              componentSource.cache.scan ( componentType ).map ( files => files.map ( file => stringUtils.dasherize(file.replace('.json','')) ) ) 
-            )
-            .toArray()
-            .map ( ([tscResults,cacheResults]) => {
-                console.log ( 'tsc result', tscResults )
-                console.log ( 'cache result', cacheResults )
-                return tscResults.filter ( tscFile => {
-                    return cacheResults.indexOf ( tscFile ) === -1
-                  } )
-            } )
-            .map ( files => {
-              console.log ( 'uncached %s files', componentType, files )
-              return files
-            } )
-          })
+  return componentSource.cache.compareTo(componentSource.tsc)
+    .flatMap ( (result) => {
+      return Observable.concat(result.items)
+                .flatMap(item => componentSource.tsc.readComponentAtPath(path.join(result.name,item)))
+                .flatMap( component => {
+                  return componentSource.cache.write(component)
+                }  )
+    } )
 }
 
 export const refreshSource = () => {
@@ -237,8 +228,7 @@ export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
   })
 */
   return refreshSource().toArray().flatMap ( list => {
-    console.log ('refreshed source', list)
-    return Observable.from(filter,Scheduler.asap)
+    return Observable.from(filter)
         .flatMap( filter => {
           //logger.log('find components for filter "%s"', filter )
           return selectSource().filter(applyFilter(filter)).toArray()

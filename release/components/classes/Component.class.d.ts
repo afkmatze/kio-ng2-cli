@@ -13,8 +13,8 @@ export declare class Component {
     readonly contentType: string;
     relativeTo(toPathname: string): string;
     relativeFrom(fromPathname: string): string;
-    getFiles(): string[];
-    getFile(fileType: KioComponentFileType): string;
+    getFiles(): any[];
+    getFile(fileType: KioComponentFileType): any;
     toString(): string;
     toJSON(): ComponentInterfaces.KioComponent;
 }

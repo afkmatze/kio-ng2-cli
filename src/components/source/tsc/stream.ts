@@ -1,10 +1,12 @@
 import { Observable, Scheduler } from 'rxjs'
 import { ComponentSource, PublicationComponent, Component, ComponentModel } from '../interfaces'
+import { AbstractComponentSource } from '../abstract'
 import { KioComponent, KioPublicationComponent, KioStructureComponent, KioComponentType, ComponentType } from '../../interfaces'
 import { createWithData, createWithPath, getComponentTypeForPath } from '../../create'
 
 import { path, KIO_PROJECT_CACHE, KIO_PROJECT_ROOT, KIO_PATHS } from '../../../env'
 import { readdir, readfile, readstats, findFiles, find, exec, evalJS } from '../../../utils/rx/fs'
+import { dasherize } from '../../../utils/string'
 import * as logger from '../../../console'
 
 
@@ -29,12 +31,21 @@ export const fetch = () => readdir(path.join(KIO_PROJECT_CACHE,'components'))
 
 const TSC_OUT = path.join(KIO_PROJECT_CACHE,'tsc-out')
 
-export class TSCStream implements ComponentSource {
+export class TSCStream extends AbstractComponentSource {
 
   isWritable=false
 
+  sourcePathForName ( pathname:string ) {
+    return KIO_PATHS.components[pathname]
+  }
+
   exists(){
     return true
+  }
+  
+
+  normalizeName ( componentName:string ):string {
+    return componentName.replace('.'+path.extname(componentName),'')
   }
 
   // date of last compilation
@@ -87,13 +98,18 @@ export class TSCStream implements ComponentSource {
     return evalJS(targetPath)
   }
 
-  scan(pathname:string):Observable<string[]> {
+  scan(pathname:string):Observable<string> {
     const targetPath:string = KIO_PATHS.components[pathname]
-    return find(targetPath).map ( filepath => path.relative ( targetPath, filepath ) )
-      .filter ( filepath => !!path.dirname(filepath) && /^\./.test(filepath) === false )
-      .map ( filepath => path.dirname(filepath) ).distinct()
-      .filter ( filepath => /^\./.test(filepath) === false && ['src','fragment','txt'].indexOf(filepath) === -1 )
-      .toArray()
+    return findFiles(targetPath)
+      .map ( file => path.relative(targetPath,file).replace(/\.json$/,'') ) 
+      .catch ( error => {
+        console.error(error)
+        return Observable.of([])
+      } )
+      .map ( (file:string) => path.dirname(file) )
+      .filter(f => f && !/^\./.test(f) ) // no empty
+      .filter((f:string) => !f.startsWith('index') )
+      .distinct()
   }
 
   protected findComponentDirs(){
@@ -103,6 +119,12 @@ export class TSCStream implements ComponentSource {
           })
           .distinct()
           //.map ( logMapLabel('merged') )
+  }
+  
+
+  readComponentAtPath ( filepath:string ):Observable<ComponentModel> {
+    const componentName = path.basename(filepath)
+    return this.readComponent(path.join(KIO_PATHS.root,filepath))
   }
 
   protected readComponent(componentPath:string):Observable<ComponentModel>{

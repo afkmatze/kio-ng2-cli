@@ -17,7 +17,7 @@ exports.operator = function (logger) {
             return chalk.green.bold(label) + " " + chalk.dim('#') + idx;
         };
         var writer = function (item, idx, list) {
-            logger.log(formatLabel(item, idx, list) + '\n---\n' + chalk.dim(item) + '\n---');
+            console.log(formatLabel(item, idx, list) + '\n---\n', item);
             return item;
         };
         return writer;

@@ -1,9 +1,12 @@
 import { Observable } from 'rxjs';
-import { ComponentSource, ComponentModel } from '../interfaces';
+import { ComponentModel } from '../interfaces';
+import { AbstractComponentSource } from '../abstract';
 export declare const fetch: () => Observable<any>;
-export declare class TSCStream implements ComponentSource {
+export declare class TSCStream extends AbstractComponentSource {
     isWritable: boolean;
+    sourcePathForName(pathname: string): any;
     exists(): boolean;
+    normalizeName(componentName: string): string;
     protected getLastCompilation(): Observable<number>;
     protected lastCompiled: Observable<number>;
     protected shouldRefresh(): Observable<boolean>;
@@ -11,8 +14,9 @@ export declare class TSCStream implements ComponentSource {
     private compiles;
     protected compile(): Observable<string>;
     protected evalComponentFile(component: ComponentModel, filename: string): Observable<any>;
-    scan(pathname: string): Observable<string[]>;
+    scan(pathname: string): Observable<string>;
     protected findComponentDirs(): Observable<string>;
+    readComponentAtPath(filepath: string): Observable<ComponentModel>;
     protected readComponent(componentPath: string): Observable<ComponentModel>;
     prepare(): Observable<string>;
     fetch(): Observable<ComponentModel>;

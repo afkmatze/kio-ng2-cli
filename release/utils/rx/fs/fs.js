@@ -81,7 +81,7 @@ exports.readfile = function (filepath, full) {
     })).map(function (buffer) { return buffer.toString(); }).concat();
 };
 exports.readDir = function (filename) {
-    return rxjs_1.Observable.fromPromise(exports.async.readdir(filename));
+    return rxjs_1.Observable.fromPromise(exports.async.readdir(filename).catch(function (error) { return Promise.resolve([]); }));
 };
 exports.readstats = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.stat(filepath)); };
 exports.unlink = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.unlink(filepath).then(function () { return true; })); };

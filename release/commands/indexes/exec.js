@@ -7,7 +7,6 @@ var componentSource = require("../../components/source");
 var templates_1 = require("../../templates");
 var logger = require("../../console");
 var rxfs = require("../../utils/rx/fs");
-var stringUtils = require("../../utils/string");
 var env_1 = require("../../env");
 var templateCreate = require("../../templates/types/index/create");
 var templateRender = require("../../templates/types/index/render");
@@ -129,21 +128,12 @@ var defaultConfig = {
     noCache: false
 };
 exports.findUncachedComponents = function () {
-    return rxjs_1.Observable.concat(['publication', 'structure', 'navigation'])
-        .flatMap(function (componentType) {
-        return rxjs_1.Observable.concat(componentSource.tsc.scan(componentType).map(function (files) { return files.map(function (file) { return env_1.path.basename(file); }); }), componentSource.cache.scan(componentType).map(function (files) { return files.map(function (file) { return stringUtils.dasherize(file.replace('.json', '')); }); }))
-            .toArray()
-            .map(function (_a) {
-            var tscResults = _a[0], cacheResults = _a[1];
-            console.log('tsc result', tscResults);
-            console.log('cache result', cacheResults);
-            return tscResults.filter(function (tscFile) {
-                return cacheResults.indexOf(tscFile) === -1;
-            });
-        })
-            .map(function (files) {
-            console.log('uncached %s files', componentType, files);
-            return files;
+    return componentSource.cache.compareTo(componentSource.tsc)
+        .flatMap(function (result) {
+        return rxjs_1.Observable.concat(result.items)
+            .flatMap(function (item) { return componentSource.tsc.readComponentAtPath(env_1.path.join(result.name, item)); })
+            .flatMap(function (component) {
+            return componentSource.cache.write(component);
         });
     });
 };
@@ -198,8 +188,7 @@ exports.default = function (config) {
       })
     */
     return exports.refreshSource().toArray().flatMap(function (list) {
-        console.log('refreshed source', list);
-        return rxjs_1.Observable.from(filter, rxjs_1.Scheduler.asap)
+        return rxjs_1.Observable.from(filter)
             .flatMap(function (filter) {
             //logger.log('find components for filter "%s"', filter )
             return exports.selectSource().filter(applyFilter(filter)).toArray()

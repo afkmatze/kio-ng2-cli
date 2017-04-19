@@ -1,6 +1,17 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
+var abstract_1 = require("../abstract");
 var create_1 = require("../../create");
 var env_1 = require("../../../env");
 var fs_1 = require("../../../utils/rx/fs");
@@ -19,13 +30,22 @@ exports.fetch = function () { return fs_1.readdir(env_1.path.join(env_1.KIO_PROJ
     .filter(function (item) { return env_1.path.extname(item) === '.json'; })
     .flatMap(function (filename) { return fs_1.readfile(filename, true).map(function (value) { return JSON.parse(value); }); }); };
 var TSC_OUT = env_1.path.join(env_1.KIO_PROJECT_CACHE, 'tsc-out');
-var TSCStream = (function () {
+var TSCStream = (function (_super) {
+    __extends(TSCStream, _super);
     function TSCStream() {
-        this.isWritable = false;
-        this.isCompiling = false;
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.isWritable = false;
+        _this.isCompiling = false;
+        return _this;
     }
+    TSCStream.prototype.sourcePathForName = function (pathname) {
+        return env_1.KIO_PATHS.components[pathname];
+    };
     TSCStream.prototype.exists = function () {
         return true;
+    };
+    TSCStream.prototype.normalizeName = function (componentName) {
+        return componentName.replace('.' + env_1.path.extname(componentName), '');
     };
     // date of last compilation
     TSCStream.prototype.getLastCompilation = function () {
@@ -67,11 +87,16 @@ var TSCStream = (function () {
     };
     TSCStream.prototype.scan = function (pathname) {
         var targetPath = env_1.KIO_PATHS.components[pathname];
-        return fs_1.find(targetPath).map(function (filepath) { return env_1.path.relative(targetPath, filepath); })
-            .filter(function (filepath) { return !!env_1.path.dirname(filepath) && /^\./.test(filepath) === false; })
-            .map(function (filepath) { return env_1.path.dirname(filepath); }).distinct()
-            .filter(function (filepath) { return /^\./.test(filepath) === false && ['src', 'fragment', 'txt'].indexOf(filepath) === -1; })
-            .toArray();
+        return fs_1.findFiles(targetPath)
+            .map(function (file) { return env_1.path.relative(targetPath, file).replace(/\.json$/, ''); })
+            .catch(function (error) {
+            console.error(error);
+            return rxjs_1.Observable.of([]);
+        })
+            .map(function (file) { return env_1.path.dirname(file); })
+            .filter(function (f) { return f && !/^\./.test(f); }) // no empty
+            .filter(function (f) { return !f.startsWith('index'); })
+            .distinct();
     };
     TSCStream.prototype.findComponentDirs = function () {
         return rxjs_1.Observable.from(Object.keys(env_1.KIO_PATHS.components).map(function (key) { return env_1.KIO_PATHS.components[key]; }))
@@ -80,6 +105,10 @@ var TSCStream = (function () {
         })
             .distinct();
         //.map ( logMapLabel('merged') )
+    };
+    TSCStream.prototype.readComponentAtPath = function (filepath) {
+        var componentName = env_1.path.basename(filepath);
+        return this.readComponent(env_1.path.join(env_1.KIO_PATHS.root, filepath));
     };
     TSCStream.prototype.readComponent = function (componentPath) {
         var _this = this;
@@ -109,7 +138,7 @@ var TSCStream = (function () {
         return this.prepare().flatMap(function (filepath) { return _this.readComponent(filepath); });
     };
     return TSCStream;
-}());
+}(abstract_1.AbstractComponentSource));
 exports.TSCStream = TSCStream;
 exports.default = new TSCStream();
 //# sourceMappingURL=stream.js.map
