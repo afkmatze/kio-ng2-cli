@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 export declare abstract class AbstractComponentSource implements ComponentSource {
     static SourcePaths: string[];
     abstract exists(name?: string): boolean;
-    abstract prepare(): Observable<string>;
+    abstract prepare(): Observable<boolean>;
     abstract fetch(): Observable<ComponentModel>;
     isWritable: boolean;
     abstract normalizeName(componentName: string): string;

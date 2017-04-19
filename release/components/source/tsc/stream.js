@@ -72,13 +72,13 @@ var TSCStream = (function (_super) {
             logger.logError("" + error, false);
             return rxjs_1.Observable.fromPromise(Promise.reject(error));
         });
-        obs.toPromise().then(function () {
+        obs.toArray().map(function () {
             logger.log('compiled to "%s"', TSC_OUT);
             _this.lastCompiled = rxjs_1.Observable.of(Date.now());
             _this.compiles = null;
         });
         this.compiles = obs;
-        return rxjs_1.Observable.concat(obs, this.findComponentDirs());
+        return obs;
     };
     TSCStream.prototype.evalComponentFile = function (component, filename) {
         var relpath = env_1.path.relative(env_1.KIO_PROJECT_ROOT, filename);
@@ -112,30 +112,35 @@ var TSCStream = (function (_super) {
     };
     TSCStream.prototype.readComponent = function (componentPath) {
         var _this = this;
-        return rxjs_1.Observable.of(create_1.createWithPath(componentPath))
-            .flatMap(function (component) {
-            var criteriaFile = component.getFile('criteria');
-            if (criteriaFile) {
-                var pubComponent_1 = component;
-                return _this.evalComponentFile(component, criteriaFile)
-                    .map(function (criteriaModule) {
-                    pubComponent_1.modifiers = criteriaModule.Criteria.modifiers;
-                    pubComponent_1.childTypes = criteriaModule.Criteria.childTypes;
-                    return pubComponent_1;
-                });
-            }
-            return rxjs_1.Observable.of(component);
+        return this.prepare().flatMap(function () {
+            logger.log('componentPath %s', componentPath);
+            return rxjs_1.Observable.of(create_1.createWithPath(componentPath))
+                .flatMap(function (component) {
+                var criteriaFile = component.getFile('criteria');
+                if (criteriaFile) {
+                    var pubComponent_1 = component;
+                    return _this.evalComponentFile(component, criteriaFile)
+                        .map(function (criteriaModule) {
+                        pubComponent_1.modifiers = criteriaModule.Criteria.modifiers;
+                        pubComponent_1.childTypes = criteriaModule.Criteria.childTypes;
+                        return pubComponent_1;
+                    });
+                }
+                return rxjs_1.Observable.of(component);
+            });
         });
     };
     TSCStream.prototype.prepare = function () {
         var _this = this;
         return this.getLastCompilation()
             .map(function (ts) { return Date.now() - ts; })
-            .flatMap(function (d) { return d > MAX_AGE ? _this.compile() : _this.findComponentDirs(); });
+            .flatMap(function (d) { return d > MAX_AGE ? _this.compile() : rxjs_1.Observable.of(false); });
     };
     TSCStream.prototype.fetch = function () {
         var _this = this;
-        return this.prepare().flatMap(function (filepath) { return _this.readComponent(filepath); });
+        return this.prepare()
+            .flatMap(function () { return _this.findComponentDirs(); })
+            .flatMap(function (filepath) { return _this.readComponent(filepath); });
     };
     return TSCStream;
 }(abstract_1.AbstractComponentSource));

@@ -18,7 +18,7 @@ export declare class CacheStream extends AbstractComponentSource {
     readComponentAtPath(filepath: string): Observable<ComponentModel>;
     fetch(): Observable<ComponentModel>;
     scan(pathname: string): Observable<string>;
-    prepare(): Observable<string>;
+    prepare(): Observable<boolean>;
     deleteComponent(component: Component): Observable<boolean>;
     write(component: PublicationComponent | Component): Observable<string>;
 }

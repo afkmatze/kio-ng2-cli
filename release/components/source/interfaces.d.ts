@@ -7,7 +7,7 @@ export interface SourceFolder {
 }
 export interface ComponentSource {
     exists(name?: string): boolean;
-    prepare(): Observable<string>;
+    prepare(): Observable<boolean>;
     fetch(): Observable<ComponentModel>;
     isWritable: boolean;
     normalizeName(componentName: string): string;

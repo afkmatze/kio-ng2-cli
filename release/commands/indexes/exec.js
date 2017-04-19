@@ -138,7 +138,7 @@ exports.findUncachedComponents = function () {
     });
 };
 exports.refreshSource = function () {
-    return exports.findUncachedComponents();
+    return componentSource.tsc.prepare().flatMap(function () { return exports.findUncachedComponents(); });
     // return Observable.concat(['publication','structure','navigation'])
     //   .flatMap ( componentType => {
     //     logger.log('read "%s"', componentType)

@@ -145,8 +145,8 @@ export class CacheStream extends AbstractComponentSource {
       .distinct()
   }
 
-  prepare():Observable<string> {
-    return Observable.of('')
+  prepare():Observable<boolean> {
+    return Observable.of(false)
   }
 
   deleteComponent(component:Component):Observable<boolean>{

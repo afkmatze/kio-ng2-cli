@@ -68,9 +68,9 @@ export class TSCStream extends AbstractComponentSource {
   }
 
   protected isCompiling:boolean=false
-  private compiles:Observable<string>
+  private compiles:Observable<boolean>
 
-  protected compile():Observable<string>{
+  protected compile():Observable<boolean>{
     if ( this.compiles )
       return this.compiles
     logger.log('recompile')
@@ -82,14 +82,14 @@ export class TSCStream extends AbstractComponentSource {
       return Observable.fromPromise(Promise.reject(error))
     })
 
-    obs.toPromise().then ( () => {
+    obs.toArray().map ( () => {
       logger.log('compiled to "%s"', TSC_OUT )
       this.lastCompiled = Observable.of(Date.now())
       this.compiles = null
     } )
 
     this.compiles = obs
-    return Observable.concat(obs,this.findComponentDirs())
+    return obs
   }
 
   protected evalComponentFile (component:ComponentModel,filename:string) {
@@ -128,7 +128,9 @@ export class TSCStream extends AbstractComponentSource {
   }
 
   protected readComponent(componentPath:string):Observable<ComponentModel>{
-    return Observable.of(createWithPath(componentPath))
+    return this.prepare().flatMap ( () => {
+      logger.log('componentPath %s',componentPath)
+      return Observable.of(createWithPath(componentPath))
               .flatMap( (component:ComponentModel) => {
                 const criteriaFile = component.getFile('criteria')
                 if ( criteriaFile )
@@ -143,19 +145,20 @@ export class TSCStream extends AbstractComponentSource {
                 }
                 return Observable.of(component)
               } )
+    })
   }
 
-  prepare():Observable<string>{
+  prepare():Observable<boolean>{
     return this.getLastCompilation()
         .map ( ts => Date.now() - ts )
         //.map ( logMapLabel('last compilation') )
-        .flatMap( d => d > MAX_AGE ? this.compile() : this.findComponentDirs() )
+        .flatMap( d => d > MAX_AGE ? this.compile() : Observable.of(false) )
   }
 
-
-
   fetch():Observable<ComponentModel> {
-    return this.prepare().flatMap(filepath => this.readComponent(filepath))
+    return this.prepare()
+          .flatMap ( () => this.findComponentDirs() )
+          .flatMap(filepath => this.readComponent(filepath))
   }
 }
 

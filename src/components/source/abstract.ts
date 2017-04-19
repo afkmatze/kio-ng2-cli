@@ -10,7 +10,7 @@ export abstract class AbstractComponentSource implements ComponentSource {
   static SourcePaths = ['publication','structure','navigation']
 
   abstract exists(name?:string):boolean;
-  abstract prepare():Observable<string>;
+  abstract prepare():Observable<boolean>;
   abstract fetch():Observable<ComponentModel>;
   isWritable:boolean=false;
 

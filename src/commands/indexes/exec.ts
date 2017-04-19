@@ -172,7 +172,7 @@ export const findUncachedComponents = () => {
 
 export const refreshSource = () => {
 
-  return findUncachedComponents()
+  return componentSource.tsc.prepare().flatMap(()=>findUncachedComponents())
 
   // return Observable.concat(['publication','structure','navigation'])
   //   .flatMap ( componentType => {

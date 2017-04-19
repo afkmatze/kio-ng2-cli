@@ -142,7 +142,7 @@ var CacheStream = (function (_super) {
             .distinct();
     };
     CacheStream.prototype.prepare = function () {
-        return rxjs_1.Observable.of('');
+        return rxjs_1.Observable.of(false);
     };
     CacheStream.prototype.deleteComponent = function (component) {
         var cacheDir = resolveComponentsCache(component.typeName);
