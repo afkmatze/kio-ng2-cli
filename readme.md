@@ -17,3 +17,9 @@ alias: <i>index</i>
 (re)build index files in kio folder
 
 ```$ ./node_modules/.bin/kio-ng2 index ```
+
+
+
+##### TODOs
+
+- accept comma separated values in command arguments
