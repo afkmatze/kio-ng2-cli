@@ -1,10 +1,12 @@
 import { Observable, Scheduler } from 'rxjs'
 import { ComponentSource, PublicationComponent, Component, ComponentModel } from '../interfaces'
+import { AbstractComponentSource } from '../abstract'
 import { KioComponent, KioPublicationComponent, KioStructureComponent, KioComponentType, ComponentType } from '../../interfaces'
 import { createWithData, createWithPath, getComponentTypeForPath } from '../../create'
 
 import { path, KIO_PROJECT_CACHE, KIO_PROJECT_ROOT, KIO_PATHS } from '../../../env'
-import { readdir, readfile, readstats, findFiles, exec, evalJS } from '../../../utils/rx/fs'
+import { readdir, readfile, readstats, findFiles, find, exec, evalJS } from '../../../utils/rx/fs'
+import { dasherize } from '../../../utils/string'
 import * as logger from '../../../console'
 
 
@@ -29,12 +31,21 @@ export const fetch = () => readdir(path.join(KIO_PROJECT_CACHE,'components'))
 
 const TSC_OUT = path.join(KIO_PROJECT_CACHE,'tsc-out')
 
-export class TSCStream implements ComponentSource {
+export class TSCStream extends AbstractComponentSource {
 
   isWritable=false
 
+  sourcePathForName ( pathname:string ) {
+    return KIO_PATHS.components[pathname]
+  }
+
   exists(){
     return true
+  }
+  
+
+  normalizeName ( componentName:string ):string {
+    return componentName.replace('.'+path.extname(componentName),'')
   }
 
   // date of last compilation
@@ -57,9 +68,9 @@ export class TSCStream implements ComponentSource {
   }
 
   protected isCompiling:boolean=false
-  private compiles:Observable<string>
+  private compiles:Observable<boolean>
 
-  protected compile():Observable<string>{
+  protected compile():Observable<boolean>{
     if ( this.compiles )
       return this.compiles
     logger.log('recompile')
@@ -71,14 +82,14 @@ export class TSCStream implements ComponentSource {
       return Observable.fromPromise(Promise.reject(error))
     })
 
-    obs.toPromise().then ( () => {
+    obs.toArray().map ( () => {
       logger.log('compiled to "%s"', TSC_OUT )
       this.lastCompiled = Observable.of(Date.now())
       this.compiles = null
     } )
 
     this.compiles = obs
-    return Observable.concat(obs,this.findComponentDirs())
+    return obs
   }
 
   protected evalComponentFile (component:ComponentModel,filename:string) {
@@ -87,6 +98,19 @@ export class TSCStream implements ComponentSource {
     return evalJS(targetPath)
   }
 
+  scan(pathname:string):Observable<string> {
+    const targetPath:string = KIO_PATHS.components[pathname]
+    return findFiles(targetPath)
+      .map ( file => path.relative(targetPath,file).replace(/\.json$/,'') ) 
+      .catch ( error => {
+        console.error(error)
+        return Observable.of([])
+      } )
+      .map ( (file:string) => path.dirname(file) )
+      .filter(f => f && !/^\./.test(f) ) // no empty
+      .filter((f:string) => !f.startsWith('index') )
+      .distinct()
+  }
 
   protected findComponentDirs(){
     return Observable.from(Object.keys(KIO_PATHS.components).map (key=>KIO_PATHS.components[key]))
@@ -96,9 +120,17 @@ export class TSCStream implements ComponentSource {
           .distinct()
           //.map ( logMapLabel('merged') )
   }
+  
+
+  readComponentAtPath ( filepath:string ):Observable<ComponentModel> {
+    const componentName = path.basename(filepath)
+    return this.readComponent(path.join(KIO_PATHS.root,filepath))
+  }
 
   protected readComponent(componentPath:string):Observable<ComponentModel>{
-    return Observable.of(createWithPath(componentPath))
+    return this.prepare().flatMap ( () => {
+      logger.log('componentPath %s',componentPath)
+      return Observable.of(createWithPath(componentPath))
               .flatMap( (component:ComponentModel) => {
                 const criteriaFile = component.getFile('criteria')
                 if ( criteriaFile )
@@ -113,19 +145,20 @@ export class TSCStream implements ComponentSource {
                 }
                 return Observable.of(component)
               } )
+    })
   }
 
-  prepare():Observable<string>{
+  prepare():Observable<boolean>{
     return this.getLastCompilation()
         .map ( ts => Date.now() - ts )
         //.map ( logMapLabel('last compilation') )
-        .flatMap( d => d > MAX_AGE ? this.compile() : this.findComponentDirs() )
+        .flatMap( d => d > MAX_AGE ? this.compile() : Observable.of(false) )
   }
 
-
-
   fetch():Observable<ComponentModel> {
-    return this.prepare().flatMap(filepath => this.readComponent(filepath))
+    return this.prepare()
+          .flatMap ( () => this.findComponentDirs() )
+          .flatMap(filepath => this.readComponent(filepath))
   }
 }
 

@@ -2,10 +2,13 @@ import { Observable, Scheduler } from 'rxjs'
 import { KioComponentType, ComponentModel, Component, PublicationComponent } from '../../components'
 import { IndexName, IndexType, ComponentIndex } from '../../indexes/interfaces'
 import * as componentSource from '../../components/source'
+//export { SourceFolder, ComponentSource } from '../../components/source/interfaces'
+import { SourceFolder, ComponentSource } from '../../components/source/interfaces'
 import { templateFiles, TemplateFile, TemplateData, IndexTemplateData, IndexTemplateDataItem } from '../../templates'
 import * as index from '../../indexes'
 import * as logger from '../../console'
 import * as rxfs from '../../utils/rx/fs'
+import * as stringUtils from '../../utils/string'
 import { CommandConfigBuildIndexes, BuildIndexFilterArg, BuildIndexArgs, path, KIO_PATHS, KIO_PROJECT_ROOT } from '../../env'
 
 import * as templateCreate from '../../templates/types/index/create'
@@ -74,7 +77,7 @@ const mapComponentToIndexItem = ( indexType:IndexType, component:ComponentModel 
   const indexName = IndexType[indexType]
   let rootPath:string = path.join(KIO_PATHS.root)
   const importAlias = mapImportAlias[indexName] || ''
-  const suffix = importAlias ? '.cquery.'+indexName : ''
+  const suffix = importAlias ? '.'+indexName : ''
   return {
     importName: component.name+(!importAlias?'Component':''),
     importPath: './'+path.join(component.relativeFrom(KIO_PATHS.root),component.dasherizedName+'.component'+suffix),
@@ -94,7 +97,7 @@ const mapImportAlias = {
   "fixture": "Fixture",
   "criteria": "Criteria"
 }
-
+/*
 export const createIndexSource = ( indexType:IndexType, components:ComponentModel[] ) => {
   const indexName = IndexType[indexType]  
   return templateRender.renderFilesIndex({
@@ -107,7 +110,7 @@ export const createIndexSource = ( indexType:IndexType, components:ComponentMode
       source
     } )
   )
-}
+}*/
 
 export const createIndexTemplateData = ( indexType:IndexType, components:ComponentModel[] ):IndexTemplateData => {
   const indexName = IndexType[indexType]  
@@ -158,6 +161,46 @@ const defaultConfig = {
   noCache: false
 }
 
+export const findUncachedComponents = () => {
+  return componentSource.cache.compareTo(componentSource.tsc)
+    .flatMap ( (result) => {
+      return Observable.concat(result.items)
+                .flatMap(item => componentSource.tsc.readComponentAtPath(path.join(result.name,item)))
+                .flatMap( component => {
+                  return componentSource.cache.write(component)
+                }  )
+    } )
+}
+
+export const refreshSource = () => {
+
+  return componentSource.tsc.prepare().flatMap(()=>findUncachedComponents())
+
+  // return Observable.concat(['publication','structure','navigation'])
+  //   .flatMap ( componentType => {
+  //     logger.log('read "%s"', componentType)
+  //     return Observable.merge(
+  //       componentSource.tsc.scan (componentType).map ( result => ({
+  //         source: 'tsc',
+  //         files: result
+  //       }) ) ,
+  //       componentSource.cache.scan ( componentType ).map ( result => ({
+  //         source: 'cache',
+  //         files: result
+  //       }) ) ,
+  //     ).toArray().map ( (items,idx) => {
+  //       //console.log( '%s = %s -> %s items', componentType,idx, items.length )
+  //       return {
+  //         componentType,
+  //         items
+  //       }
+  //     } )
+  //   } )
+  //   .map ( result => {
+  //     console.log ( '%s: ', result.componentType, result.items )
+  //     return result
+  //   } )
+}
 
 export const selectSource = ( cached:boolean=true ) => {
 

@@ -12,9 +12,9 @@ const fileTypePatterns = {
   "spec": /\.component\.spec\.ts$/,
   "template": /\.component\.html$/,
   "style": /\.component\.[s]?css$/,
-  "criteria": /\.component\.cquery\.criteria\.ts$/,
-  "fixture": /\.component\.cquery\.fixture\.ts$/,
-  "querytest": /\.component\.cquery\.spec\.ts$/
+  "criteria": /\.component\.criteria\.ts$/,
+  "fixture": /\.component\.fixture\.ts$/,
+  "querytest": /\.component\.spec\.ts$/
 }
 
 const matchFileType = ( fileType:KioComponentFileType ) => {

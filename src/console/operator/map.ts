@@ -27,7 +27,7 @@ export const operator:LogOperatorPlugin = ( logger:any ):LogOperatorMap => {
       return `${chalk.green.bold(label)} ${chalk.dim('#')}${idx}`
     }
     const writer:LogWriterMap = ( item:any , idx?:number, list?:any[] ):any => {
-      logger.log(formatLabel(item,idx,list)+'\n---\n'+chalk.dim(item)+'\n---')
+      console.log(formatLabel(item,idx,list)+'\n---\n', item)
       return item
     }
 

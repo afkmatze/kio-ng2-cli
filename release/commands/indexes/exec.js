@@ -58,7 +58,7 @@ var mapComponentToIndexItem = function (indexType, component) {
     var indexName = interfaces_1.IndexType[indexType];
     var rootPath = env_1.path.join(env_1.KIO_PATHS.root);
     var importAlias = mapImportAlias[indexName] || '';
-    var suffix = importAlias ? '.cquery.' + indexName : '';
+    var suffix = importAlias ? '.' + indexName : '';
     return {
         importName: component.name + (!importAlias ? 'Component' : ''),
         importPath: './' + env_1.path.join(component.relativeFrom(env_1.KIO_PATHS.root), component.dasherizedName + '.component' + suffix),
@@ -76,18 +76,20 @@ var mapImportAlias = {
     "fixture": "Fixture",
     "criteria": "Criteria"
 };
-exports.createIndexSource = function (indexType, components) {
-    var indexName = interfaces_1.IndexType[indexType];
-    return templateRender.renderFilesIndex({
-        exportName: mapExportNames[indexName],
-        indexItems: components.map(function (component) {
-            return mapComponentToIndexItem(indexType, component);
-        })
-    }).map(function (source) { return ({
-        name: interfaces_1.IndexType[indexType],
-        source: source
-    }); });
-};
+/*
+export const createIndexSource = ( indexType:IndexType, components:ComponentModel[] ) => {
+  const indexName = IndexType[indexType]
+  return templateRender.renderFilesIndex({
+    exportName: mapExportNames[indexName],
+    indexItems: components.map ( component => {
+      return mapComponentToIndexItem ( indexType, component )
+    } )
+  }).map ( source => ({
+      name: IndexType[indexType],
+      source
+    } )
+  )
+}*/
 exports.createIndexTemplateData = function (indexType, components) {
     var indexName = interfaces_1.IndexType[indexType];
     var templateData = {
@@ -125,6 +127,43 @@ var defaultConfig = {
     filter: ["publication", "navigation", "structure", "fixture", "criteria"],
     noCache: false
 };
+exports.findUncachedComponents = function () {
+    return componentSource.cache.compareTo(componentSource.tsc)
+        .flatMap(function (result) {
+        return rxjs_1.Observable.concat(result.items)
+            .flatMap(function (item) { return componentSource.tsc.readComponentAtPath(env_1.path.join(result.name, item)); })
+            .flatMap(function (component) {
+            return componentSource.cache.write(component);
+        });
+    });
+};
+exports.refreshSource = function () {
+    return componentSource.tsc.prepare().flatMap(function () { return exports.findUncachedComponents(); });
+    // return Observable.concat(['publication','structure','navigation'])
+    //   .flatMap ( componentType => {
+    //     logger.log('read "%s"', componentType)
+    //     return Observable.merge(
+    //       componentSource.tsc.scan (componentType).map ( result => ({
+    //         source: 'tsc',
+    //         files: result
+    //       }) ) ,
+    //       componentSource.cache.scan ( componentType ).map ( result => ({
+    //         source: 'cache',
+    //         files: result
+    //       }) ) ,
+    //     ).toArray().map ( (items,idx) => {
+    //       //console.log( '%s = %s -> %s items', componentType,idx, items.length )
+    //       return {
+    //         componentType,
+    //         items
+    //       }
+    //     } )
+    //   } )
+    //   .map ( result => {
+    //     console.log ( '%s: ', result.componentType, result.items )
+    //     return result
+    //   } )
+};
 exports.selectSource = function (cached) {
     if (cached === void 0) { cached = true; }
     if (cached === false || !componentSource.cache.exists('components')) {
@@ -148,21 +187,23 @@ exports.default = function (config) {
         return selectSource().filter(applyFilter(val))
       })
     */
-    return rxjs_1.Observable.from(filter, rxjs_1.Scheduler.asap)
-        .flatMap(function (filter) {
-        //logger.log('find components for filter "%s"', filter )
-        return exports.selectSource().filter(applyFilter(filter)).toArray()
-            .map(function (components) {
-            return {
-                filter: filter,
-                components: components
-            };
-        });
-    }, 1)
-        .concatMap(function (result) {
-        //logger.log('%s-filtered components: %s', result.filter, result.components)
-        return exports.writeComponentsToIndexTemplate(interfaces_1.IndexType[result.filter], result.components).map(function (filename) {
-            return filename;
+    return exports.refreshSource().toArray().flatMap(function (list) {
+        return rxjs_1.Observable.from(filter)
+            .flatMap(function (filter) {
+            //logger.log('find components for filter "%s"', filter )
+            return exports.selectSource().filter(applyFilter(filter)).toArray()
+                .map(function (components) {
+                return {
+                    filter: filter,
+                    components: components
+                };
+            });
+        }, 1)
+            .concatMap(function (result) {
+            //logger.log('%s-filtered components: %s', result.filter, result.components)
+            return exports.writeComponentsToIndexTemplate(interfaces_1.IndexType[result.filter], result.components).map(function (filename) {
+                return filename;
+            });
         });
     });
     //const cb = selectSource(!config.noCache).filter(applyFilter(filter))

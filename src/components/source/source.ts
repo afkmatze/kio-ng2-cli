@@ -9,7 +9,6 @@ export const getSource = ( sourceType:'cache'|'tsc' ):Observable<Component> => {
 
   if ( sourceType === 'cache' )
   {
-    trace('getSource')
     return cacheStream.fetch()
   }
   return tscStream.fetch()

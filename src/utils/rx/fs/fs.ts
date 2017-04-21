@@ -80,7 +80,7 @@ export const readfile = ( filepath:string, full:boolean=false ):Observable<strin
 }
 
 export const readDir = ( filename:string ):Observable<string> => {
-  return Observable.fromPromise(async.readdir(filename))
+  return Observable.fromPromise(async.readdir(filename).catch(error=>Promise.resolve([])))
 }
 
 export const readstats = ( filepath:string ):Observable<fs.Stats> => Observable.fromPromise(async.stat(filepath))

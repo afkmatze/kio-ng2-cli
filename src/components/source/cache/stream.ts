@@ -1,9 +1,11 @@
 import { Observable, Scheduler } from 'rxjs'
 import { ComponentSource, PublicationComponent, Component, ComponentModel } from '../interfaces'
+import { AbstractComponentSource } from '../abstract'
 import { KioComponent, KioPublicationComponent, KioStructureComponent, KioComponentType, ComponentType } from '../../interfaces'
 import { createWithData } from '../../create'
 import * as logger from '../../../console'
 
+import { dasherize } from '../../../utils/string'
 
 import { path, KIO_PROJECT_CACHE, KIO_PROJECT_ROOT, KIO_PATHS } from '../../../env'
 import { readdir, readfile } from '../../../utils/rx/fs'
@@ -23,6 +25,7 @@ const KioComponentType2Path = {
   [KioComponentType.StructureComponent]: 'structure',
   [KioComponentType[KioComponentType.StructureComponent]]: 'structure'
 }
+
 
 const COMPONENTS_CACHE = path.join(KIO_PROJECT_CACHE, 'components')
 
@@ -44,12 +47,20 @@ export const fetch = () => readdir(path.join(KIO_PROJECT_CACHE,'components'))
              } )
 
 
-export class CacheStream implements ComponentSource {
+export class CacheStream extends AbstractComponentSource {
 
   isWritable=true
 
+  sourcePathForName ( pathname:string ) {
+    return path.join ( KIO_PROJECT_CACHE, pathname )
+  }
+
   exists(name:string="components"){
     return rxfs.existsSync(path.join(KIO_PROJECT_CACHE,name))
+  }
+
+  normalizeName ( componentName:string ):string {
+    return componentName.replace('.'+path.extname(componentName),'')
   }
 
   private cachedFetch:Observable<any>
@@ -96,6 +107,12 @@ export class CacheStream implements ComponentSource {
     }
     return Observable.of(createWithData(componentData.data))
   }
+  
+  readComponentAtPath ( filepath:string ):Observable<ComponentModel> {
+    return readfile(path.join(KIO_PROJECT_CACHE,'components',filepath+'.json'),true)
+        .map ( content => JSON.parse(content) )
+        .map ( data => createWithData(data) )
+  }
 
   fetch():Observable<ComponentModel> {
     return fetch().flatMap ( item => {
@@ -110,8 +127,26 @@ export class CacheStream implements ComponentSource {
     .concat()*/
   }
 
-  prepare():Observable<string> {
-    return Observable.of('')
+  scan(pathname:string):Observable<string> {
+    //const targetPath:string = KIO_PATHS.components[pathname]
+    //logger.log('scanning cache path: "%s"', pathname)
+    const targetPath:string = path.join(KIO_PROJECT_CACHE,'components',pathname)
+    return rxfs.findFiles(targetPath)
+      .map ( file => path.relative(targetPath,file).replace(/\.json$/,'') ) 
+      .filter ( file => file && /^\./.test(file) === false )
+      .catch ( error => {
+        console.error(error)
+        return Observable.of([])
+      } )
+      //.map ( filepath => path.relative ( targetPath, filepath ) )
+      //.map ( logMap )
+      //.map ( filepath => path.basename(filepath,'.json') )
+      //.filter ( filepath => /^\./.test(filepath) === false && ['src','fragment','txt'].indexOf(filepath) === -1 )
+      .distinct()
+  }
+
+  prepare():Observable<boolean> {
+    return Observable.of(false)
   }
 
   deleteComponent(component:Component):Observable<boolean>{
@@ -126,9 +161,13 @@ export class CacheStream implements ComponentSource {
     return source
   }
 
-  write(component:PublicationComponent):Observable<string>{
-    const cacheDir = resolveComponentsCache(component.typeName)
-    const cachePath = resolveComponentsCache(component.typeName, component.name+'.json')
+  write(component:PublicationComponent|Component):Observable<string>{
+    const cacheDir = (component instanceof PublicationComponent 
+              ? resolveComponentsCache(component.typeName, component.contentType)
+              : resolveComponentsCache(component.typeName))
+
+    const cachePath = path.join(cacheDir, dasherize(component.name)+'.json')
+
     const jsonData = component.toJSON()
     const data = JSON.stringify(jsonData,null,'  ')
 
@@ -138,6 +177,7 @@ export class CacheStream implements ComponentSource {
     {
       source = Observable.fromPromise(rxfs.async.mkdir(cacheDir,true).then ( () => cachePath ))
     }
+    logger.log('Writing cache for "%s" at %s', component, path.relative(KIO_PROJECT_ROOT,cachePath)  )
     return source.flatMap(filepath => rxfs.writeFile( cachePath, data ) )
   }
 }
