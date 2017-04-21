@@ -30,3 +30,11 @@ export const evalJS = ( filepath:string, opts?:ExecOptions ) => {
   const data = require(filepath)
   return Observable.of(data)
 }
+
+
+export const evalTS = ( filepath:string, opts?:ExecOptions ) => {
+  const execRoot = opts && opts.cwd ? opts.cwd : KIO_PROJECT_ROOT
+  const relFilepath = path.relative(execRoot,filepath)
+
+  return execObserve ( `ts-node -e 'require("./${relFilepath}")'`, {cwd: execRoot} )
+}

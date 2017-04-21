@@ -121,6 +121,8 @@ export const createIndexTemplateData = ( indexType:IndexType, components:Compone
   return templateData
 }
 
+const getIndexFileName = ( indexName:string ) => path.join(KIO_PATHS.root,`${mapExportNames[indexName]}.generated.ts`)
+
 export const writeComponentsToIndexTemplate = ( indexType:IndexType, components:Observable<ComponentModel>|ComponentModel[] ) => {
   const indexName = IndexType[indexType]
 
@@ -212,6 +214,15 @@ export const selectSource = ( cached:boolean=true ) => {
   return componentSource.cache.fetch()
 }
 
+const indexNames = ['publication','navigation','structure','fixture','criteria']
+
+export const writeEmptyIndexFiles = () => {
+  return Observable.concat(indexNames).flatMap ( indexName => {
+    const templateFile = getIndexFileName(indexName)
+    return rxfs.existsSync(templateFile) ? Observable.empty() : writeComponentsToIndexTemplate(IndexType[indexName],[])
+  } )
+}
+
 export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
   
   let filter:BuildIndexFilterArg|BuildIndexFilterArg[] = config.filter || defaultConfig.filter
@@ -221,36 +232,34 @@ export default ( config:BuildIndexArgs=defaultConfig ):Observable<string[]> => {
 
   const indexTemplate = templateCreate.createTemplateByName("index")
   indexTemplate.source = templateCreate.createTemplateSource("index")
-/*
-  const filters = Observable.from(filter,Scheduler.async).flatMap(val => {
-    console.log('select ', val , 'of', filter)
-    return selectSource().filter(applyFilter(val))
-  })
-*/
-  return refreshSource().toArray().flatMap ( list => {
-    return Observable.from(filter)
-        .flatMap( filter => {
-          //logger.log('find components for filter "%s"', filter )
-          return selectSource().filter(applyFilter(filter)).toArray()
-            .map(
-              components => {
-                return {
-                  filter,
-                  components
+
+  return Observable.concat(
+    writeEmptyIndexFiles(),
+    refreshSource().toArray().flatMap ( list => {
+      return Observable.from(filter)
+          .flatMap( filter => {
+            //logger.log('find components for filter "%s"', filter )
+            return selectSource().filter(applyFilter(filter)).toArray()
+              .map(
+                components => {
+                  return {
+                    filter,
+                    components
+                  }
                 }
-              }
-            )
-        }, 1 )
-        //.toArray()
-        .concatMap(result => {
-            //logger.log('%s-filtered components: %s', result.filter, result.components)
-            return writeComponentsToIndexTemplate(IndexType[result.filter],result.components).map (
-              ( filename ) => {
-                return filename
-              }
-            )
-          })
-  } )
+              )
+          }, 1 )
+          //.toArray()
+          .concatMap(result => {
+              //logger.log('%s-filtered components: %s', result.filter, result.components)
+              return writeComponentsToIndexTemplate(IndexType[result.filter],result.components).map (
+                ( filename ) => {
+                  return filename
+                }
+              )
+            })
+    } )
+  )
 
   //const cb = selectSource(!config.noCache).filter(applyFilter(filter))
 /*
