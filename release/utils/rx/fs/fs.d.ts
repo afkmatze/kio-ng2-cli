@@ -18,4 +18,4 @@ export declare const readfile: (filepath: string, full?: boolean) => Observable<
 export declare const readDir: (filename: string) => Observable<string>;
 export declare const readstats: (filepath: string) => Observable<fs.Stats>;
 export declare const unlink: (filepath: string) => Observable<boolean>;
-export declare const mkdir: (filepath: string) => Observable<string>;
+export declare const mkdir: (filepath: string, p?: boolean) => Observable<string>;

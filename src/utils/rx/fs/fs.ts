@@ -89,4 +89,4 @@ export const unlink = ( filepath:string ):Observable<boolean> => Observable.from
   async.unlink(filepath).then ( () => true )
 )
 
-export const mkdir = ( filepath:string ):Observable<string> => Observable.fromPromise(async.mkdir(filepath).then(()=>filepath))
+export const mkdir = ( filepath:string, p?:boolean):Observable<string> => Observable.fromPromise(async.mkdir(filepath,p).then(()=>filepath))

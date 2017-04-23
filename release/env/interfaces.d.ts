@@ -1,5 +1,5 @@
 import { KioContentType } from 'kio-ng2';
-import { IndexName } from '../indexes/interfaces';
+import { IndexType } from '../project/interfaces';
 export interface KioPath extends String {
     join(...args: string[]): KioPath;
 }
@@ -34,7 +34,7 @@ export interface EnvConfig {
 export interface CommandConfig extends EnvConfig {
     command: Command;
 }
-export declare type BuildIndexFilterArg = IndexName | string;
+export declare type BuildIndexFilterArg = IndexType | string;
 export interface BuildIndexArgs {
     noCache?: boolean;
     filter?: BuildIndexFilterArg | BuildIndexFilterArg[];

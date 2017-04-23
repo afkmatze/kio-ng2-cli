@@ -1,6 +1,6 @@
 import * as path from 'path'
 import { KioContentType } from 'kio-ng2'
-import { IndexType, IndexName } from '../indexes/interfaces'
+import { IndexType, IndexTypes } from '../project/interfaces'
 
 export interface KioPath extends String {
   join(...args:string[]):KioPath
@@ -44,7 +44,7 @@ export interface CommandConfig extends EnvConfig {
   command:Command;
 }
 
-export type BuildIndexFilterArg = IndexName|string
+export type BuildIndexFilterArg = IndexType|string
 
 export interface BuildIndexArgs {
   noCache?:boolean

@@ -61,6 +61,25 @@ exports.FileSystemAssertions = {
         return exports.FileSystemAssertions.toBeFSType(not, actual, "file", message);
     }
 };
+var normalizeDate = function (datetime) {
+    var t = datetime.getTime();
+    return new Date(t - (t % 1000));
+};
+exports.FileAgeAssertion = {
+    toBeNewerThan: function (not, actual, datetime, message) {
+        if (not === void 0) { not = false; }
+        datetime = normalizeDate(datetime);
+        var stats = exports.getStats(actual);
+        var valTime = datetime.getTime();
+        var statsTime = stats.mtime.getTime();
+        ceylon_1.assert({
+            assertion: statsTime >= valTime !== not,
+            message: message || "expected " + actual + " " + (not ? 'not ' : '') + "to be newer than " + datetime + " (diff: " + (datetime.getTime() - stats.mtime.getTime()) + ")",
+            expected: 'newer than ' + datetime.getTime(),
+            actual: stats.mtime.getTime() + ' diff: ' + (stats.mtime.getTime() - datetime.getTime())
+        });
+    }
+};
 exports.emptyStats = {
     isFile: function () { return false; },
     isDirectory: function () { return false; },
@@ -106,11 +125,13 @@ exports.default = function (filepath) {
         actual: filepath + ''
     };
     var assertions = {
+        toBeNewerThan: function (datetime, message) { return exports.FileAgeAssertion.toBeNewerThan(false, filepath, datetime, message || undefined); },
         toBeFSType: function (fsType, message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, fsType, message || undefined); },
         toBeDirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "directory", message || undefined); },
         toBeADirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "directory", message || undefined); },
         toBeFile: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "file", message || undefined); },
         toBeAFile: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "file", message || undefined); },
+        toNotBeNewerThan: function (datetime, message) { return exports.FileAgeAssertion.toBeNewerThan(true, filepath, datetime, message || undefined); },
         toNotBeFSType: function (fsType, message) { return exports.FileSystemAssertions.toBeFSType(true, filepath, fsType, message || undefined); },
         toNotBeDirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(true, filepath, "directory", message || undefined); },
         toNotBeADirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(true, filepath, "directory", message || undefined); },

@@ -1,16 +1,75 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxjs_1 = require("rxjs");
-var env = require("../env/constants");
-var cmd_indexes = require("./indexes");
-var cmd_component = require("./component");
+var env = require("../env");
 var path = require("path");
 var console_1 = require("../console");
-var logger = require("../console");
-var exec_1 = require("./indexes/exec");
 var yargs = require("yargs");
+var project = require("../project");
 exports.BUILD_INDEXES = "indexes";
 exports.CREATE_COMPONENT = "component";
+/** CREATE COMPONENT */
+exports.createComponentCommand = {
+    command: 'createComponent',
+    aliases: ['create'],
+    describe: 'Creates a new publication component',
+    builder: function (argv) {
+        return argv
+            .usage('Usage: $0 <command> <ComponentName>')
+            .demand(1)
+            .option('contentType', {
+            alias: 't',
+            choices: ['txt', 'src', 'fragment'],
+            demand: true
+        })
+            .option('modifiers', {
+            alias: 'm',
+            type: 'array',
+            describe: 'list of modifiers'
+        })
+            .option('childTypes', {
+            alias: 'c',
+            describe: 'child type content types',
+            type: 'array'
+        });
+    },
+    handler: function (args) {
+        var _a = args._, command = _a[0], componentName = _a[1];
+        return project.createComponent(__assign({}, args, { name: componentName })).toPromise()
+            .catch(function (error) {
+            console.error(error);
+        });
+    }
+};
+exports.buildIndexesCommand = {
+    command: 'buildIndexes',
+    aliases: ['index'],
+    describe: 'Updates index files in ' + env.KIO_PATHS.root,
+    builder: function (argv) {
+        return argv
+            .usage('Usage: $0 index [publication|structure|fixture|criteria]')
+            .option('filter', {
+            alias: 'f',
+            choices: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
+            default: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
+            demand: true
+        });
+    },
+    handler: function (args) {
+        var command = args._[0];
+        return project.buildIndexes(args).toPromise()
+            .catch(function (error) {
+            console.error(error);
+        });
+    }
+};
 exports.exec = function (command) {
     console_1.banner();
     if (!env.KIO_PROJECT_ROOT || path.basename(env.KIO_PROJECT_ROOT) === 'kio-ng2-cli') {
@@ -31,33 +90,8 @@ exports.exec = function (command) {
         description: 'cli config file',
         default: path.resolve('kio-ng2.config.json')
     })
-        .command(cmd_component.yargs)
-        .command(cmd_indexes.yargs)
-        .command("ls", "List components", function (argv) {
-        return argv.options({
-            filter: {
-                alias: 'f',
-                type: 'array',
-                choices: all_filter,
-                default: all_filter
-            }
-        });
-    }, function (args) {
-        args.filter = args.filter || all_filter;
-        var filter = args.filter.length > 0 ? args.filter : all_filter;
-        var indexSourceStream = exec_1.selectSource(!args.noCache);
-        var obs = rxjs_1.Observable.concat(filter).flatMap(function (filterValue) {
-            return indexSourceStream.filter(function (component) { return component.typeName.toLowerCase().indexOf(filterValue) > -1; }).toArray().map(function (components) {
-                logger.log('%s %s components', components.length, filterValue);
-                components.forEach(function (component, idx) { return logger.log('[component:%s/%s]: %s', idx + 1, components.length, component); });
-                return {
-                    filter: filter,
-                    components: components
-                };
-            });
-        });
-        return obs.toPromise();
-    })
+        .command(exports.createComponentCommand)
+        .command(exports.buildIndexesCommand)
         .demand(1)
         .help('h')
         .argv;
