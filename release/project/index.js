@@ -83,7 +83,7 @@ exports.createComponent = function (args) {
     })
         .toArray()
         .flatMap(function (list) {
-        return exports.buildIndexes({}).toArray().map(function () { return list; });
+        return list.indexOf(true) > -1 ? exports.buildIndexes({}).toPromise() : rxjs_1.Observable.empty();
     });
 };
 //# sourceMappingURL=index.js.map

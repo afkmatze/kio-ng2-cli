@@ -42,9 +42,12 @@ exports.createComponentCommand = {
     },
     handler: function (args) {
         var _a = args._, command = _a[0], componentName = _a[1];
-        return project.createComponent(__assign({}, args, { name: componentName })).toPromise()
-            .catch(function (error) {
+        var sub = project.createComponent(__assign({}, args, { name: componentName })).subscribe(function (value) { }, function (error) {
             console.error(error);
+        }, function () {
+            if (sub) {
+                sub.unsubscribe();
+            }
         });
     }
 };

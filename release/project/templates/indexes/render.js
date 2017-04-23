@@ -14,22 +14,32 @@ exports.mapTemplateData = function (component, relativeTo) {
     return item;
 };
 exports.mapFilesToTemplateData = function (exportName, files, relativeTo) {
-    return files.map(function (file) { return exports.mapFileToTemplateDataItem(file, relativeTo); })
-        .toArray().map(function (files) { return ({
-        exportName: exportName,
-        indexItems: files
-    }); });
+    return files.toArray()
+        .map(function (files) {
+        return {
+            exportName: exportName,
+            indexItems: files.map(function (file) { return exports.mapFileToTemplateDataItem(file, relativeTo); })
+        };
+    });
 };
 exports.mapFileToTemplateDataItem = function (filepath, relativeTo) {
     var componentBaseName = path.basename(filepath, '.ts').split('.component').join('');
     var _a = componentBaseName.split('.') || [], _b = _a[0], componentName = _b === void 0 ? '' : _b, _c = _a[1], typeName = _c === void 0 ? '' : _c;
+    var componentRoot = path.relative(relativeTo, path.dirname(filepath));
     if (!componentName) {
         throw Error('Invalid component name at "' + filepath + '".');
     }
     var item = {
         importName: string_1.classify(componentName),
-        importPath: './' + path.relative(relativeTo, filepath).replace(/\.ts$/, '')
+        importPath: './' + path.relative(relativeTo, filepath)
     };
+    if (!rxfs.existsSync(path.resolve(relativeTo, path.dirname(item.importPath)))) {
+        console.log('componentRoot', componentRoot);
+        console.log('componentBaseName', componentBaseName);
+        console.log('item.importPath', item.importPath);
+        throw Error("\n\n" + item.importPath + " is not a valid directory");
+    }
+    item.importPath = item.importPath.replace(/\.ts$/, '');
     if (!typeName) {
         item.importName += 'Component';
     }

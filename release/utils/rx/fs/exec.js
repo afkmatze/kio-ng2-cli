@@ -12,7 +12,7 @@ var execObserve = function (command, opts) {
     };
     //console.log(commandLog)
     var cp = child_process_1.exec(command, opts, function (error, out) {
-        //console.log('[%s] %s - end', new Date() , commandLog , '\n---\nerror\n', error )
+        //console.log('[%s] %s - end', new Date() , out , '\n---\nerror\n', error )
     });
     var obs = from_1.fromReadable(cp.stdout).map(function (stdout) { return ({ stdout: stdout }); });
     var obsErr = from_1.fromReadable(cp.stderr).map(function (stderr) { return ({ stderr: stderr }); });

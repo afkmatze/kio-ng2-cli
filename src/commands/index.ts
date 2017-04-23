@@ -41,13 +41,18 @@ export const createComponentCommand:yargs.CommandModule = {
   handler: (args:any|env.CommandConfigCreateComponent) => {
     const [ command, componentName ] = args._    
     
-    return project.createComponent({
+    const sub = project.createComponent({
       ...args,
       name: componentName
-    }).toPromise()
-      .catch(error => {
-        console.error(error)
-      })
+    }).subscribe(value=> {}, error=>{
+      console.error(error)
+    },()=>{
+      if ( sub )
+      {
+        sub.unsubscribe()
+      }
+    })
+      
   }
 }
 

@@ -41,12 +41,21 @@ const logComponent = ( m:matcher ) => {
 
 const logImage = logComponent(val => /simple\-image/.test(val))*/
 
+const assertFile = ( file:string, idx:number ) => {
+  if ( !rxfs.existsSync(file) )
+  {
+    throw Error(`${file} does not exist`)
+  }
+  return file
+}
+
 export const list = ( sourcePath:string='' ):Observable<string> => {
   if ( !path.isAbsolute(sourcePath) )
   {
     sourcePath = env.resolve ( sourcePath )
   }
-  return rxfs.findFiles(sourcePath)
+  return rxfs.find(sourcePath)
+      .map ( assertFile )
       .filter ( filename => /\..+$/.test(filename) )
       //.map ( filename => './'+path.relative(env.KIO_PROJECT_ROOT,filename) )
 }
@@ -88,7 +97,6 @@ export const publicationComponentCriterias = ( ):Observable<string> => {
 
 export const filesForIndexType = ( indexType:IndexType ) => {
   return list ( resolveRootByIndexType(indexType) )
-          //.map ( logImage('before filter') )
           .filter ( filterByIndexType(indexType) )
           //.map ( logImage('after filter') )
 }

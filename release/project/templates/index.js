@@ -42,8 +42,8 @@ exports.replaceFile = function (targetFilepath, contents) {
         .flatMap(function (dir) {
         return exports.shouldUpdateFile(targetFilepath, contents)
             .flatMap(function (result) {
-            return result ? rxfs.writeFile(targetFilepath, contents) : rxjs_1.Observable.empty();
-        }).map(function () { return true; });
+            return result ? rxfs.writeFile(targetFilepath, contents).map(function () { return true; }) : rxjs_1.Observable.of(false);
+        });
     });
 };
 //# sourceMappingURL=index.js.map

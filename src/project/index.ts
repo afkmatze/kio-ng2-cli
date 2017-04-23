@@ -106,14 +106,15 @@ export const createComponent = ( args:CLICommandArgsCreateComponent ) => {
 
   const templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args)
 
+
   return templates.publicationComponent.render(templateData)
         .flatMap ( (template,idx) => {
           const targetFile = path.join(env.KIO_PATHS.components.publication,template.filepath)
           return templates.replaceFile(targetFile,template.content)
         } )
         .toArray()
-        .flatMap( list => {
-          return buildIndexes({}).toArray().map(()=>list)
+        .flatMap ( list => {
+          return list.indexOf(true) > -1 ? buildIndexes({}).toPromise() : Observable.empty()
         } )
 }
 

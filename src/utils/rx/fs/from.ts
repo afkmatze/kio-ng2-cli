@@ -6,17 +6,34 @@ export const fromReadable = function(readable:Readable) {
     return Observable.create(function(observer:Observer<Buffer>) {
         function nop() {};
 
-        var nextFn = observer.next ? observer.next.bind(observer) : nop;
-        var returnFn = observer.complete ? observer.complete.bind(observer) : nop;
-        var throwFn = observer.error ? observer.error.bind(observer) : nop;
 
-        const onData = ( data:string ) => {
-          Observable.from(data.split('\n')).subscribe(
-              nextFn,
-              throwFn
-            )
+        let buffer = ''
+
+        const emit = ( rows:string[] ) => {
+          Observable.from(rows).subscribe(
+            nextFn,
+            throwFn
+          )
         }
 
+        const onData = ( data:string ) => {
+          const chunks = data.split('\n')
+          const first = buffer + chunks[0]
+          buffer = chunks.pop()
+          const payload = [first,...chunks.slice(1)]          
+          emit(payload)
+        }
+
+        var nextFn = observer.next ? observer.next.bind(observer) : nop;
+        var returnFnCallback = observer.complete ? observer.complete.bind(observer) : nop;
+        const returnFn = () => {
+          if ( buffer )
+          {
+            emit([buffer])
+          }
+          returnFnCallback()
+        }
+        var throwFn = observer.error ? observer.error.bind(observer) : nop;
         
         readable.on('data', (data)=>{
           if ( 'string' === typeof data )

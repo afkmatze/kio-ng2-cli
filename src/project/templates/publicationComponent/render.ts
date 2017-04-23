@@ -16,14 +16,13 @@ const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData
 }
 
 export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData => {
-  console.log('create cli ', args)
   const parentName = 'kio-abstract-' + args.contentType
   const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication,args.contentType)
   return {
     ...args,
     styles: path.relative(componentRoot,path.join(env.KIO_PROJECT_ROOT,'src','scss','utils')),
     selector: 'publication-' + stringUtils.dasherize(args.name),
-    classifiedModuleName: stringUtils.classify(args.name) + 'Component',
+    classifiedModuleName: stringUtils.classify(args.name),
     dasherizedModuleName: stringUtils.dasherize(args.name),
     classifiedParentComponentName: stringUtils.classify(parentName) + 'Component',
     dasherizedParentComponentPath: stringUtils.dasherize(parentName),

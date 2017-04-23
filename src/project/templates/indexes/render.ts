@@ -17,11 +17,14 @@ export const mapTemplateData = <ComponentType>( component:Component<ComponentTyp
 }
 
 export const mapFilesToTemplateData = ( exportName:string, files:Observable<string>, relativeTo:string ):Observable<IndexTemplateData> => {
-  return files.map( file => mapFileToTemplateDataItem(file,relativeTo) )
-          .toArray().map( files => ({
-            exportName,
-            indexItems: files
-          }) )
+  return files.toArray()
+          .map( files => {
+            return {
+              exportName,
+              indexItems: files.map( file => mapFileToTemplateDataItem(file,relativeTo) )
+            }
+          }) 
+
 }
 
 export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):IndexTemplateDataItem => {
@@ -29,6 +32,7 @@ export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):
   const componentBaseName = path.basename(filepath,'.ts').split('.component').join('')
   const [ componentName='', typeName='' ] = componentBaseName.split('.') || []
 
+  const componentRoot = path.relative(relativeTo,path.dirname(filepath))
 
   if ( !componentName )
   {
@@ -37,8 +41,18 @@ export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):
 
   const item:IndexTemplateDataItem = {
     importName: classify(componentName),
-    importPath: './'+path.relative(relativeTo,filepath).replace(/\.ts$/,'')
+    importPath: './'+path.relative(relativeTo,filepath)
   }
+
+  if ( !rxfs.existsSync(path.resolve(relativeTo,path.dirname(item.importPath))) )
+  {
+    console.log('componentRoot', componentRoot)
+    console.log('componentBaseName', componentBaseName)
+    console.log('item.importPath', item.importPath)
+    throw Error(`\n\n${item.importPath} is not a valid directory`);  
+  }
+
+  item.importPath = item.importPath.replace(/\.ts$/,'')
 
   if ( !typeName )
   {

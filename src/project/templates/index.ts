@@ -51,7 +51,7 @@ export const replaceFile = ( targetFilepath:string , contents:string ) => {
       return shouldUpdateFile(targetFilepath,contents)
         .flatMap ( (result) => {
           
-          return result ? rxfs.writeFile ( targetFilepath, contents ) : Observable.empty()
-        } ).map( () => true )
+          return result ? rxfs.writeFile ( targetFilepath, contents ).map(()=>true) : Observable.of(false)
+        } )
     })
 }
