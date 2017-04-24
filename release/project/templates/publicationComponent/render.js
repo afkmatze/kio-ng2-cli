@@ -21,7 +21,7 @@ var replaceFilepath = function (filepath, data) {
 exports.mapCLIArgsToTemplateData = function (args) {
     var parentName = 'kio-abstract-' + args.contentType;
     var componentRoot = path.resolve(env.KIO_PROJECT_ROOT, env.KIO_PATHS.components.publication, args.contentType);
-    return __assign({}, args, { styles: path.relative(componentRoot, path.join(env.KIO_PROJECT_ROOT, 'src', 'scss', 'utils')), selector: 'publication-' + stringUtils.dasherize(args.name), classifiedModuleName: stringUtils.classify(args.name), dasherizedModuleName: stringUtils.dasherize(args.name), classifiedParentComponentName: stringUtils.classify(parentName) + 'Component', dasherizedParentComponentPath: stringUtils.dasherize(parentName), pathToStructureComponents: '../../../components/' });
+    return __assign({}, args, { styles: path.relative(path.join(componentRoot, args.name), path.join(env.KIO_PROJECT_ROOT, 'src', 'scss')), selector: 'publication-' + stringUtils.dasherize(args.name), classifiedModuleName: stringUtils.classify(args.name), dasherizedModuleName: stringUtils.dasherize(args.name), classifiedParentComponentName: stringUtils.classify(parentName) + 'Component', dasherizedParentComponentPath: stringUtils.dasherize(parentName), pathToStructureComponents: '../../../components/' });
 };
 exports.render = function (data) {
     return rxfs.findFiles(path.join(TEMPLATE_DIR, data.contentType), /\.\w+$/)

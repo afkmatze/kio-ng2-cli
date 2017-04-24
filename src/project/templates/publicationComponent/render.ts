@@ -20,7 +20,7 @@ export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):P
   const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication,args.contentType)
   return {
     ...args,
-    styles: path.relative(componentRoot,path.join(env.KIO_PROJECT_ROOT,'src','scss','utils')),
+    styles: path.relative(path.join(componentRoot,args.name),path.join(env.KIO_PROJECT_ROOT,'src','scss')),
     selector: 'publication-' + stringUtils.dasherize(args.name),
     classifiedModuleName: stringUtils.classify(args.name),
     dasherizedModuleName: stringUtils.dasherize(args.name),
