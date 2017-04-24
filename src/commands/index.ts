@@ -13,8 +13,10 @@ export const CREATE_COMPONENT:string = "component"
 
 /** CREATE COMPONENT */
 
+import { createComponentCommand } from './createComponent'
+import { buildIndexesCommand } from './buildIndexes'
 
-export const createComponentCommand:yargs.CommandModule = {
+/*export const createComponentCommand:yargs.CommandModule = {
   command: 'createComponent',
   aliases: ['create'],
   describe: 'Creates a new publication component',
@@ -54,8 +56,10 @@ export const createComponentCommand:yargs.CommandModule = {
     })
       
   }
-}
+}*/
 
+/** build indexes */
+/*
 export const buildIndexesCommand:yargs.CommandModule = {
   command: 'buildIndexes',
   aliases: ['index'],
@@ -77,7 +81,7 @@ export const buildIndexesCommand:yargs.CommandModule = {
         console.error(error)
       })
   }
-}
+}*/
 
 export const exec = ( command:"indexes"|string ) => {
 
