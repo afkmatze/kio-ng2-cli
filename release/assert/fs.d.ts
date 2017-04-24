@@ -39,16 +39,21 @@ export interface BoundFSAssertion {
     [key: string]: BoundAssertionCallback;
 }
 export declare const FileSystemAssertions: FSAssertion;
+export declare const FileAgeAssertion: {
+    toBeNewerThan: (not: boolean, actual: string, datetime: Date, message?: string) => void;
+};
 export declare const emptyStats: fs.Stats;
 export declare const getStats: (filepath: string) => fs.Stats;
 export declare const assertExists: (filepath: string, message?: string) => void;
 export declare const expectFile: (filepath: string) => void;
 declare var _default: (filepath: string) => {
+    toBeNewerThan: (datetime: Date, message?: string) => void;
     toBeFSType: (fsType: FSType, message?: string) => void;
     toBeDirectory: (message?: string) => void;
     toBeADirectory: (message?: string) => void;
     toBeFile: (message?: string) => void;
     toBeAFile: (message?: string) => void;
+    toNotBeNewerThan: (datetime: Date, message?: string) => void;
     toNotBeFSType: (fsType: FSType, message?: string) => void;
     toNotBeDirectory: (message?: string) => void;
     toNotBeADirectory: (message?: string) => void;

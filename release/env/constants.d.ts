@@ -1,10 +1,10 @@
 import { KioProjectPaths } from './interfaces';
-export declare const resolveLink: (filepath: string) => void;
 export * from './interfaces';
-export declare const KIO_PROJECT_ROOT: string;
+export * from './resolve';
+export declare const MACHINE_ROOT: string;
+export declare const KIO_PROJECT_ROOT: any;
 export declare const KIO_PROJECT_PACKAGE: any;
-export declare const resolve: (componentType: string, projectPath?: string) => string;
-export declare const relative: (absProjectPath: string) => string;
 export declare const KIO_PROJECT_CACHE: string;
 export declare const KIO_PATHS: KioProjectPaths;
+export declare const KIO_TEMPLATES: string;
 export declare const TEMPLATES: string;

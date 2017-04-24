@@ -88,6 +88,26 @@ export const FileSystemAssertions:FSAssertion = {
   }
 }
 
+const normalizeDate = (datetime:Date) => {
+  const t = datetime.getTime()
+  return new Date(t-(t%1000))
+}
+
+export const FileAgeAssertion = {
+  toBeNewerThan: ( not:boolean=false, actual:string, datetime:Date, message?:string ) => {
+    datetime = normalizeDate(datetime)
+    const stats = getStats(actual)
+    const valTime = datetime.getTime()
+    const statsTime = stats.mtime.getTime()
+    assert({
+      assertion: statsTime >= valTime !== not,
+      message: message || `expected ${actual} ${not?'not ':''}to be newer than ${datetime} (diff: ${datetime.getTime() - stats.mtime.getTime()})`,
+      expected: 'newer than '+datetime.getTime(),
+      actual: stats.mtime.getTime() + ' diff: ' + (stats.mtime.getTime() - datetime.getTime())
+    })
+  }
+}
+
 export const emptyStats:fs.Stats = {
   isFile: ()=>false,
   isDirectory: ()=>false,
@@ -140,11 +160,13 @@ export default ( filepath:string ) => {
   }
 
   const assertions = {
+    toBeNewerThan: ( datetime:Date, message?:string ) => FileAgeAssertion.toBeNewerThan(false, filepath, datetime, message||undefined ),
     toBeFSType: ( fsType:FSType, message?:string ) => FileSystemAssertions.toBeFSType ( false, filepath, fsType, message||undefined ),
     toBeDirectory: ( message?:string ) => FileSystemAssertions.toBeFSType ( false, filepath, "directory", message||undefined ),
     toBeADirectory: ( message?:string ) => FileSystemAssertions.toBeFSType ( false, filepath, "directory", message||undefined ),
     toBeFile: ( message?:string ) => FileSystemAssertions.toBeFSType ( false, filepath, "file", message||undefined ),
     toBeAFile: ( message?:string ) => FileSystemAssertions.toBeFSType ( false, filepath, "file", message||undefined ),
+    toNotBeNewerThan: ( datetime:Date, message?:string ) => FileAgeAssertion.toBeNewerThan( true, filepath, datetime, message||undefined ),
     toNotBeFSType: ( fsType:FSType, message?:string ) => FileSystemAssertions.toBeFSType ( true, filepath, fsType, message||undefined ),
     toNotBeDirectory: ( message?:string ) => FileSystemAssertions.toBeFSType ( true, filepath, "directory", message||undefined ),
     toNotBeADirectory: ( message?:string ) => FileSystemAssertions.toBeFSType ( true, filepath, "directory", message||undefined ),

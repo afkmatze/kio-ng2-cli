@@ -2,8 +2,15 @@
 	"folders":
 	[
 		{
-			"path": ".",
-      "folder_exclude_patterns": ["node_modules","release"]
+			"folder_exclude_patterns":
+			[
+				"node_modules",
+				"release"
+			],
+			"path": "."
+		},
+		{
+			"path": "test_target/src/app/kio"
 		}
 	]
 }

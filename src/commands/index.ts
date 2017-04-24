@@ -1,15 +1,83 @@
 import { Observable, Scheduler } from 'rxjs'
-import * as env from '../env/constants'
-import * as cmd_indexes from './indexes'
-import * as cmd_component from './component'
+import * as env from '../env'
 import * as path from 'path'
 import { log, logError, banner } from '../console'
 import * as logger from '../console'
-import { selectSource } from './indexes/exec'
 import * as yargs from 'yargs'
+
+import * as project from '../project'
 
 export const BUILD_INDEXES:string = "indexes"
 export const CREATE_COMPONENT:string = "component"
+
+
+/** CREATE COMPONENT */
+
+
+export const createComponentCommand:yargs.CommandModule = {
+  command: 'createComponent',
+  aliases: ['create'],
+  describe: 'Creates a new publication component',
+  builder: ( argv ) => {
+    return argv
+      .usage('Usage: $0 <command> <ComponentName>')
+      .demand(1)
+      .option('contentType',{
+        alias: 't',
+        choices: ['txt','src','fragment'],
+        demand: true
+      })
+      .option('modifiers',{
+        alias: 'm',
+        type: 'array',
+        describe: 'list of modifiers'
+      })
+      .option('childTypes',{
+        alias: 'c',
+        describe: 'child type content types',
+        type: 'array'
+      })
+  },  
+  handler: (args:any|env.CommandConfigCreateComponent) => {
+    const [ command, componentName ] = args._    
+    
+    const sub = project.createComponent({
+      ...args,
+      name: componentName
+    }).subscribe(value=> {}, error=>{
+      console.error(error)
+    },()=>{
+      if ( sub )
+      {
+        sub.unsubscribe()
+      }
+    })
+      
+  }
+}
+
+export const buildIndexesCommand:yargs.CommandModule = {
+  command: 'buildIndexes',
+  aliases: ['index'],
+  describe: 'Updates index files in ' + env.KIO_PATHS.root,
+  builder: ( argv ) => {
+    return argv
+      .usage('Usage: $0 index [publication|structure|fixture|criteria]')
+      .option('filter',{
+        alias: 'f',
+        choices: ['publication','navigation','structure','fixture','criteria'],
+        default: ['publication','navigation','structure','fixture','criteria'],
+        demand: true
+      })
+  },  
+  handler: (args:any) => {
+    const [ command ] = args._
+    return project.buildIndexes(args).toPromise()
+      .catch(error => {
+        console.error(error)
+      })
+  }
+}
 
 export const exec = ( command:"indexes"|string ) => {
 
@@ -37,35 +105,8 @@ export const exec = ( command:"indexes"|string ) => {
       description: 'cli config file',
       default: path.resolve('kio-ng2.config.json')      
     })
-    .command(cmd_component.yargs)
-    .command(cmd_indexes.yargs)
-    .command("ls","List components",(argv)=>{
-      return argv.options({
-        filter: {
-          alias: 'f',
-          type: 'array',
-          choices: all_filter,
-          default: all_filter
-        }
-      })
-    },(args)=>{
-      
-      args.filter = args.filter || all_filter
-      const filter = args.filter.length > 0 ? args.filter : all_filter
-      const indexSourceStream = selectSource(!args.noCache)
-
-      const obs = Observable.concat(filter).flatMap((filterValue:string) => {
-        return indexSourceStream.filter(component => component.typeName.toLowerCase().indexOf(filterValue) > -1).toArray ().map ( components => {
-          logger.log('%s %s components', components.length, filterValue )
-          components.forEach((component,idx) => logger.log('[component:%s/%s]: %s',idx+1,components.length,component))
-          return {
-            filter,
-            components
-          }
-        } )
-      })
-      return obs.toPromise()
-    })
+    .command(createComponentCommand)
+    .command(buildIndexesCommand)
     .demand(1)
     .help('h')
     .argv

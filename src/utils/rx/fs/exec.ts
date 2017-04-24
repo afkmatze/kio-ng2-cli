@@ -15,7 +15,7 @@ const execObserve = ( command:string, opts?:ExecOptions ):Observable<ExecData> =
 
   //console.log(commandLog)
   const cp = exec(command,opts,(error,out)=>{
-    //console.log('[%s] %s - end', new Date() , commandLog , '\n---\nerror\n', error )
+    //console.log('[%s] %s - end', new Date() , out , '\n---\nerror\n', error )
   })
 
   const obs = fromReadable(cp.stdout).map( stdout => ({stdout}) )
@@ -38,3 +38,4 @@ export const evalTS = ( filepath:string, opts?:ExecOptions ) => {
 
   return execObserve ( `ts-node -e 'require("./${relFilepath}")'`, {cwd: execRoot} )
 }
+

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { <%= classifiedParentComponentName %> } from '<%= pathToStructureComponents %>/<%= dasherizedParentComponentPath %>/<%= dasherizedParentComponentPath %>.component'
 
 @Component({

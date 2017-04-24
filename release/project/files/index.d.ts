@@ -1,0 +1,11 @@
+import { Observable } from 'rxjs';
+import { IndexTypes } from '../interfaces';
+export declare const resolveRootByIndexType: (indexType: IndexTypes) => string;
+export declare const list: (sourcePath?: string) => Observable<string>;
+export declare const publicationComponents: () => Observable<string>;
+export declare const structureComponents: () => Observable<string>;
+export declare const navigationComponents: () => Observable<string>;
+export declare const publicationComponentFiles: () => Observable<string[]>;
+export declare const publicationComponentFixtures: () => Observable<string>;
+export declare const publicationComponentCriterias: () => Observable<string>;
+export declare const filesForIndexType: (indexType: IndexTypes) => Observable<string>;

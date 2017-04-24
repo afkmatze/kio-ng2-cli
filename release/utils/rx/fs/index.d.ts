@@ -1,7 +1,10 @@
 import { Observable } from 'rxjs';
+export * from './diff';
+import * as tmp from './tmp';
 export * from './interfaces';
 export * from './exec';
 export * from './find';
 export * from './fs';
 export * from './from';
+export { tmp };
 export declare const readdir: (filepath: string) => Observable<string>;

@@ -85,5 +85,5 @@ exports.readDir = function (filename) {
 };
 exports.readstats = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.stat(filepath)); };
 exports.unlink = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.unlink(filepath).then(function () { return true; })); };
-exports.mkdir = function (filepath) { return rxjs_1.Observable.fromPromise(exports.async.mkdir(filepath).then(function () { return filepath; })); };
+exports.mkdir = function (filepath, p) { return rxjs_1.Observable.fromPromise(exports.async.mkdir(filepath, p).then(function () { return filepath; })); };
 //# sourceMappingURL=fs.js.map
