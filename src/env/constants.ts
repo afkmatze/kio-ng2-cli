@@ -1,6 +1,6 @@
 import * as path from './path'
 import { KioComponentsPaths, KioProjectPaths } from './interfaces'
-import { isInstalled, moduleRoot, resolveRoot, relative } from './resolve'
+import { isInstalled, moduleRoot, resolveRoot, relative, resolveProjectPackage } from './resolve'
 
 export * from './interfaces'
 export * from './resolve'
@@ -16,11 +16,11 @@ export const KIO_PROJECT_PACKAGE = require(path.join(KIO_PROJECT_ROOT,'package.j
 export const KIO_PROJECT_CACHE = resolveRoot('.kio-ng2-cache')
 
 export const KIO_PATHS:KioProjectPaths = {
-  root: resolveRoot(KIO_PROJECT_PACKAGE.kio.root),
+  root: resolveProjectPackage().kio.root,
   components: {
-    publication: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.publication),
-    structure: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.structure),
-    navigation: resolveRoot(KIO_PROJECT_PACKAGE.kio.components.navigation)
+    publication: resolveProjectPackage().kio.components.publication,
+    structure: resolveProjectPackage().kio.components.structure,
+    navigation: resolveProjectPackage().kio.components.navigation
   }
 }
 

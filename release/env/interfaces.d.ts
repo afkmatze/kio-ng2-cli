@@ -39,6 +39,8 @@ export interface BuildIndexArgs {
     noCache?: boolean;
     filter?: BuildIndexFilterArg | BuildIndexFilterArg[];
 }
+export interface CommandConfigTestComponents extends CommandConfig {
+}
 export interface CommandConfigBuildIndexes extends CommandConfig {
     args: BuildIndexArgs;
 }

@@ -34,6 +34,8 @@ export interface CLICommandArgs {
   [key:string]: any;
 }
 
+export interface CLICommandArgsTestComponents extends CLICommandArgs {}
+
 export interface CLICommandArgsBuildIndexes extends CLICommandArgs {
   filter?:string|string[]  
 }

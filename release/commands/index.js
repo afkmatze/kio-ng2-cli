@@ -9,71 +9,7 @@ exports.CREATE_COMPONENT = "component";
 /** CREATE COMPONENT */
 var createComponent_1 = require("./createComponent");
 var buildIndexes_1 = require("./buildIndexes");
-/*export const createComponentCommand:yargs.CommandModule = {
-  command: 'createComponent',
-  aliases: ['create'],
-  describe: 'Creates a new publication component',
-  builder: ( argv ) => {
-    return argv
-      .usage('Usage: $0 <command> <ComponentName>')
-      .demand(1)
-      .option('contentType',{
-        alias: 't',
-        choices: ['txt','src','fragment'],
-        demand: true
-      })
-      .option('modifiers',{
-        alias: 'm',
-        type: 'array',
-        describe: 'list of modifiers'
-      })
-      .option('childTypes',{
-        alias: 'c',
-        describe: 'child type content types',
-        type: 'array'
-      })
-  },
-  handler: (args:any|env.CommandConfigCreateComponent) => {
-    const [ command, componentName ] = args._
-    
-    const sub = project.createComponent({
-      ...args,
-      name: componentName
-    }).subscribe(value=> {}, error=>{
-      console.error(error)
-    },()=>{
-      if ( sub )
-      {
-        sub.unsubscribe()
-      }
-    })
-      
-  }
-}*/
-/** build indexes */
-/*
-export const buildIndexesCommand:yargs.CommandModule = {
-  command: 'buildIndexes',
-  aliases: ['index'],
-  describe: 'Updates index files in ' + env.KIO_PATHS.root,
-  builder: ( argv ) => {
-    return argv
-      .usage('Usage: $0 index [publication|structure|fixture|criteria]')
-      .option('filter',{
-        alias: 'f',
-        choices: ['publication','navigation','structure','fixture','criteria'],
-        default: ['publication','navigation','structure','fixture','criteria'],
-        demand: true
-      })
-  },
-  handler: (args:any) => {
-    const [ command ] = args._
-    return project.buildIndexes(args).toPromise()
-      .catch(error => {
-        console.error(error)
-      })
-  }
-}*/
+var testComponents_1 = require("./testComponents");
 exports.exec = function (command) {
     console_1.banner();
     if (!env.KIO_PROJECT_ROOT || path.basename(env.KIO_PROJECT_ROOT) === 'kio-ng2-cli') {
@@ -95,6 +31,7 @@ exports.exec = function (command) {
         default: path.resolve('kio-ng2.config.json')
     })
         .command(createComponent_1.createComponentCommand)
+        .command(testComponents_1.testComponentsCommand)
         .command(buildIndexes_1.buildIndexesCommand)
         .demand(1)
         .help('h')

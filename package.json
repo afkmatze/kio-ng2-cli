@@ -17,6 +17,8 @@
     "pretest": "./scripts/init_test_targets.sh",
     "test": "NODE_ENV=test ts-mocha ./src/project.spec.ts",
     "test:watch": "nodemon -w ./src -e ts --exec \"npm run test\"",
+    "test:find": "NODE_ENV=test ts-mocha ./src/utils/rx/fs/find.spec.ts",
+    "test:find:watch": "./scripts/watch.sh test:find",
     "test:fs": "NODE_ENV=test ts-mocha ./src/utils/rx/fs.spec.ts",
     "test:fs:watch": "./scripts/watch.sh test:fs",
     "test:str": "NODE_ENV=test ts-mocha ./src/utils/string.spec.ts",

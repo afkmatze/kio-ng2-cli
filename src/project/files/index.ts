@@ -41,11 +41,15 @@ const logComponent = ( m:matcher ) => {
 
 const logImage = logComponent(val => /simple\-image/.test(val))*/
 
+let prevFile
 const assertFile = ( file:string, idx:number ) => {
   if ( !rxfs.existsSync(file) )
   {
+    console.log('prevFile: ', prevFile)
     throw Error(`${file} does not exist`)
   }
+  //console.log('file #%s', idx, file )
+  prevFile = file
   return file
 }
 
@@ -54,7 +58,7 @@ export const list = ( sourcePath:string='' ):Observable<string> => {
   {
     sourcePath = env.resolve ( sourcePath )
   }
-  return rxfs.find(sourcePath)
+  return rxfs.find(sourcePath, 1)
       .map ( assertFile )
       .filter ( filename => /\..+$/.test(filename) )
       //.map ( filename => './'+path.relative(env.KIO_PROJECT_ROOT,filename) )

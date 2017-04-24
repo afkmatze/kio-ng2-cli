@@ -14,11 +14,11 @@ exports.KIO_PROJECT_ROOT = resolve_1.moduleRoot();
 exports.KIO_PROJECT_PACKAGE = require(path.join(exports.KIO_PROJECT_ROOT, 'package.json'));
 exports.KIO_PROJECT_CACHE = resolve_1.resolveRoot('.kio-ng2-cache');
 exports.KIO_PATHS = {
-    root: resolve_1.resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.root),
+    root: resolve_1.resolveProjectPackage().kio.root,
     components: {
-        publication: resolve_1.resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.publication),
-        structure: resolve_1.resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.structure),
-        navigation: resolve_1.resolveRoot(exports.KIO_PROJECT_PACKAGE.kio.components.navigation)
+        publication: resolve_1.resolveProjectPackage().kio.components.publication,
+        structure: resolve_1.resolveProjectPackage().kio.components.structure,
+        navigation: resolve_1.resolveProjectPackage().kio.components.navigation
     }
 };
 exports.KIO_TEMPLATES = path.resolve(__dirname, '../../templates');

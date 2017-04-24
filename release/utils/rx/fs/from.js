@@ -12,9 +12,16 @@ exports.fromReadable = function (readable) {
         var onData = function (data) {
             var chunks = data.split('\n');
             var first = buffer + chunks[0];
+            if (buffer) {
+                process.env.NODE_ENV === "debug_stream" ? console.log('buffer kept: "%s"', buffer) : null;
+                process.env.NODE_ENV === "debug_stream" ? console.log('joined with "%s" to: "%s"', chunks[0], first) : null;
+            }
             buffer = chunks.pop();
             var payload = [first].concat(chunks.slice(1));
             emit(payload);
+            if (buffer) {
+                process.env.NODE_ENV === "debug_stream" ? console.log('buffer keeps: "%s"', buffer) : null;
+            }
         };
         var nextFn = observer.next ? observer.next.bind(observer) : nop;
         var returnFnCallback = observer.complete ? observer.complete.bind(observer) : nop;

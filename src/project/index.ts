@@ -2,9 +2,11 @@ import { Observable, Scheduler } from 'rxjs'
 import * as path from 'path'
 import { 
   Project, ProjectEnv,
-  CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsCreateComponent,
+  CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsTestComponents, CLICommandArgsCreateComponent,
   IndexType, IndexTypes
 } from './interfaces'
+
+import testRunner, { ComponentTest } from './testing'
 
 import * as env from '../env'
 import * as files from './files'
@@ -105,8 +107,6 @@ export const createComponent = ( args:CLICommandArgsCreateComponent ) => {
   } = args
 
   const templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args)
-
-
   return templates.publicationComponent.render(templateData)
         .flatMap ( (template,idx) => {
           const targetFile = path.join(env.KIO_PATHS.components.publication,template.filepath)
@@ -117,6 +117,32 @@ export const createComponent = ( args:CLICommandArgsCreateComponent ) => {
           return list.indexOf(true) > -1 ? buildIndexes({}).toPromise() : Observable.empty()
         } )
 }
+
+
+export const testComponents = ( args:CLICommandArgsTestComponents ) => {
+  return Observable.zip(
+      files.filesForIndexType(IndexTypes.fixture),
+      files.filesForIndexType(IndexTypes.criteria)
+    ).toArray()/*.map ( results => Object.assign({},...results) )    */
+  /*.concatMap ( results => {
+    const criterias = results.criterias
+    const fixtures = results.fixtures
+    for (var i = 0; i < results.length; i++) {
+      const criteriaFile = criterias[i]
+      const fixtureFile = fixtures[i]
+      const componentName = path.basename(fixtureFile,'.component.fixture.ts')
+      testRunner.addTest({
+        name: componentName,
+        criteria: criteriaFile,
+        fixture: fixtureFile
+      })
+    }
+    console.log('criterias',results)
+    return testRunner.run()
+  } )*/
+  
+}
+
 
 export { 
   templates, 

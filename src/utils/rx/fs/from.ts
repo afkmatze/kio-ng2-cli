@@ -19,9 +19,18 @@ export const fromReadable = function(readable:Readable) {
         const onData = ( data:string ) => {
           const chunks = data.split('\n')
           const first = buffer + chunks[0]
+          if ( buffer )
+          {
+            process.env.NODE_ENV==="debug_stream" ? console.log('buffer kept: "%s"', buffer) : null
+            process.env.NODE_ENV==="debug_stream" ? console.log('joined with "%s" to: "%s"', chunks[0], first) : null
+          }
           buffer = chunks.pop()
           const payload = [first,...chunks.slice(1)]          
           emit(payload)
+          if ( buffer )
+          {
+            process.env.NODE_ENV==="debug_stream" ? console.log('buffer keeps: "%s"', buffer ) : null
+          }
         }
 
         var nextFn = observer.next ? observer.next.bind(observer) : nop;

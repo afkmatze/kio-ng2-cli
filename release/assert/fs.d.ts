@@ -23,7 +23,8 @@ export declare const flagMatcher: {
 export declare const isFSType: (value: fs.Stats, fsType: FSType) => boolean;
 export declare const getFSTypeForStats: (value: fs.Stats) => "file" | "directory" | "socket";
 export interface AssertionCallback {
-    (not: boolean, actual: string, fsType: FSType, message?: string): void;
+    (not: boolean, actual: string, fsType?: FSType, message?: string): void;
+    (not: boolean, actual: string, message?: string): void;
 }
 export interface BoundAssertionCallback {
     (actual: string, expected: string, message?: string): void;
@@ -47,12 +48,14 @@ export declare const getStats: (filepath: string) => fs.Stats;
 export declare const assertExists: (filepath: string, message?: string) => void;
 export declare const expectFile: (filepath: string) => void;
 declare var _default: (filepath: string) => {
+    toExist: (message?: string) => void;
     toBeNewerThan: (datetime: Date, message?: string) => void;
     toBeFSType: (fsType: FSType, message?: string) => void;
     toBeDirectory: (message?: string) => void;
     toBeADirectory: (message?: string) => void;
     toBeFile: (message?: string) => void;
     toBeAFile: (message?: string) => void;
+    toNotExist: (message?: string) => void;
     toNotBeNewerThan: (datetime: Date, message?: string) => void;
     toNotBeFSType: (fsType: FSType, message?: string) => void;
     toNotBeDirectory: (message?: string) => void;

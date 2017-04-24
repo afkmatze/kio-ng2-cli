@@ -3,11 +3,12 @@ import * as path from 'path'
 import { existsSync } from './fs'
 import { exec } from './exec'
 
-export const find = ( filepath:string ):Observable<string> => {
+export const find = ( filepath:string, concurrent?:number ):Observable<string> => {
   if ( !existsSync(filepath) )
     return Observable.empty()
-  return exec(`find .`,{cwd: filepath}).map(value => path.join(filepath,value.stdout.toString('utf8')))
-              .flatMap(value => Observable.of(value)).concat()
+  return exec(`find .`,{cwd: filepath})
+        .map(value => path.join(filepath,value.stdout.toString('utf8')))
+        .flatMap(value => Observable.of(value),concurrent)
 }
 
 export const findFiles = ( filepath:string, pattern:RegExp=/.*/ ):Observable<string> => {

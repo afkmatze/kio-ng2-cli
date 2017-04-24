@@ -86,4 +86,23 @@ exports.createComponent = function (args) {
         return list.indexOf(true) > -1 ? exports.buildIndexes({}).toPromise() : rxjs_1.Observable.empty();
     });
 };
+exports.testComponents = function (args) {
+    return rxjs_1.Observable.zip(files.filesForIndexType(interfaces_1.IndexTypes.fixture), files.filesForIndexType(interfaces_1.IndexTypes.criteria)).toArray(); /*.map ( results => Object.assign({},...results) )    */
+    /*.concatMap ( results => {
+      const criterias = results.criterias
+      const fixtures = results.fixtures
+      for (var i = 0; i < results.length; i++) {
+        const criteriaFile = criterias[i]
+        const fixtureFile = fixtures[i]
+        const componentName = path.basename(fixtureFile,'.component.fixture.ts')
+        testRunner.addTest({
+          name: componentName,
+          criteria: criteriaFile,
+          fixture: fixtureFile
+        })
+      }
+      console.log('criterias',results)
+      return testRunner.run()
+    } )*/
+};
 //# sourceMappingURL=index.js.map

@@ -16,7 +16,7 @@ function gitInfo(){
 }
 
 function gitRemote(){
-  local infos=($(gitInfo "${1}" | head -1))
+  local infos=($(gitInfo "${1}" | grep origin | head -1))
   printf '%s' ${infos[1]}
 }
 
