@@ -6,6 +6,16 @@ var ejs = require("ejs");
 var string_1 = require("../../../utils/string");
 var rxjs_1 = require("rxjs");
 var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates/index');
+exports.render = function (indexName, data) {
+    return rxfs
+        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'), 'utf8')
+        .flatMap(function (contents) {
+        return rxjs_1.Observable.of(ejs.render(contents, data));
+    }).map(function (contents) {
+        //console.log('contents\n----\n',contents,'\n----\n')
+        return contents;
+    });
+};
 exports.mapTemplateData = function (component, relativeTo) {
     var item = {
         importName: string_1.classify(component.name),
@@ -16,6 +26,7 @@ exports.mapTemplateData = function (component, relativeTo) {
 exports.mapFilesToTemplateData = function (exportName, files, relativeTo) {
     return files.toArray()
         .map(function (files) {
+        console.log('mapFilesToTemplate::exportName', exportName);
         return {
             exportName: exportName,
             indexItems: files.map(function (file) { return exports.mapFileToTemplateDataItem(file, relativeTo); })
@@ -33,6 +44,7 @@ exports.mapFileToTemplateDataItem = function (filepath, relativeTo) {
         importName: string_1.classify(componentName),
         importPath: './' + path.relative(relativeTo, filepath)
     };
+    //console.log('map template data - relativeTo', item.importPath)
     if (!rxfs.existsSync(path.resolve(relativeTo, path.dirname(item.importPath)))) {
         console.log('componentRoot', componentRoot);
         console.log('componentBaseName', componentBaseName);
@@ -50,11 +62,5 @@ exports.mapFileToTemplateDataItem = function (filepath, relativeTo) {
         item.importAlias = 'Criteria';
     }
     return item;
-};
-exports.render = function (indexName, data) {
-    return rxfs.readfile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'), true)
-        .flatMap(function (contents) {
-        return rxjs_1.Observable.of(ejs.render(contents.toString(), data));
-    });
 };
 //# sourceMappingURL=render.js.map

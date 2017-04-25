@@ -4,3 +4,7 @@ import { Observable } from 'rxjs';
 export { indexes, publicationComponent };
 export declare const shouldUpdateFile: (targetFilepath: string, contents: string) => Observable<{}>;
 export declare const replaceFile: (targetFilepath: string, contents: string) => Observable<boolean>;
+export declare const renderTemplateWithData: (templateName: string, data: any) => Observable<{
+    file: string;
+    content: string;
+}>;

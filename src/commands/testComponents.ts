@@ -1,3 +1,4 @@
+import { Observable } from 'rxjs'
 import * as yargs from 'yargs'
 import * as project from '../project'
 import * as env from '../env'
@@ -17,7 +18,12 @@ export const testComponentsCommand:yargs.CommandModule = {
     let t = setInterval(()=>{
       console.log('check interval')
     },1000)
+    
     return project.testComponents(args)
+      .catch ( error => {
+        console.error(error)
+        return Observable.throw(error)
+      })
       .toPromise()
       .then ( result => {
         console.log('tests finished', result)

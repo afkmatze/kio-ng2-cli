@@ -1,6 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var ejs = require("ejs");
 var path = require("path");
+var files = require("../files");
 var indexes = require("./indexes");
 exports.indexes = indexes;
 var logger = require("../../console");
@@ -8,6 +10,7 @@ var publicationComponent = require("./publicationComponent");
 exports.publicationComponent = publicationComponent;
 var rxjs_1 = require("rxjs");
 var rxfs = require("../../utils/rx/fs");
+var TEMPLATES_ROOT = path.resolve(__dirname, '../../../templates');
 var logUpdateReason = function (reason, targetFilepath) {
     logger.log('update %s for reason: %s ', path.basename(targetFilepath), reason);
 };
@@ -44,6 +47,24 @@ exports.replaceFile = function (targetFilepath, contents) {
             .flatMap(function (result) {
             return result ? rxfs.writeFile(targetFilepath, contents).map(function () { return true; }) : rxjs_1.Observable.of(false);
         });
+    });
+};
+exports.renderTemplateWithData = function (templateName, data) {
+    var TEMPLATE_DIR = path.join(TEMPLATES_ROOT, templateName);
+    return files.list(TEMPLATE_DIR)
+        .flatMap(function (file) {
+        return rxfs.readFile(file, 'utf8').map(function (content) { return ({
+            file: path.relative(TEMPLATE_DIR, file),
+            content: content
+        }); });
+    })
+        .map(function (_a, idx) {
+        var file = _a.file, content = _a.content;
+        content = ejs.render(content, data);
+        return {
+            file: file,
+            content: content
+        };
     });
 };
 //# sourceMappingURL=index.js.map

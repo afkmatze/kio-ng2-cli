@@ -6,7 +6,7 @@ import {
   IndexType, IndexTypes
 } from './interfaces'
 
-import testRunner, { ComponentTest } from './testing'
+import testRunner, { ComponentTest, renderTests, execTestAt, ExecData } from './testing'
 
 import * as env from '../env'
 import * as files from './files'
@@ -70,8 +70,9 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
             .flatMap ( (indexType:IndexType) => {
               const source = files.filesForIndexType(indexType)
               const indexName = indexNames[nameForType(mapIndexType(indexType))]
-              return templates.indexes.mapFilesToTemplateData(indexName,source,env.KIO_PATHS.root)
-                  .map ( templateData => {
+              return templates.indexes.mapFilesToTemplateData(indexName,source,env.resolve(env.KIO_PATHS.root))
+                  .map ( (templateData,idx) => {
+                    console.log('templateData indexName',idx,indexName)
                     return {
                       indexName: indexName,
                       templateData
@@ -83,7 +84,7 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
                 .render(item.indexName,item.templateData) 
                 .flatMap ( 
                   contents => {
-                    const indexFileName = path.join(env.KIO_PATHS.root,item.indexName+'.generated.ts')
+                    const indexFileName = env.resolve(env.KIO_PATHS.root,item.indexName+'.generated.ts')
                     return templates.replaceFile(indexFileName,contents).map ( status => ({
                       indexFileName: path.relative(env.KIO_PROJECT_ROOT,indexFileName),
                       status
@@ -120,26 +121,21 @@ export const createComponent = ( args:CLICommandArgsCreateComponent ) => {
 
 
 export const testComponents = ( args:CLICommandArgsTestComponents ) => {
-  return Observable.zip(
+  const targetFilepath = path.join(path.resolve('./'),'ComponentTests.spec.ts')
+  console.log('writing spec file at "%s"', targetFilepath )
+  return renderTests(targetFilepath)
+          .map( (row,idx) => {
+            console.log('item %s\n----\n', idx, row, '\n----\n')
+            return row
+          } ).flatMap(
+            row => execTestAt(targetFilepath)
+          )
+
+  /*return Observable.zip(
       files.filesForIndexType(IndexTypes.fixture),
       files.filesForIndexType(IndexTypes.criteria)
-    ).toArray()/*.map ( results => Object.assign({},...results) )    */
-  /*.concatMap ( results => {
-    const criterias = results.criterias
-    const fixtures = results.fixtures
-    for (var i = 0; i < results.length; i++) {
-      const criteriaFile = criterias[i]
-      const fixtureFile = fixtures[i]
-      const componentName = path.basename(fixtureFile,'.component.fixture.ts')
-      testRunner.addTest({
-        name: componentName,
-        criteria: criteriaFile,
-        fixture: fixtureFile
-      })
-    }
-    console.log('criterias',results)
-    return testRunner.run()
-  } )*/
+    ).toArray()
+  */
   
 }
 

@@ -5,6 +5,29 @@ import { ExecOptions, exec } from 'child_process'
 import { fromReadable } from './from'
 import * as logger from '../../../console'
 
+import { ChildProcessOptions, StreamData, spawn, ChildProcess, CommandParams, ExecCallback } from '../child_process'
+
+
+const execChildProcess = ( command:string, opts?:ExecOptions|any ) => {
+  return spawn({
+    command,
+    ...opts
+  }).catch(error => {
+    console.error(error)
+    return Observable.throw(error)
+  })
+  /*.map ( data => {
+    const {
+      stderr,
+      stdout
+    } = data
+    return {
+      stderr: stderr.toString('utf8'),
+      stdout: stdout.toString('utf8')
+    }
+  } )*/
+}
+
 const execObserve = ( command:string, opts?:ExecOptions ):Observable<ExecData> => {
   const cwd = (opts||{cwd: process.cwd()}).cwd
   const commandLog = `command: "${command}"`
@@ -23,7 +46,7 @@ const execObserve = ( command:string, opts?:ExecOptions ):Observable<ExecData> =
   return Observable.merge(obs,obsErr)
 }
 
-export { execObserve as exec }
+export { execChildProcess as exec }
 
 
 export const evalJS = ( filepath:string, opts?:ExecOptions ) => {
@@ -38,4 +61,3 @@ export const evalTS = ( filepath:string, opts?:ExecOptions ) => {
 
   return execObserve ( `ts-node -e 'require("./${relFilepath}")'`, {cwd: execRoot} )
 }
-

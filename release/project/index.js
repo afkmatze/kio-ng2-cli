@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var path = require("path");
 var interfaces_1 = require("./interfaces");
+var testing_1 = require("./testing");
 var env = require("../env");
 var files = require("./files");
 exports.files = files;
@@ -51,8 +52,9 @@ exports.buildIndexes = function (args) {
         .flatMap(function (indexType) {
         var source = files.filesForIndexType(indexType);
         var indexName = indexNames[nameForType(mapIndexType(indexType))];
-        return templates.indexes.mapFilesToTemplateData(indexName, source, env.KIO_PATHS.root)
-            .map(function (templateData) {
+        return templates.indexes.mapFilesToTemplateData(indexName, source, env.resolve(env.KIO_PATHS.root))
+            .map(function (templateData, idx) {
+            console.log('templateData indexName', idx, indexName);
             return {
                 indexName: indexName,
                 templateData: templateData
@@ -62,7 +64,7 @@ exports.buildIndexes = function (args) {
         .flatMap(function (item) { return templates.indexes
         .render(item.indexName, item.templateData)
         .flatMap(function (contents) {
-        var indexFileName = path.join(env.KIO_PATHS.root, item.indexName + '.generated.ts');
+        var indexFileName = env.resolve(env.KIO_PATHS.root, item.indexName + '.generated.ts');
         return templates.replaceFile(indexFileName, contents).map(function (status) { return ({
             indexFileName: path.relative(env.KIO_PROJECT_ROOT, indexFileName),
             status: status
@@ -87,22 +89,17 @@ exports.createComponent = function (args) {
     });
 };
 exports.testComponents = function (args) {
-    return rxjs_1.Observable.zip(files.filesForIndexType(interfaces_1.IndexTypes.fixture), files.filesForIndexType(interfaces_1.IndexTypes.criteria)).toArray(); /*.map ( results => Object.assign({},...results) )    */
-    /*.concatMap ( results => {
-      const criterias = results.criterias
-      const fixtures = results.fixtures
-      for (var i = 0; i < results.length; i++) {
-        const criteriaFile = criterias[i]
-        const fixtureFile = fixtures[i]
-        const componentName = path.basename(fixtureFile,'.component.fixture.ts')
-        testRunner.addTest({
-          name: componentName,
-          criteria: criteriaFile,
-          fixture: fixtureFile
-        })
-      }
-      console.log('criterias',results)
-      return testRunner.run()
-    } )*/
+    var targetFilepath = path.join(path.resolve('./'), 'ComponentTests.spec.ts');
+    console.log('writing spec file at "%s"', targetFilepath);
+    return testing_1.renderTests(targetFilepath)
+        .map(function (row, idx) {
+        console.log('item %s\n----\n', idx, row, '\n----\n');
+        return row;
+    }).flatMap(function (row) { return testing_1.execTestAt(targetFilepath); });
+    /*return Observable.zip(
+        files.filesForIndexType(IndexTypes.fixture),
+        files.filesForIndexType(IndexTypes.criteria)
+      ).toArray()
+    */
 };
 //# sourceMappingURL=index.js.map

@@ -1,0 +1,1 @@
+{"version":3,"file":"command.js","sourceRoot":"","sources":["../../../../src/utils/rx/child_process/command.ts"],"names":[],"mappings":";;AAEa,QAAA,YAAY,GAAG,UAAE,OAA4B;IACxD,EAAE,CAAC,CAAE,QAAQ,KAAK,OAAO,OAAQ,CAAC,CAClC,CAAC;QACC,MAAM,CAAC,OAAO,CAAA;IAChB,CAAC;IAEK,IAAA,+BAAqD,EAAnD,mBAAW,EAAE,kBAAO,CAA+B;IAC3D,MAAM,CAAC;QACL,WAAW,aAAA;QACX,IAAI,MAAA;KACL,CAAA;AACH,CAAC,CAAA"}

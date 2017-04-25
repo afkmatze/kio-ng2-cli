@@ -1,9 +1,35 @@
 "use strict";
+var __assign = (this && this.__assign) || Object.assign || function(t) {
+    for (var s, i = 1, n = arguments.length; i < n; i++) {
+        s = arguments[i];
+        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
+            t[p] = s[p];
+    }
+    return t;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var env_1 = require("../../../env");
 var child_process_1 = require("child_process");
 var from_1 = require("./from");
+var child_process_2 = require("../child_process");
+var execChildProcess = function (command, opts) {
+    return child_process_2.spawn(__assign({ command: command }, opts)).catch(function (error) {
+        console.error(error);
+        return rxjs_1.Observable.throw(error);
+    });
+    /*.map ( data => {
+      const {
+        stderr,
+        stdout
+      } = data
+      return {
+        stderr: stderr.toString('utf8'),
+        stdout: stdout.toString('utf8')
+      }
+    } )*/
+};
+exports.exec = execChildProcess;
 var execObserve = function (command, opts) {
     var cwd = (opts || { cwd: process.cwd() }).cwd;
     var commandLog = "command: \"" + command + "\"";
@@ -18,7 +44,6 @@ var execObserve = function (command, opts) {
     var obsErr = from_1.fromReadable(cp.stderr).map(function (stderr) { return ({ stderr: stderr }); });
     return rxjs_1.Observable.merge(obs, obsErr);
 };
-exports.exec = execObserve;
 exports.evalJS = function (filepath, opts) {
     var data = require(filepath);
     return rxjs_1.Observable.of(data);

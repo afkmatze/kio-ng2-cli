@@ -1,9 +1,13 @@
+import * as ejs from 'ejs'
 import * as path from 'path'
+import * as files from '../files'
 import * as indexes from './indexes'
 import * as logger from '../../console'
 import * as publicationComponent from './publicationComponent'
 import { Observable } from 'rxjs'
 import * as rxfs from '../../utils/rx/fs'
+
+const TEMPLATES_ROOT = path.resolve(__dirname,'../../../templates')
 
 export { indexes, publicationComponent }
 
@@ -54,4 +58,23 @@ export const replaceFile = ( targetFilepath:string , contents:string ) => {
           return result ? rxfs.writeFile ( targetFilepath, contents ).map(()=>true) : Observable.of(false)
         } )
     })
+}
+
+
+export const renderTemplateWithData = ( templateName:string, data:any ) => {
+  const TEMPLATE_DIR = path.join(TEMPLATES_ROOT,templateName)
+  return files.list(TEMPLATE_DIR)
+       .flatMap( file => {
+         return rxfs.readFile(file, 'utf8').map ( content => ({ 
+           file: path.relative(TEMPLATE_DIR, file),
+           content 
+         }))
+       } )
+       .map( ({file,content},idx) => {
+         content = ejs.render(content,data)
+         return {
+           file,
+           content
+         }
+       } )
 }

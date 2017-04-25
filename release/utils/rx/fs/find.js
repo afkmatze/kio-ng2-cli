@@ -8,8 +8,10 @@ exports.find = function (filepath, concurrent) {
     if (!fs_1.existsSync(filepath))
         return rxjs_1.Observable.empty();
     return exec_1.exec("find .", { cwd: filepath })
-        .map(function (value) { return path.join(filepath, value.stdout.toString('utf8')); })
-        .flatMap(function (value) { return rxjs_1.Observable.of(value); }, concurrent);
+        .map(function (value) {
+        return value.stdout.toString('utf8').split('\n');
+    })
+        .flatMap(function (value) { return rxjs_1.Observable.of(value); });
 };
 exports.findFiles = function (filepath, pattern) {
     if (pattern === void 0) { pattern = /.*/; }

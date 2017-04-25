@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+var rxjs_1 = require("rxjs");
 var project = require("../project");
 var logger = require("../console");
 exports.testComponentsCommand = {
@@ -13,6 +14,10 @@ exports.testComponentsCommand = {
             console.log('check interval');
         }, 1000);
         return project.testComponents(args)
+            .catch(function (error) {
+            console.error(error);
+            return rxjs_1.Observable.throw(error);
+        })
             .toPromise()
             .then(function (result) {
             console.log('tests finished', result);
