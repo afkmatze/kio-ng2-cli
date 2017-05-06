@@ -1,5 +1,5 @@
 import { Observable, Scheduler } from 'rxjs'
-import * as rxfs from './rx/fs'
+import * as rxfs from 'rxfs'
 const stringUtils = require('ember-cli-string-utils')
 
 export const dasherize = (str:string):string => stringUtils.dasherize(str)

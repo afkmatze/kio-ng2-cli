@@ -16,7 +16,7 @@
     "preversion": "npm run build:production",
     "pretest": "./scripts/init_test_targets.sh",
     "test": "NODE_ENV=test ts-mocha ./src/project.spec.ts",
-    "test:watch": "nodemon -w ./src -e ts --exec \"npm run test\"",
+    "test:watch": "./scripts/watch.sh test",
     "test:find": "NODE_ENV=test ts-mocha ./src/utils/rx/fs/find.spec.ts",
     "test:find:watch": "./scripts/watch.sh test:find",
     "pretest:cmd:index": "npm run build",
@@ -62,7 +62,9 @@
     "ember-source": "^2.12.1",
     "kio-ng2": "github:afkmatze/kio-ng2",
     "kio-ng2-component-routing": "github:afkmatze/kio-ng2-component-routing",
+    "rxfs": "git+ssh://git@dergoldenefoehn.de:/opt/git/rxfs.git",
     "rxjs": "^5.3.0",
+    "rxshell": "git+ssh://git@dergoldenefoehn.de:/opt/git/rxshell.git",
     "shelljs": "^0.7.7",
     "yargs": "^7.0.2"
   },

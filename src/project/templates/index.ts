@@ -5,7 +5,7 @@ import * as indexes from './indexes'
 import * as logger from '../../console'
 import * as publicationComponent from './publicationComponent'
 import { Observable } from 'rxjs'
-import * as rxfs from '../../utils/rx/fs'
+import * as rxfs from 'rxfs'
 
 const TEMPLATES_ROOT = path.resolve(__dirname,'../../../templates')
 
@@ -22,7 +22,7 @@ export const shouldUpdateFile = ( targetFilepath:string, contents:string ) => {
     return Observable.of(true)
   }
 
-  return rxfs.readfile(targetFilepath,true).flatMap ( currentContents => {
+  return rxfs.readFile(targetFilepath).toArray().map(rows => rows.join('\n')).flatMap ( currentContents => {
     if ( currentContents.length !== contents.length )
     {
       logUpdateReason(`different size. current size: ${currentContents.length}, next size: ${contents.length} `, targetFilepath)
@@ -50,12 +50,12 @@ export const replaceFile = ( targetFilepath:string , contents:string ) => {
   if ( !rxfs.existsSync(targetDirParent) )
     return Observable.throw('Invalid target path. ' + targetDirParent + ' is not a directory.')
   return rxfs
-    .mkdir(targetDirpath,true)
+    .mkdir(targetDirpath)
     .flatMap( dir => {
       return shouldUpdateFile(targetFilepath,contents)
         .flatMap ( (result) => {
           
-          return result ? rxfs.writeFile ( targetFilepath, contents ).map(()=>true) : Observable.of(false)
+          return result ? rxfs.writeFile ( targetFilepath, Observable.of(new Buffer(contents)) ).map(()=>true) : Observable.of(false)
         } )
     })
 }
@@ -65,7 +65,8 @@ export const renderTemplateWithData = ( templateName:string, data:any ) => {
   const TEMPLATE_DIR = path.join(TEMPLATES_ROOT,templateName)
   return files.list(TEMPLATE_DIR)
        .flatMap( file => {
-         return rxfs.readFile(file, 'utf8').map ( content => ({ 
+         return rxfs.readFile<string>(file, 'utf8')
+         .map ( content => ({ 
            file: path.relative(TEMPLATE_DIR, file),
            content 
          }))

@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxfs = require("../../../utils/rx/fs");
+var rxfs = require("rxfs");
 var path = require("path");
 var ejs = require("ejs");
 var string_1 = require("../../../utils/string");
@@ -8,9 +8,9 @@ var rxjs_1 = require("rxjs");
 var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates/index');
 exports.render = function (indexName, data) {
     return rxfs
-        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'), 'utf8')
+        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'))
         .flatMap(function (contents) {
-        return rxjs_1.Observable.of(ejs.render(contents, data));
+        return rxjs_1.Observable.of(ejs.render(contents.toString('utf8'), data));
     }).map(function (contents) {
         //console.log('contents\n----\n',contents,'\n----\n')
         return contents;

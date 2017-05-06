@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
-var rxfs = require("./rx/fs");
+var rxfs = require("rxfs");
 var stringUtils = require('ember-cli-string-utils');
 exports.dasherize = function (str) { return stringUtils.dasherize(str); };
 exports.decamelize = function (str) { return stringUtils.decamelize(str); };

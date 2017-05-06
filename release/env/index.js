@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./interfaces"));
 __export(require("./constants"));
 __export(require("./resolve"));
+__export(require("./folder-settings"));
 var path = require("./path");
 exports.path = path;
 //# sourceMappingURL=index.js.map

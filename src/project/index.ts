@@ -1,12 +1,13 @@
 import { Observable, Scheduler } from 'rxjs'
 import * as path from 'path'
+import { ExecData } from 'rxfs'
 import { 
   Project, ProjectEnv,
   CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsTestComponents, CLICommandArgsCreateComponent,
   IndexType, IndexTypes
 } from './interfaces'
 
-import testRunner, { ComponentTest, renderTests, execTestAt, ExecData } from './testing'
+import testRunner, { ComponentTest, renderTests, execTestAt } from './testing'
 
 import * as env from '../env'
 import * as files from './files'
@@ -110,7 +111,7 @@ export const createComponent = ( args:CLICommandArgsCreateComponent ) => {
   const templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args)
   return templates.publicationComponent.render(templateData)
         .flatMap ( (template,idx) => {
-          const targetFile = path.join(env.KIO_PATHS.components.publication,template.filepath)
+          const targetFile = path.join(env.resolveKioPath('publication'),template.filepath)
           return templates.replaceFile(targetFile,template.content)
         } )
         .toArray()

@@ -8,7 +8,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxfs = require("../../../utils/rx/fs");
+var rxfs = require("rxfs");
 var env = require("../../../env");
 var stringUtils = require("../../../utils/string");
 var path = require("path");
@@ -24,8 +24,9 @@ exports.mapCLIArgsToTemplateData = function (args) {
     return __assign({}, args, { styles: path.relative(path.join(componentRoot, args.name), path.join(env.KIO_PROJECT_ROOT, 'src', 'scss')), selector: 'publication-' + stringUtils.dasherize(args.name), classifiedModuleName: stringUtils.classify(args.name), dasherizedModuleName: stringUtils.dasherize(args.name), classifiedParentComponentName: stringUtils.classify(parentName) + 'Component', dasherizedParentComponentPath: stringUtils.dasherize(parentName), pathToStructureComponents: '../../../components/' });
 };
 exports.render = function (data) {
-    return rxfs.findFiles(path.join(TEMPLATE_DIR, data.contentType), /\.\w+$/)
-        .flatMap(function (filename) { return rxfs.readfile(filename, true)
+    return rxfs.find(['-type', 'file'], path.join(TEMPLATE_DIR, data.contentType))
+        .map(function (streamData) { return streamData.stdout.toString('utf8'); })
+        .flatMap(function (filename) { return rxfs.readFile(filename).toArray().map(function (rows) { return rows.join('\n'); })
         .map(function (content) { return ({
         content: ejs.render(content.toString(), data),
         filepath: path.relative(TEMPLATE_DIR, filename)

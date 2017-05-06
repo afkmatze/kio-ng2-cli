@@ -18,6 +18,15 @@ describe('project api',()=>{
 
       it('has a package.json',()=>{
         assertFs(path.join(env.KIO_PROJECT_ROOT,'package.json')).toBeAFile()
+        assertFs(path.join(env.resolveRoot('package.json'))).toBeAFile()
+      })
+
+      it('can read package.json',()=>{
+        expect(env.resolveProjectPackage()).toExist()
+      })
+
+      it('package.json has kio key',()=>{
+        expect(env.resolveProjectPackage()).toContainKey("kio")
       })
 
     })
@@ -41,14 +50,43 @@ describe('project api',()=>{
     })
 
     it('emits publication components',(done)=>{
-      project.files.publicationComponents().subscribe ( file => {
-        //console.log('publication component',file)
+      project.files.publicationComponents().toArray().subscribe ( files => {
+        expect(files).toExist()
+        expect(files.length).toBeGreaterThan(0)
+        files.forEach ( (file:string) => {
+          expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
+        } )
+        //console.log('publication components',files)
+      }, done, done )
+    })
+
+    it('emits structure components',(done)=>{
+      project.files.structureComponents().toArray().subscribe ( files => {
+        expect(files).toExist()
+        expect(files.length).toBeGreaterThan(0)
+        files.forEach ( (file:string) => {
+          expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
+        } )
+      }, done, done )
+    })
+
+    it('emits navigation components',(done)=>{
+      project.files.navigationComponents().toArray().subscribe ( files => {
+        expect(files).toExist()
+        expect(files.length).toBeGreaterThan(0)
+        files.forEach ( (file:string) => {
+          expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
+        } )
       }, done, done )
     })
 
     it('emits publication component files',(done)=>{
-      project.files.publicationComponentFiles().subscribe ( files => {
-        //console.log('publication component files',files)
+      project.files.publicationComponentFiles().subscribe ( fileGroup => {
+        expect(fileGroup).toExist()
+        expect(fileGroup.length).toBeGreaterThan(0)
+        fileGroup.forEach ( (file:string) => {
+          expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
+        } )
       }, done, done )
     })
 

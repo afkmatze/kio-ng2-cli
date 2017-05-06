@@ -9,7 +9,7 @@ var logger = require("../../console");
 var publicationComponent = require("./publicationComponent");
 exports.publicationComponent = publicationComponent;
 var rxjs_1 = require("rxjs");
-var rxfs = require("../../utils/rx/fs");
+var rxfs = require("rxfs");
 var TEMPLATES_ROOT = path.resolve(__dirname, '../../../templates');
 var logUpdateReason = function (reason, targetFilepath) {
     logger.log('update %s for reason: %s ', path.basename(targetFilepath), reason);
@@ -19,7 +19,7 @@ exports.shouldUpdateFile = function (targetFilepath, contents) {
         logUpdateReason('does not exist', targetFilepath);
         return rxjs_1.Observable.of(true);
     }
-    return rxfs.readfile(targetFilepath, true).flatMap(function (currentContents) {
+    return rxfs.readFile(targetFilepath).toArray().map(function (rows) { return rows.join('\n'); }).flatMap(function (currentContents) {
         if (currentContents.length !== contents.length) {
             logUpdateReason("different size. current size: " + currentContents.length + ", next size: " + contents.length + " ", targetFilepath);
             return rxjs_1.Observable.of(true);
@@ -41,11 +41,11 @@ exports.replaceFile = function (targetFilepath, contents) {
     if (!rxfs.existsSync(targetDirParent))
         return rxjs_1.Observable.throw('Invalid target path. ' + targetDirParent + ' is not a directory.');
     return rxfs
-        .mkdir(targetDirpath, true)
+        .mkdir(targetDirpath)
         .flatMap(function (dir) {
         return exports.shouldUpdateFile(targetFilepath, contents)
             .flatMap(function (result) {
-            return result ? rxfs.writeFile(targetFilepath, contents).map(function () { return true; }) : rxjs_1.Observable.of(false);
+            return result ? rxfs.writeFile(targetFilepath, rxjs_1.Observable.of(new Buffer(contents))).map(function () { return true; }) : rxjs_1.Observable.of(false);
         });
     });
 };
@@ -53,7 +53,8 @@ exports.renderTemplateWithData = function (templateName, data) {
     var TEMPLATE_DIR = path.join(TEMPLATES_ROOT, templateName);
     return files.list(TEMPLATE_DIR)
         .flatMap(function (file) {
-        return rxfs.readFile(file, 'utf8').map(function (content) { return ({
+        return rxfs.readFile(file, 'utf8')
+            .map(function (content) { return ({
             file: path.relative(TEMPLATE_DIR, file),
             content: content
         }); });

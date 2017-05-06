@@ -68,6 +68,25 @@ exports.printStackItem = function (item, short) {
     if (short === void 0) { short = true; }
     return "(./" + (item.filepath ? path.relative(ROOT_PATH, item.filepath) : '') + ":" + item.line + ":" + item.column + ")";
 };
+exports.DebuggerOptionsDefault = {
+    debugKey: 'debug',
+    envKey: 'KIO_CLI_ENV'
+};
+function createDebugger(opts) {
+    var _a = opts || {}, _b = _a.debugKey, debugKey = _b === void 0 ? exports.DebuggerOptionsDefault.debugKey : _b, _c = _a.envKey, envKey = _c === void 0 ? exports.DebuggerOptionsDefault.envKey : _c;
+    var envValue = process.env[envKey];
+    var envExpression = new RegExp(debugKey);
+    if (envExpression.test(envValue)) {
+        return writer("[" + debugKey + ":" + envKey + "]");
+    }
+    return function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+    };
+}
+exports.createDebugger = createDebugger;
 exports.debug = process.env.NODE_ENV === 'debug' ? writer("[DEBUG:kio-ng2-cli] ") : function () {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
@@ -95,4 +114,5 @@ exports.request = function (message, callback) {
         rl.question(message, validateAnswer);
     });
 };
+exports.default = createDebugger;
 //# sourceMappingURL=api.js.map

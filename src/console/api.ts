@@ -66,8 +66,32 @@ export const printStackItem = ( item=getStack()[0], short:boolean=true ) => {
   return `(./${item.filepath ? path.relative(ROOT_PATH,item.filepath) : ''}:${item.line}:${item.column})`
 }
 
-export const debug = process.env.NODE_ENV === 'debug' ? writer(`[DEBUG:kio-ng2-cli] `) : ( ...args:any[] )=>{}
+export interface DebuggerOptions {
+  debugKey?:string
+  envKey?:string
+}
 
+export const DebuggerOptionsDefault = {
+  debugKey: 'debug',
+  envKey: 'KIO_CLI_ENV'
+}
+
+export function createDebugger( opts?:DebuggerOptions ){
+  const {
+    debugKey=DebuggerOptionsDefault.debugKey,
+    envKey=DebuggerOptionsDefault.envKey
+  } = opts || {}
+
+  const envValue = process.env[envKey]
+  const envExpression = new RegExp(debugKey)
+  if ( envExpression.test(envValue) )
+  {
+    return writer(`[${debugKey}:${envKey}]`)
+  }
+  return ( ...args:any[] ) => {}
+}
+
+export const debug = process.env.NODE_ENV === 'debug' ? writer(`[DEBUG:kio-ng2-cli] `) : ( ...args:any[] )=>{}
 
 export const request = ( message:string, callback:RequestCallback ):Promise<any> => {
   const options:readline.ReadLineOptions = {
@@ -95,3 +119,5 @@ export const request = ( message:string, callback:RequestCallback ):Promise<any>
     rl.question(message,validateAnswer)
   })
 }
+
+export default createDebugger

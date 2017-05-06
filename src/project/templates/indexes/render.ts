@@ -1,4 +1,4 @@
-import * as rxfs from '../../../utils/rx/fs'
+import * as rxfs from 'rxfs'
 import * as env from '../../../env'
 import * as path from 'path'
 import * as ejs from 'ejs'
@@ -13,10 +13,10 @@ const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/index')
 
 export const render = ( indexName:string, data:IndexTemplateData ) => {
   return rxfs
-    .readFile(path.join(TEMPLATE_DIR,'ComponentIndex.ts'),'utf8')
+    .readFile<Buffer>(path.join(TEMPLATE_DIR,'ComponentIndex.ts'))
     .flatMap( 
       contents => {
-        return Observable.of(ejs.render(contents,data))
+        return Observable.of(ejs.render(contents.toString('utf8'),data))
       } 
     ).map ( contents => {
       //console.log('contents\n----\n',contents,'\n----\n')

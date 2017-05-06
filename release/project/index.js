@@ -80,7 +80,7 @@ exports.createComponent = function (args) {
     var templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args);
     return templates.publicationComponent.render(templateData)
         .flatMap(function (template, idx) {
-        var targetFile = path.join(env.KIO_PATHS.components.publication, template.filepath);
+        var targetFile = path.join(env.resolveKioPath('publication'), template.filepath);
         return templates.replaceFile(targetFile, template.content);
     })
         .toArray()

@@ -1,15 +1,14 @@
 import { Observable } from 'rxjs'
 import * as path from 'path'
 import * as env from '../../env'
-import * as rxfs from '../../utils/rx/fs'
-import { ExecData } from '../../utils/rx/fs'
+import * as rxfs from 'rxfs'
+import { ExecData } from 'rxfs'
 import * as stringUtils from '../../utils/string'
 export * from './Runner.class'
 import { TestRunner, ComponentTest } from './Runner.class'
 import * as templates from '../templates'
 import * as files from '../files'
 
-export { ExecData }
 
 const runner = new TestRunner()
 
@@ -32,7 +31,7 @@ export const renderTests = ( targetFilename:string ) => {
           })
           .flatMap (
             ({file,content}) => {
-              return rxfs.writeFile(targetFilepath,content).map ( () => path.relative(process.cwd(),targetFilepath) )
+              return rxfs.writeFile(targetFilepath,Observable.of(new Buffer(content))).map ( () => path.relative(process.cwd(),targetFilepath) )
             }
           )
       }, 1 )

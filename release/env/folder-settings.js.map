@@ -1,0 +1,1 @@
+{"version":3,"file":"folder-settings.js","sourceRoot":"","sources":["../../src/env/folder-settings.ts"],"names":[],"mappings":";;AAEa,QAAA,gBAAgB,GAAG;IAC9B,aAAa;CACd,CAAA;AAEY,QAAA,cAAc,GAAG,UAAE,GAAuB;IACrD,EAAE,CAAC,CAAE,QAAQ,KAAK,OAAO,GAAI,CAAC,CAC9B,CAAC;QACC,MAAM,CAAC;YACL,IAAI,EAAE,GAAG;YACT,OAAO,EAAE,wBAAgB;SAC1B,CAAA;IACH,CAAC;IACD,MAAM,CAAC,GAAG,CAAA;AACZ,CAAC,CAAA"}
