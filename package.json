@@ -10,7 +10,7 @@
     "prebuild": "rm -rf ./release",
     "build": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "build:watch": "nodemon -w ./src -e ts --exec \"npm run build\"",
-    "prebuild:production": "rm -rf ./release; npm run doc",
+    "prebuild:production": "rm -rf ./release",
     "build:production": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "doc": "typedoc --out documentation",
     "preversion": "npm run build:production",
