@@ -1,8 +1,8 @@
 import { Observable } from 'rxjs';
-import { KioFolderSettings, KioFolderSettingArg, KioFileFilter } from '../../env';
+import { KioFolderSettingArg, KioFileFilter } from '../../env';
 import { IndexTypes } from '../interfaces';
-export declare const resolveRootByIndexType: (indexType: IndexTypes) => KioFolderSettings;
-export declare const filepathFilter: (filter: string | RegExp | KioFileFilter[]) => any;
+export declare const resolveRootByIndexType: (indexType: IndexTypes) => "publication" | "structure" | "navigation";
+export declare const filepathFilter: (filter: string | RegExp | KioFileFilter[], include?: boolean) => any;
 export declare const list: (sourcePath: KioFolderSettingArg) => Observable<string>;
 export declare const kioFiles: (kioPathType: string) => Observable<string>;
 export declare const publicationComponents: () => Observable<string>;

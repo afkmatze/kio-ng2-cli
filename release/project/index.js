@@ -10,6 +10,8 @@ exports.files = files;
 var templates = require("./templates");
 exports.templates = templates;
 var _ = require("lodash");
+var logger = require("../console");
+var debug = logger.createDebugger();
 var indexNames = {
     publication: 'PublicationComponents',
     fixture: 'PublicationFixtures',
@@ -48,13 +50,18 @@ exports.buildIndexes = function (args) {
             : true);
     });
     //.map ( (indexTypeName:string) => IndexTypes[indexTypeName] )
+    debug('build index types: %s', indexTypes);
     return rxjs_1.Observable.from(indexTypes.map(function (indexType) { return mapIndexType(indexType); }))
         .flatMap(function (indexType) {
-        var source = files.filesForIndexType(indexType);
+        debug('indexType: ', indexType);
+        var source = files.filesForIndexType(indexType).map(function (row, idx) {
+            debug('source file #%s: %s', idx, path.relative(process.cwd(), row));
+            return row;
+        });
         var indexName = indexNames[nameForType(mapIndexType(indexType))];
         return templates.indexes.mapFilesToTemplateData(indexName, source, env.resolve(env.KIO_PATHS.root))
             .map(function (templateData, idx) {
-            console.log('templateData indexName', idx, indexName);
+            debug('templateData indexName', idx, indexName);
             return {
                 indexName: indexName,
                 templateData: templateData

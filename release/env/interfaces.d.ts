@@ -3,6 +3,7 @@ import { IndexType } from '../project/interfaces';
 export declare type KioFileFilter = string | RegExp;
 export interface KioFolderSettings {
     path: string;
+    include?: KioFileFilter[];
     exclude: KioFileFilter[];
 }
 export declare type KioFolderSettingArg = string | KioFolderSettings;

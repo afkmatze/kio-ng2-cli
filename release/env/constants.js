@@ -16,7 +16,6 @@ exports.KIO_PROJECT_ROOT = resolve_1.moduleRoot();
 exports.KIO_PROJECT_PACKAGE = require(path.join(exports.KIO_PROJECT_ROOT, 'package.json'));
 exports.KIO_PROJECT_CACHE = resolve_1.resolveRoot('.kio-ng2-cache');
 var projectPackage = resolve_1.resolveProjectPackage();
-debug('project package: ', projectPackage);
 exports.KIO_PATHS = {
     root: projectPackage.kio.root,
     components: {

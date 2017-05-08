@@ -19,7 +19,6 @@ export const KIO_PROJECT_PACKAGE = require(path.join(KIO_PROJECT_ROOT,'package.j
 export const KIO_PROJECT_CACHE = resolveRoot('.kio-ng2-cache')
 
 const projectPackage = resolveProjectPackage()
-debug('project package: ', projectPackage)
 
 export const KIO_PATHS:KioProjectPaths = {
   root: projectPackage.kio.root,

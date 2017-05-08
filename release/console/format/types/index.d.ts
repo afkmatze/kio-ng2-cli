@@ -1,0 +1,13 @@
+export * from './interfaces';
+export { FormatValueType } from './type.class';
+import { FormatValueType } from './type.class';
+import StringType from './string';
+import NumberType from './number';
+import ObjectType from './object';
+import BooleanType from './boolean';
+export declare const stringType: StringType;
+export declare const numberType: NumberType;
+export declare const objectType: ObjectType;
+export declare const booleanType: BooleanType;
+export declare const Types: FormatValueType<any>[];
+export default Types;

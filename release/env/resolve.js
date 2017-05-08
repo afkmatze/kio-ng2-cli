@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger = require("../console");
 var path = require("./path");
 var fs = require("fs");
 var folder_settings_1 = require("./folder-settings");
+var logger = require("../console");
 var debug = logger.createDebugger();
 exports.isInstalled = function () {
     if (process && process.argv && /\/kio\-ng2$/.test(process.argv[1] || ""))
@@ -79,7 +79,7 @@ exports.resolveProjectPackage = function () {
         var json = fs.readFileSync(packagePath, 'utf8');
         debug('json:', json);
         projectPackage = JSON.parse(json) || require('./' + packagePath);
-        debug('package contents: ', projectPackage);
+        debug('package key config: ', projectPackage.kio);
     }
     return projectPackage;
 };
@@ -88,7 +88,6 @@ exports.resolveProjectCache = function () {
 };
 exports.resolveKioPathSettings = function (pathName) {
     var packageInfo = exports.resolveProjectPackage();
-    debug('package info: %s', packageInfo);
     var folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
     return folder_settings_1.folderSettings(folder);
 };

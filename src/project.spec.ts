@@ -90,6 +90,17 @@ describe('project api',()=>{
       }, done, done )
     })
 
+    it('emits publication component fixtures',(done)=>{
+      project.files.publicationComponentFixtures().toArray().subscribe ( files => {
+        expect(files).toExist()
+        expect(files.length).toBeGreaterThan(0)
+        console.log('%s files', files.length, files.map ( f => path.basename(f) ))
+        files.forEach ( (file:string) => {
+          expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
+        } )
+      }, done, done )
+    })
+
   })
 
 })

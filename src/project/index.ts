@@ -14,6 +14,9 @@ import * as files from './files'
 import { cache, ComponentCacheFileContent, ComponentFixture } from './cache'
 import * as templates from './templates'
 import * as _ from 'lodash'
+import * as logger from '../console'
+
+const debug = logger.createDebugger()
 
 const indexNames = {
   publication: 'PublicationComponents',
@@ -66,14 +69,19 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
       )
     } )
     //.map ( (indexTypeName:string) => IndexTypes[indexTypeName] )
-
+  debug('build index types: %s', indexTypes)
   return Observable.from(indexTypes.map(indexType => mapIndexType(indexType)))
             .flatMap ( (indexType:IndexType) => {
-              const source = files.filesForIndexType(indexType)
+              debug('indexType: ', indexType)
+
+              const source = files.filesForIndexType(indexType).map ( (row,idx) => {
+                debug ( 'source file #%s: %s', idx, path.relative(process.cwd(),row) )
+                return row
+              } )
               const indexName = indexNames[nameForType(mapIndexType(indexType))]
               return templates.indexes.mapFilesToTemplateData(indexName,source,env.resolve(env.KIO_PATHS.root))
                   .map ( (templateData,idx) => {
-                    console.log('templateData indexName',idx,indexName)
+                    debug('templateData indexName',idx,indexName)
                     return {
                       indexName: indexName,
                       templateData

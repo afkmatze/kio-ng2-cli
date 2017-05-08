@@ -6,6 +6,7 @@ export type KioFileFilter = string|RegExp
 
 export interface KioFolderSettings {
   path: string
+  include?: KioFileFilter[]
   exclude: KioFileFilter[]
 }
 

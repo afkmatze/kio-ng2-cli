@@ -1,8 +1,8 @@
-import * as logger from '../console'
 import * as path from './path'
 import * as fs from 'fs'
 import { KioComponentsPaths, KioComponentsPathType, KioProjectPaths, KioFolderSettingArg, KioFileFilter, KioFolderSettings } from './interfaces'
 import { folderSettings } from './folder-settings'
+import * as logger from '../console'
 
 const debug = logger.createDebugger()
 
@@ -97,9 +97,8 @@ export const resolveProjectPackage = ():any => {
     const json = fs.readFileSync(packagePath,'utf8')
     debug('json:',json)
     projectPackage = JSON.parse ( json ) || require('./'+packagePath)
-    debug('package contents: ', projectPackage)
+    debug('package key config: ', projectPackage.kio)
   }
-
   return projectPackage  
 }
 
@@ -110,7 +109,6 @@ export const resolveProjectCache = () => {
 
 export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathName?:T ):KioFolderSettings => {
   const packageInfo = resolveProjectPackage()
-  debug('package info: %s', packageInfo)
   const folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root
   return folderSettings(folder)
 }
