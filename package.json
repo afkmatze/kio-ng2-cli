@@ -69,9 +69,9 @@
     "ember-source": "^2.12.1",
     "kio-ng2": "github:afkmatze/kio-ng2",
     "kio-ng2-component-routing": "github:afkmatze/kio-ng2-component-routing",
-    "rxfs": "git+ssh://git@dergoldenefoehn.de:/opt/git/rxfs.git",
+    "rxfs": "github:afkmatze/rxfs",
     "rxjs": "^5.3.0",
-    "rxshell": "git+ssh://git@dergoldenefoehn.de:/opt/git/rxshell.git",
+    "rxshell": "github:afkmatze/rxshell",
     "shelljs": "^0.7.7",
     "yargs": "^7.0.2"
   },
