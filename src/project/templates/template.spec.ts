@@ -2,7 +2,7 @@ import 'mocha'
 import expect, { assert } from 'ceylon'
 import assertFs from '../../assert/fs'
 import { Observable, Scheduler } from 'rxjs'
-import * as rxfs from '../../utils/rx/fs'
+import * as rxfs from 'rxfs'
 
 import * as template from './'
 

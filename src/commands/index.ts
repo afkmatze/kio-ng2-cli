@@ -13,71 +13,10 @@ export const CREATE_COMPONENT:string = "component"
 
 /** CREATE COMPONENT */
 
+import { createComponentCommand } from './createComponent'
+import { buildIndexesCommand } from './buildIndexes'
+import { testComponentsCommand } from './testComponents'
 
-export const createComponentCommand:yargs.CommandModule = {
-  command: 'createComponent',
-  aliases: ['create'],
-  describe: 'Creates a new publication component',
-  builder: ( argv ) => {
-    return argv
-      .usage('Usage: $0 <command> <ComponentName>')
-      .demand(1)
-      .option('contentType',{
-        alias: 't',
-        choices: ['txt','src','fragment'],
-        demand: true
-      })
-      .option('modifiers',{
-        alias: 'm',
-        type: 'array',
-        describe: 'list of modifiers'
-      })
-      .option('childTypes',{
-        alias: 'c',
-        describe: 'child type content types',
-        type: 'array'
-      })
-  },  
-  handler: (args:any|env.CommandConfigCreateComponent) => {
-    const [ command, componentName ] = args._    
-    
-    const sub = project.createComponent({
-      ...args,
-      name: componentName
-    }).subscribe(value=> {}, error=>{
-      console.error(error)
-    },()=>{
-      if ( sub )
-      {
-        sub.unsubscribe()
-      }
-    })
-      
-  }
-}
-
-export const buildIndexesCommand:yargs.CommandModule = {
-  command: 'buildIndexes',
-  aliases: ['index'],
-  describe: 'Updates index files in ' + env.KIO_PATHS.root,
-  builder: ( argv ) => {
-    return argv
-      .usage('Usage: $0 index [publication|structure|fixture|criteria]')
-      .option('filter',{
-        alias: 'f',
-        choices: ['publication','navigation','structure','fixture','criteria'],
-        default: ['publication','navigation','structure','fixture','criteria'],
-        demand: true
-      })
-  },  
-  handler: (args:any) => {
-    const [ command ] = args._
-    return project.buildIndexes(args).toPromise()
-      .catch(error => {
-        console.error(error)
-      })
-  }
-}
 
 export const exec = ( command:"indexes"|string ) => {
 
@@ -106,6 +45,7 @@ export const exec = ( command:"indexes"|string ) => {
       default: path.resolve('kio-ng2.config.json')      
     })
     .command(createComponentCommand)
+    .command(testComponentsCommand)
     .command(buildIndexesCommand)
     .demand(1)
     .help('h')

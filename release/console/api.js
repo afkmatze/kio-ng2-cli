@@ -3,22 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var chalk = require("chalk");
 var path = require("path");
 var readline = require("readline");
-var format_1 = require("./format");
+var writer_1 = require("./writer");
+var create_1 = require("./debug/create");
+exports.createDebugger = create_1.createDebugger;
 var pckg = require('../../package.json');
 var ROOT_PATH = path.resolve(__dirname, '../../');
 exports.banner = function () {
     console.log('%s v%s', chalk.yellow(pckg.name), pckg.version);
 };
-var writer = function (prefix) { return function (format) {
-    var args = [];
-    for (var _i = 1; _i < arguments.length; _i++) {
-        args[_i - 1] = arguments[_i];
-    }
-    var out = format_1.formatter.printf.apply(format_1.formatter, [format].concat(args));
-    //console.log ( chalk.dim(prefix) + format, ...args )  
-    console.log(chalk.dim(prefix) + out);
-}; };
-exports.log = writer('[kio-ng2-cli] ');
+exports.log = writer_1.writer('[kio-ng2-cli] ');
 exports.logError = function (error, exit) {
     if (exit === void 0) { exit = true; }
     console.log(chalk.red(error));
@@ -68,7 +61,7 @@ exports.printStackItem = function (item, short) {
     if (short === void 0) { short = true; }
     return "(./" + (item.filepath ? path.relative(ROOT_PATH, item.filepath) : '') + ":" + item.line + ":" + item.column + ")";
 };
-exports.debug = process.env.NODE_ENV === 'debug' ? writer("[DEBUG:kio-ng2-cli] ") : function () {
+exports.debug = process.env.NODE_ENV === 'debug' ? writer_1.writer("[DEBUG:kio-ng2-cli] ") : function () {
     var args = [];
     for (var _i = 0; _i < arguments.length; _i++) {
         args[_i] = arguments[_i];
@@ -95,4 +88,5 @@ exports.request = function (message, callback) {
         rl.question(message, validateAnswer);
     });
 };
+exports.default = create_1.createDebugger;
 //# sourceMappingURL=api.js.map

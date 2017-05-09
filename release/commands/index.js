@@ -1,78 +1,15 @@
 "use strict";
-var __assign = (this && this.__assign) || Object.assign || function(t) {
-    for (var s, i = 1, n = arguments.length; i < n; i++) {
-        s = arguments[i];
-        for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p))
-            t[p] = s[p];
-    }
-    return t;
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 var env = require("../env");
 var path = require("path");
 var console_1 = require("../console");
 var yargs = require("yargs");
-var project = require("../project");
 exports.BUILD_INDEXES = "indexes";
 exports.CREATE_COMPONENT = "component";
 /** CREATE COMPONENT */
-exports.createComponentCommand = {
-    command: 'createComponent',
-    aliases: ['create'],
-    describe: 'Creates a new publication component',
-    builder: function (argv) {
-        return argv
-            .usage('Usage: $0 <command> <ComponentName>')
-            .demand(1)
-            .option('contentType', {
-            alias: 't',
-            choices: ['txt', 'src', 'fragment'],
-            demand: true
-        })
-            .option('modifiers', {
-            alias: 'm',
-            type: 'array',
-            describe: 'list of modifiers'
-        })
-            .option('childTypes', {
-            alias: 'c',
-            describe: 'child type content types',
-            type: 'array'
-        });
-    },
-    handler: function (args) {
-        var _a = args._, command = _a[0], componentName = _a[1];
-        var sub = project.createComponent(__assign({}, args, { name: componentName })).subscribe(function (value) { }, function (error) {
-            console.error(error);
-        }, function () {
-            if (sub) {
-                sub.unsubscribe();
-            }
-        });
-    }
-};
-exports.buildIndexesCommand = {
-    command: 'buildIndexes',
-    aliases: ['index'],
-    describe: 'Updates index files in ' + env.KIO_PATHS.root,
-    builder: function (argv) {
-        return argv
-            .usage('Usage: $0 index [publication|structure|fixture|criteria]')
-            .option('filter', {
-            alias: 'f',
-            choices: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
-            default: ['publication', 'navigation', 'structure', 'fixture', 'criteria'],
-            demand: true
-        });
-    },
-    handler: function (args) {
-        var command = args._[0];
-        return project.buildIndexes(args).toPromise()
-            .catch(function (error) {
-            console.error(error);
-        });
-    }
-};
+var createComponent_1 = require("./createComponent");
+var buildIndexes_1 = require("./buildIndexes");
+var testComponents_1 = require("./testComponents");
 exports.exec = function (command) {
     console_1.banner();
     if (!env.KIO_PROJECT_ROOT || path.basename(env.KIO_PROJECT_ROOT) === 'kio-ng2-cli') {
@@ -93,8 +30,9 @@ exports.exec = function (command) {
         description: 'cli config file',
         default: path.resolve('kio-ng2.config.json')
     })
-        .command(exports.createComponentCommand)
-        .command(exports.buildIndexesCommand)
+        .command(createComponent_1.createComponentCommand)
+        .command(testComponents_1.testComponentsCommand)
+        .command(buildIndexes_1.buildIndexesCommand)
         .demand(1)
         .help('h')
         .argv;

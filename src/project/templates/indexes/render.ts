@@ -1,4 +1,5 @@
-import * as rxfs from '../../../utils/rx/fs'
+import * as rxfs from 'rxfs'
+import * as env from '../../../env'
 import * as path from 'path'
 import * as ejs from 'ejs'
 import { dasherize, classify, camelize } from '../../../utils/string'
@@ -7,6 +8,26 @@ import { IndexTemplateData, IndexTemplateDataItem, IndexType, IndexTypes } from 
 import { Component, ComponentType, PublicationComponent, StructureComponent, NavigationComponent } from '../../interfaces'
 
 const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/index')
+
+
+
+export const render = ( indexName:string, data:IndexTemplateData ) => {
+  return rxfs
+    .readFile<Buffer>(path.join(TEMPLATE_DIR,'ComponentIndex.ts'))
+    .toArray().map ( rows => rows.join('\n') )
+    .flatMap( 
+      contents => {
+        //console.log('render(%s)\n-----\n\x1b[2m', indexName, contents,'\n-----\x1b[0m')
+        //console.log(data)
+        return Observable.of(ejs.render(contents,data))
+      } 
+    ).map ( contents => {
+      //console.log('contents\n----\n',contents,'\n----\n')
+      return contents
+    } )
+}
+
+
 
 export const mapTemplateData = <ComponentType>( component:Component<ComponentType>, relativeTo:string ):IndexTemplateDataItem => {
   const item:IndexTemplateDataItem = {
@@ -17,11 +38,15 @@ export const mapTemplateData = <ComponentType>( component:Component<ComponentTyp
 }
 
 export const mapFilesToTemplateData = ( exportName:string, files:Observable<string>, relativeTo:string ):Observable<IndexTemplateData> => {
-  return files.toArray()
+  return files
+          .toArray()
           .map( files => {
+            //console.log('mapFilesToTemplate::exportName',exportName,files)
             return {
               exportName,
-              indexItems: files.map( file => mapFileToTemplateDataItem(file,relativeTo) )
+              indexItems: files
+                .map( file => mapFileToTemplateDataItem(file,relativeTo) )
+                .filter ( item => !!item.importName )
             }
           }) 
 
@@ -29,8 +54,14 @@ export const mapFilesToTemplateData = ( exportName:string, files:Observable<stri
 
 export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):IndexTemplateDataItem => {
 
-  const componentBaseName = path.basename(filepath,'.ts').split('.component').join('')
+  const componentBaseName = path.basename(filepath,'.ts').split('.component')
+                            .map( val => val.replace('.cquery','') )
+                            .join('')
   const [ componentName='', typeName='' ] = componentBaseName.split('.') || []
+
+  //console.log('componentBaseName',componentBaseName)
+  //console.log('componentName',componentName)
+  //console.log('typeName',typeName)
 
   const componentRoot = path.relative(relativeTo,path.dirname(filepath))
 
@@ -43,6 +74,7 @@ export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):
     importName: classify(componentName),
     importPath: './'+path.relative(relativeTo,filepath)
   }
+  //console.log('map template data - relativeTo', item.importPath)
 
   if ( !rxfs.existsSync(path.resolve(relativeTo,path.dirname(item.importPath))) )
   {
@@ -67,11 +99,4 @@ export const mapFileToTemplateDataItem = ( filepath:string, relativeTo:string ):
     item.importAlias = 'Criteria'
   }
   return item
-}
-
-export const render = ( indexName:string, data:IndexTemplateData ) => {
-  return rxfs.readfile(path.join(TEMPLATE_DIR,'ComponentIndex.ts'),true)
-        .flatMap( contents => {
-          return Observable.of(ejs.render(contents.toString(),data))
-        } )
 }

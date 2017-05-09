@@ -1,6 +1,10 @@
 import * as path from './path'
-import { KioComponentsPaths, KioProjectPaths } from './interfaces'
+import * as fs from 'fs'
+import { KioComponentsPaths, KioComponentsPathType, KioProjectPaths, KioFolderSettingArg, KioFileFilter, KioFolderSettings } from './interfaces'
+import { folderSettings } from './folder-settings'
+import * as logger from '../console'
 
+const debug = logger.createDebugger()
 
 export const isInstalled = () => {
   if ( process && process.argv && /\/kio\-ng2$/.test(process.argv[1]||"") )
@@ -12,11 +16,16 @@ export const cliRoot = () => {
   return __dirname.replace(/kio\-ng2\-cli\/.*/,'kio-ng2-cli')
 }
 
+let __moduleRoot
 export const moduleRoot = () => {
+  if ( __moduleRoot )
+    return __moduleRoot
 
   if ( process.env.KIO_NG2_PROJECT )
   {
-    return process.env.KIO_NG2_PROJECT
+    debug('Use project path from environment variable KIO_NG2_PROJECT: "%s"', process.env.KIO_NG2_PROJECT )
+    __moduleRoot = process.env.KIO_NG2_PROJECT
+    return __moduleRoot
   }
   
   let resolvedPath:string
@@ -39,10 +48,14 @@ export const moduleRoot = () => {
 
   if ( resolvedPath )
   {
-    return path.resolveFull(resolvedPath)
+    resolvedPath = path.resolveFull(resolvedPath)
+  } else {
+    resolvedPath = path.resolve('./')
   }
 
-  return path.resolve('./')
+  debug('resolve module root: %s', resolvedPath)
+  __moduleRoot = resolvedPath
+  return resolvedPath
 }
 
 /**
@@ -55,7 +68,7 @@ export const moduleRoot = () => {
 export const resolveRoot = ( projectPath:string ) => {
   if ( path.isAbsolute(projectPath) )
     return projectPath
-  return path.resolveFull(path.join(moduleRoot(),projectPath))
+  return path.resolve(path.join(moduleRoot(),projectPath))
 }
 
 export const relative = ( absProjectPath:string ) => {
@@ -74,8 +87,19 @@ export const resolveProjectPackagePath = () => {
   return resolveRoot('package.json')
 }
 
+let projectPackage
+
 export const resolveProjectPackage = ():any => {
-  return require(resolveProjectPackagePath())
+  if ( !projectPackage )
+  {
+    const packagePath = resolveProjectPackagePath()
+    debug('package path: %s', packagePath)
+    const json = fs.readFileSync(packagePath,'utf8')
+    debug('json:',json)
+    projectPackage = JSON.parse ( json ) || require('./'+packagePath)
+    debug('package key config: ', projectPackage.kio)
+  }
+  return projectPackage  
 }
 
 
@@ -83,9 +107,15 @@ export const resolveProjectCache = () => {
   return resolveRoot('.kio-ng2-cache')
 }
 
-export const resolveKioPath = ( pathName?:keyof KioComponentsPaths ) => {
+export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathName?:T ):KioFolderSettings => {
   const packageInfo = resolveProjectPackage()
-  return packageInfo.kio [ pathName || 'root' ]
+  const folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root
+  return folderSettings(folder)
+}
+
+export const resolveKioPath = ( pathName?:KioComponentsPathType ) => {
+  const kioPath = resolveKioPathSettings ( pathName )
+  return kioPath.path
 }
 
 export const resolve = ( ...pathNames:string[] ) => {

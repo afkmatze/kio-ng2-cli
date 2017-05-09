@@ -3,12 +3,15 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var path = require("path");
 var interfaces_1 = require("./interfaces");
+var testing_1 = require("./testing");
 var env = require("../env");
 var files = require("./files");
 exports.files = files;
 var templates = require("./templates");
 exports.templates = templates;
 var _ = require("lodash");
+var logger = require("../console");
+var debug = logger.createDebugger();
 var indexNames = {
     publication: 'PublicationComponents',
     fixture: 'PublicationFixtures',
@@ -47,12 +50,18 @@ exports.buildIndexes = function (args) {
             : true);
     });
     //.map ( (indexTypeName:string) => IndexTypes[indexTypeName] )
+    debug('build index types: %s', indexTypes);
     return rxjs_1.Observable.from(indexTypes.map(function (indexType) { return mapIndexType(indexType); }))
         .flatMap(function (indexType) {
-        var source = files.filesForIndexType(indexType);
+        debug('indexType: ', indexType);
+        var source = files.filesForIndexType(indexType).map(function (row, idx) {
+            debug('source file #%s: %s', idx, path.relative(process.cwd(), row));
+            return row;
+        });
         var indexName = indexNames[nameForType(mapIndexType(indexType))];
-        return templates.indexes.mapFilesToTemplateData(indexName, source, env.KIO_PATHS.root)
-            .map(function (templateData) {
+        return templates.indexes.mapFilesToTemplateData(indexName, source, env.resolve(env.KIO_PATHS.root))
+            .map(function (templateData, idx) {
+            debug('templateData indexName', idx, indexName);
             return {
                 indexName: indexName,
                 templateData: templateData
@@ -62,7 +71,7 @@ exports.buildIndexes = function (args) {
         .flatMap(function (item) { return templates.indexes
         .render(item.indexName, item.templateData)
         .flatMap(function (contents) {
-        var indexFileName = path.join(env.KIO_PATHS.root, item.indexName + '.generated.ts');
+        var indexFileName = env.resolve(env.KIO_PATHS.root, item.indexName + '.generated.ts');
         return templates.replaceFile(indexFileName, contents).map(function (status) { return ({
             indexFileName: path.relative(env.KIO_PROJECT_ROOT, indexFileName),
             status: status
@@ -78,12 +87,26 @@ exports.createComponent = function (args) {
     var templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args);
     return templates.publicationComponent.render(templateData)
         .flatMap(function (template, idx) {
-        var targetFile = path.join(env.KIO_PATHS.components.publication, template.filepath);
+        var targetFile = path.join(env.resolveKioPath('publication'), template.filepath);
         return templates.replaceFile(targetFile, template.content);
     })
         .toArray()
         .flatMap(function (list) {
         return list.indexOf(true) > -1 ? exports.buildIndexes({}).toPromise() : rxjs_1.Observable.empty();
     });
+};
+exports.testComponents = function (args) {
+    var targetFilepath = path.join(path.resolve('./'), 'ComponentTests.spec.ts');
+    console.log('writing spec file at "%s"', targetFilepath);
+    return testing_1.renderTests(targetFilepath)
+        .map(function (row, idx) {
+        console.log('item %s\n----\n', idx, row, '\n----\n');
+        return row;
+    }).flatMap(function (row) { return testing_1.execTestAt(targetFilepath); });
+    /*return Observable.zip(
+        files.filesForIndexType(IndexTypes.fixture),
+        files.filesForIndexType(IndexTypes.criteria)
+      ).toArray()
+    */
 };
 //# sourceMappingURL=index.js.map

@@ -52,6 +52,14 @@ exports.FileSystemAssertions = {
             actual: exports.getFSTypeForStats(stats)
         });
     },
+    toExist: function (not, actual, message) {
+        if (not === void 0) { not = false; }
+        var stats = exports.getStats(actual);
+        ceylon_1.assert({
+            assertion: !!stats !== not,
+            message: message || "expected " + actual + " " + (not ? 'not ' : '') + "to be a existing",
+        });
+    },
     toBeDirectory: function (not, actual, message) {
         if (not === void 0) { not = false; }
         return exports.FileSystemAssertions.toBeFSType(not, actual, "directory", message);
@@ -125,12 +133,14 @@ exports.default = function (filepath) {
         actual: filepath + ''
     };
     var assertions = {
+        toExist: function (message) { return exports.FileSystemAssertions.toExist(false, filepath, message || undefined); },
         toBeNewerThan: function (datetime, message) { return exports.FileAgeAssertion.toBeNewerThan(false, filepath, datetime, message || undefined); },
         toBeFSType: function (fsType, message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, fsType, message || undefined); },
         toBeDirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "directory", message || undefined); },
         toBeADirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "directory", message || undefined); },
         toBeFile: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "file", message || undefined); },
         toBeAFile: function (message) { return exports.FileSystemAssertions.toBeFSType(false, filepath, "file", message || undefined); },
+        toNotExist: function (message) { return exports.FileSystemAssertions.toExist(true, filepath, message || undefined); },
         toNotBeNewerThan: function (datetime, message) { return exports.FileAgeAssertion.toBeNewerThan(true, filepath, datetime, message || undefined); },
         toNotBeFSType: function (fsType, message) { return exports.FileSystemAssertions.toBeFSType(true, filepath, fsType, message || undefined); },
         toNotBeDirectory: function (message) { return exports.FileSystemAssertions.toBeFSType(true, filepath, "directory", message || undefined); },

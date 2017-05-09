@@ -3,7 +3,7 @@ import expect, { assert } from 'ceylon';
 import assertFs from './assert/fs';
 
 import * as env from './env'
-import * as rxfs from './utils/rx/fs'
+import * as rxfs from 'rxfs'
 import * as project from './project'
 import { ProjectEnv, Project } from './project/interfaces'
 

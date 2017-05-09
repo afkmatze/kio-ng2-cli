@@ -1,5 +1,5 @@
 import { Observable } from 'rxjs'
-import * as rxfs from '../../../utils/rx/fs'
+import * as rxfs from 'rxfs'
 import * as env from '../../../env'
 import * as stringUtils from '../../../utils/string'
 import * as path from 'path'
@@ -32,9 +32,11 @@ export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):P
 
 export const render = ( data:PublicationComponentTemplateData ) => {
 
-  return rxfs.findFiles(path.join(TEMPLATE_DIR,data.contentType),/\.\w+$/)
+  return rxfs.find(['-type','file'],path.join(TEMPLATE_DIR,data.contentType))
+            .map ( streamData => streamData.stdout.toString('utf8') )
+            //.filter ( filepath => !/\.\w+$/.test(filepath) )
             .flatMap ( 
-              filename => rxfs.readfile(filename,true)
+              filename => rxfs.readFile<string>(filename).toArray().map ( rows => rows.join('\n') )
                           .map(content => ({
                                 content: ejs.render(content.toString(),data),
                                 filepath: path.relative ( TEMPLATE_DIR, filename )

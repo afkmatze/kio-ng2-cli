@@ -1,6 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var path = require("./path");
+var fs = require("fs");
+var folder_settings_1 = require("./folder-settings");
+var logger = require("../console");
+var debug = logger.createDebugger();
 exports.isInstalled = function () {
     if (process && process.argv && /\/kio\-ng2$/.test(process.argv[1] || ""))
         return true;
@@ -9,9 +13,14 @@ exports.isInstalled = function () {
 exports.cliRoot = function () {
     return __dirname.replace(/kio\-ng2\-cli\/.*/, 'kio-ng2-cli');
 };
+var __moduleRoot;
 exports.moduleRoot = function () {
+    if (__moduleRoot)
+        return __moduleRoot;
     if (process.env.KIO_NG2_PROJECT) {
-        return process.env.KIO_NG2_PROJECT;
+        debug('Use project path from environment variable KIO_NG2_PROJECT: "%s"', process.env.KIO_NG2_PROJECT);
+        __moduleRoot = process.env.KIO_NG2_PROJECT;
+        return __moduleRoot;
     }
     var resolvedPath;
     try {
@@ -28,9 +37,14 @@ exports.moduleRoot = function () {
         resolvedPath = process.env.DEV_LATEST || process.env.AFKM_LATEST;
     }
     if (resolvedPath) {
-        return path.resolveFull(resolvedPath);
+        resolvedPath = path.resolveFull(resolvedPath);
     }
-    return path.resolve('./');
+    else {
+        resolvedPath = path.resolve('./');
+    }
+    debug('resolve module root: %s', resolvedPath);
+    __moduleRoot = resolvedPath;
+    return resolvedPath;
 };
 /**
  * @brief      resolves path in target project
@@ -42,7 +56,7 @@ exports.moduleRoot = function () {
 exports.resolveRoot = function (projectPath) {
     if (path.isAbsolute(projectPath))
         return projectPath;
-    return path.resolveFull(path.join(exports.moduleRoot(), projectPath));
+    return path.resolve(path.join(exports.moduleRoot(), projectPath));
 };
 exports.relative = function (absProjectPath) {
     //if ( !absProjectPath.startsWith(process.env.HOME) )
@@ -57,15 +71,29 @@ exports.relative = function (absProjectPath) {
 exports.resolveProjectPackagePath = function () {
     return exports.resolveRoot('package.json');
 };
+var projectPackage;
 exports.resolveProjectPackage = function () {
-    return require(exports.resolveProjectPackagePath());
+    if (!projectPackage) {
+        var packagePath = exports.resolveProjectPackagePath();
+        debug('package path: %s', packagePath);
+        var json = fs.readFileSync(packagePath, 'utf8');
+        debug('json:', json);
+        projectPackage = JSON.parse(json) || require('./' + packagePath);
+        debug('package key config: ', projectPackage.kio);
+    }
+    return projectPackage;
 };
 exports.resolveProjectCache = function () {
     return exports.resolveRoot('.kio-ng2-cache');
 };
-exports.resolveKioPath = function (pathName) {
+exports.resolveKioPathSettings = function (pathName) {
     var packageInfo = exports.resolveProjectPackage();
-    return packageInfo.kio[pathName || 'root'];
+    var folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
+    return folder_settings_1.folderSettings(folder);
+};
+exports.resolveKioPath = function (pathName) {
+    var kioPath = exports.resolveKioPathSettings(pathName);
+    return kioPath.path;
 };
 exports.resolve = function () {
     var pathNames = [];

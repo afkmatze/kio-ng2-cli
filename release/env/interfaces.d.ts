@@ -1,24 +1,37 @@
 import { KioContentType } from 'kio-ng2';
 import { IndexType } from '../project/interfaces';
+export declare type KioFileFilter = string | RegExp;
+export interface KioFolderSettings {
+    path: string;
+    include?: KioFileFilter[];
+    exclude: KioFileFilter[];
+}
+export declare type KioFolderSettingArg = string | KioFolderSettings;
 export interface KioPath extends String {
     join(...args: string[]): KioPath;
 }
 export interface KioComponentsPaths {
     /**
      * path to structure components
-     * @type {string}
+     * @type {KioFolderSettings}
      */
-    structure: string;
+    structure: KioFolderSettings;
     /**
      * path to navigation components
-     * @type {string}
+     * @type {KioFolderSettings}
      */
-    navigation: string;
+    navigation: KioFolderSettings;
     /**
      * path to publication components
-     * @type {string}
+     * @type {KioFolderSettings}
      */
-    publication: string;
+    publication: KioFolderSettings;
+}
+export declare type KioComponentsPathType = string | keyof KioComponentsPaths;
+export declare enum KioComponentsPathTypes {
+    structure = 0,
+    navigation = 1,
+    publication = 2,
 }
 export interface KioProjectPaths {
     root: string;
@@ -38,6 +51,8 @@ export declare type BuildIndexFilterArg = IndexType | string;
 export interface BuildIndexArgs {
     noCache?: boolean;
     filter?: BuildIndexFilterArg | BuildIndexFilterArg[];
+}
+export interface CommandConfigTestComponents extends CommandConfig {
 }
 export interface CommandConfigBuildIndexes extends CommandConfig {
     args: BuildIndexArgs;
