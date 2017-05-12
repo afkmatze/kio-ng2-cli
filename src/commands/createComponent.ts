@@ -3,7 +3,7 @@ import * as project from '../project'
 import * as env from '../env'
 
 
-export const createComponentCommand:yargs.CommandModule = {
+export const createComponentCommand = ():yargs.CommandModule => ({
   command: 'createComponent',
   aliases: ['create'],
   describe: 'Creates a new publication component',
@@ -44,3 +44,4 @@ export const createComponentCommand:yargs.CommandModule = {
       
   }
 }
+)

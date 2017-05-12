@@ -26,7 +26,7 @@ export const renderTests = ( targetFilename:string ) => {
         const targetDir:string = path.resolve(path.dirname(targetFilename))
         return templates
           .renderTemplateWithData('test',{
-            pathToKioIndexes: './'+path.relative(targetDir,env.resolve(env.KIO_PATHS.root)),
+            pathToKioIndexes: './'+path.relative(targetDir,env.resolve(env.resolveKioPath('root'))),
             componentNames 
           })
           .flatMap (

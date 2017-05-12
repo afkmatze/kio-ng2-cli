@@ -1,8 +1,12 @@
 "use strict";
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var path = require("path");
 var interfaces_1 = require("./interfaces");
+__export(require("./create"));
 var testing_1 = require("./testing");
 var env = require("../env");
 var files = require("./files");
@@ -59,7 +63,7 @@ exports.buildIndexes = function (args) {
             return row;
         });
         var indexName = indexNames[nameForType(mapIndexType(indexType))];
-        return templates.indexes.mapFilesToTemplateData(indexName, source, env.resolve(env.KIO_PATHS.root))
+        return templates.indexes.mapFilesToTemplateData(indexName, source, env.resolve(env.resolveKioPath('root')))
             .map(function (templateData, idx) {
             debug('templateData indexName', idx, indexName);
             return {
@@ -71,9 +75,9 @@ exports.buildIndexes = function (args) {
         .flatMap(function (item) { return templates.indexes
         .render(item.indexName, item.templateData)
         .flatMap(function (contents) {
-        var indexFileName = env.resolve(env.KIO_PATHS.root, item.indexName + '.generated.ts');
+        var indexFileName = env.resolve(env.resolveKioPath('root'), item.indexName + '.generated.ts');
         return templates.replaceFile(indexFileName, contents).map(function (status) { return ({
-            indexFileName: path.relative(env.KIO_PROJECT_ROOT, indexFileName),
+            indexFileName: path.relative(env.resolveRoot('.'), indexFileName),
             status: status
         }); });
     })

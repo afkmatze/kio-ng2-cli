@@ -3,10 +3,10 @@ import * as project from '../project'
 import * as env from '../env'
 
 
-export const buildIndexesCommand:yargs.CommandModule = {
+export const buildIndexesCommand = ():yargs.CommandModule => ({
   command: 'buildIndexes',
   aliases: ['index'],
-  describe: 'Updates index files in ' + env.KIO_PATHS.root,
+  describe: 'Updates index files in ' + env.resolveKioPath(),
   builder: ( argv ) => {
     return argv
       .usage('Usage: $0 index [publication|structure|fixture|criteria]')
@@ -24,4 +24,4 @@ export const buildIndexesCommand:yargs.CommandModule = {
         console.error(error)
       })
   }
-}
+})

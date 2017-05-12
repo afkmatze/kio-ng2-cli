@@ -46,6 +46,14 @@ exports.moduleRoot = function () {
     __moduleRoot = resolvedPath;
     return resolvedPath;
 };
+exports.isProjectEnv = function () {
+    var __env_path;
+    try {
+        __env_path = exports.resolveProjectPackage();
+    }
+    catch (e) { }
+    return !!__env_path;
+};
 /**
  * @brief      resolves path in target project
  *

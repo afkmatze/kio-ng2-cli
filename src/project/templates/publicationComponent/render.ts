@@ -17,7 +17,7 @@ const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData
 
 export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData => {
   const parentName = 'kio-abstract-' + args.contentType
-  const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication,args.contentType)
+  const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.resolveKioPath('publication'),args.contentType)
   return {
     ...args,
     styles: path.relative(path.join(componentRoot,args.name),path.join(env.KIO_PROJECT_ROOT,'src','scss')),

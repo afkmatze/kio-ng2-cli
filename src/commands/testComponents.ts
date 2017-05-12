@@ -5,7 +5,7 @@ import * as env from '../env'
 import * as logger from '../console'
 
 
-export const testComponentsCommand:yargs.CommandModule = {
+export const testComponentsCommand = ():yargs.CommandModule => ({
   command: 'testComponents',
   aliases: ['test'],
   describe: 'Tests criteria matching for components',
@@ -31,4 +31,4 @@ export const testComponentsCommand:yargs.CommandModule = {
       } )
       
   }
-}
+})

@@ -68,6 +68,7 @@
     "ejs": "^2.5.6",
     "ember-source": "^2.13.0",
     "kio-ng2": "github:afkmatze/kio-ng2",
+    "kio-ng2-env": "github:afkmatze/kio-ng2-env",
     "kio-ng2-component-routing": "github:afkmatze/kio-ng2-component-routing",
     "rxfs": "github:afkmatze/rxfs",
     "rxjs": "^5.3.1",

@@ -22,7 +22,7 @@ export const evalProject = (recompile:boolean=false) => {
   const compilerOpts:CompilerOptions = tsconf.compilerOptions
   const outpath = env.resolve(compilerOpts.outDir)
 
-  const tmp_outpath = path.resolve(env.KIO_PROJECT_CACHE,'tsc-out')
+  const tmp_outpath = path.resolve(env.resolveProjectCache(),'tsc-out')
 
   if ( recompile || !shellCheck('-d ',tmp_outpath) )
   {

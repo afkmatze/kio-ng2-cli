@@ -9,7 +9,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var project = require("../project");
-exports.createComponentCommand = {
+exports.createComponentCommand = function () { return ({
     command: 'createComponent',
     aliases: ['create'],
     describe: 'Creates a new publication component',
@@ -43,5 +43,5 @@ exports.createComponentCommand = {
             }
         });
     }
-};
+}); };
 //# sourceMappingURL=createComponent.js.map

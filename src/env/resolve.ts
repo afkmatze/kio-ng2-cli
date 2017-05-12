@@ -58,6 +58,14 @@ export const moduleRoot = () => {
   return resolvedPath
 }
 
+export const isProjectEnv = () => {
+  let __env_path
+  try{
+    __env_path = resolveProjectPackage()
+  }catch(e){}
+  return !!__env_path
+}
+
 /**
  * @brief      resolves path in target project
  *

@@ -16,20 +16,13 @@ export const CREATE_COMPONENT:string = "component"
 import { createComponentCommand } from './createComponent'
 import { buildIndexesCommand } from './buildIndexes'
 import { testComponentsCommand } from './testComponents'
+import { createProjectCommand } from './createProject'
 
 
-export const exec = ( command:"indexes"|string ) => {
+export const exec = ( command:string ) => {
 
   banner()
 
-  if ( !env.KIO_PROJECT_ROOT || path.basename(env.KIO_PROJECT_ROOT) === 'kio-ng2-cli' )
-  {
-    logError(Error("kio-ng2-cli must be run as an installed module."))
-  }
-  
-  if ( !env.KIO_PROJECT_PACKAGE || !env.KIO_PROJECT_PACKAGE.kio ) {
-    logError(Error("package.json is missing config at prop 'kio'"))
-  }
 /*
   if(!command) {
     logError(Error("Command required."))
@@ -37,16 +30,27 @@ export const exec = ( command:"indexes"|string ) => {
 
   const all_filter = ['publication','navigation','structure']
 
+  const addCommands = ( yargv:yargs.Argv ) => {
+    const isEnv = env.isProjectEnv()
+    console.log('is env:', isEnv )
+    if ( isEnv )
+    {
+      return yargv
+        .command(createComponentCommand())
+        .command(testComponentsCommand())
+        .command(buildIndexesCommand())
+    }
+    else 
+    {
+      return yargv
+        .command(createProjectCommand())
+    }
+  }
+
   const argv = yargs
-    .usage('Usage: $0 <command> [options]')
-    .options('config-file',{
-      type: 'string',
-      description: 'cli config file',
-      default: path.resolve('kio-ng2.config.json')      
-    })
-    .command(createComponentCommand)
-    .command(testComponentsCommand)
-    .command(buildIndexesCommand)
+    .usage('Usage: $0 <command> [options]')    
+
+  addCommands(argv)
     .demand(1)
     .help('h')
     .argv
