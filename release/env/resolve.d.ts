@@ -2,6 +2,7 @@ import { KioFolderSettings } from './interfaces';
 export declare const isInstalled: () => boolean;
 export declare const cliRoot: () => string;
 export declare const moduleRoot: () => any;
+export declare const isProjectEnv: () => boolean;
 /**
  * @brief      resolves path in target project
  *

@@ -4,11 +4,10 @@
   "description": "cli tool for kio ng2 projects",
   "main": "index.js",
   "bin": {
-    "kio-ng2": "./bin/exec.js",
-    "kio-ng2-ts": "./bin/exec.ts"
+    "kio-ng2": "./bin/exec.js"
   },
   "scripts": {
-    "prebuild": "rm -rf ./release; kio-env-build-inc",
+    "prebuild": "rm -rf ./release",
     "build": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "build:watch": "nodemon -w ./src -e ts --exec \"npm run build\"",
     "prebuild:production": "rm -rf ./release",
@@ -69,13 +68,13 @@
     "ejs": "^2.5.6",
     "ember-source": "^2.13.0",
     "kio-ng2": "github:afkmatze/kio-ng2",
-    "kio-ng2-env": "git+ssh://git@dergoldenefoehn.de:/opt/git/kio-ng2-env.git",
+    "kio-ng2-env": "github:afkmatze/kio-ng2-env",
     "kio-ng2-component-routing": "github:afkmatze/kio-ng2-component-routing",
     "rxfs": "github:afkmatze/rxfs",
     "rxjs": "^5.3.1",
     "rxshell": "github:afkmatze/rxshell",
     "shelljs": "^0.7.7",
-    "yargs": "^8.0.1"
+    "yargs": "^7.0.2"
   },
   "repository": {
     "type": "git",

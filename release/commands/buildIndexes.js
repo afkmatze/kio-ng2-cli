@@ -2,10 +2,10 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var project = require("../project");
 var env = require("../env");
-exports.buildIndexesCommand = {
+exports.buildIndexesCommand = function () { return ({
     command: 'buildIndexes',
     aliases: ['index'],
-    describe: 'Updates index files in ' + env.KIO_PATHS.root,
+    describe: 'Updates index files in ' + env.resolveKioPath(),
     builder: function (argv) {
         return argv
             .usage('Usage: $0 index [publication|structure|fixture|criteria]')
@@ -23,5 +23,5 @@ exports.buildIndexesCommand = {
             console.error(error);
         });
     }
-};
+}); };
 //# sourceMappingURL=buildIndexes.js.map

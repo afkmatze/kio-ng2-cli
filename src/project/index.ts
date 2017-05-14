@@ -7,6 +7,8 @@ import {
   IndexType, IndexTypes
 } from './interfaces'
 
+export * from './create'
+
 import testRunner, { ComponentTest, renderTests, execTestAt } from './testing'
 
 import * as env from '../env'
@@ -78,7 +80,7 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
                 return row
               } )
               const indexName = indexNames[nameForType(mapIndexType(indexType))]
-              return templates.indexes.mapFilesToTemplateData(indexName,source,env.resolve(env.KIO_PATHS.root))
+              return templates.indexes.mapFilesToTemplateData(indexName,source,env.resolve(env.resolveKioPath('root')))
                   .map ( (templateData,idx) => {
                     debug('templateData indexName',idx,indexName)
                     return {
@@ -92,9 +94,9 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
                 .render(item.indexName,item.templateData) 
                 .flatMap ( 
                   contents => {
-                    const indexFileName = env.resolve(env.KIO_PATHS.root,item.indexName+'.generated.ts')
+                    const indexFileName = env.resolve(env.resolveKioPath('root'),item.indexName+'.generated.ts')
                     return templates.replaceFile(indexFileName,contents).map ( status => ({
-                      indexFileName: path.relative(env.KIO_PROJECT_ROOT,indexFileName),
+                      indexFileName: path.relative(env.resolveRoot('.'),indexFileName),
                       status
                     }) )
                   }

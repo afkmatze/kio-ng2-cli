@@ -3,7 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
 var project = require("../project");
 var logger = require("../console");
-exports.testComponentsCommand = {
+exports.testComponentsCommand = function () { return ({
     command: 'testComponents',
     aliases: ['test'],
     describe: 'Tests criteria matching for components',
@@ -24,5 +24,5 @@ exports.testComponentsCommand = {
             clearInterval(t);
         });
     }
-};
+}); };
 //# sourceMappingURL=testComponents.js.map

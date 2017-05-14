@@ -21,19 +21,7 @@ const replaceFilepath = <T extends KioPrimitiveContentType, P extends NamedCompo
 
 export const mapCLIArgsToTemplateData = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData<T,P> => {
   const parentName = 'kio-abstract-' + args.contentType
-  const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication,args.contentType)
   return undefined
-  /*return {
-    ...args,
-    contentType: KioNodeType[args.contentType],
-    styles: path.relative(path.join(componentRoot,args.name),path.join(env.KIO_PROJECT_ROOT,'src','scss')),
-    selector: 'publication-' + stringUtils.dasherize(args.name),
-    classifiedModuleName: stringUtils.classify(args.name),
-    dasherizedModuleName: stringUtils.dasherize(args.name),
-    classifiedParentComponentName: stringUtils.classify(parentName) + 'Component',
-    dasherizedParentComponentPath: stringUtils.dasherize(parentName),
-    pathToStructureComponents: '../../../components/' 
-  }*/
 }
 
 export const render = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  data:PublicationComponentTemplateData<T,P> ) => {
