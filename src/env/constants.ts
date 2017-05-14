@@ -23,9 +23,9 @@ const projectPackage = resolveProjectPackage()
 export const KIO_PATHS:KioProjectPaths = {
   root: projectPackage.kio.root,
   components: {
-    publication: projectPackage.kio.components.publication,
-    structure: projectPackage.kio.components.structure,
-    navigation: projectPackage.kio.components.navigation
+    publication: projectPackage.kio.components.publication
+    /*structure: projectPackage.kio.components.structure,
+    navigation: projectPackage.kio.components.navigation*/
   }
 }
 

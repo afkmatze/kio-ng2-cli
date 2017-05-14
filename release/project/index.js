@@ -15,9 +15,9 @@ var debug = logger.createDebugger();
 var indexNames = {
     publication: 'PublicationComponents',
     fixture: 'PublicationFixtures',
-    criteria: 'PublicationCriterias',
+    criteria: 'PublicationCriterias' /*,
     navigation: 'NavigationComponents',
-    structure: 'StructureComponents'
+    structure: 'StructureComponents'*/
 };
 var mapIndexType = function (indexName) {
     if ('string' !== typeof indexName)
@@ -27,10 +27,12 @@ var mapIndexType = function (indexName) {
             return interfaces_1.IndexTypes.fixture;
         case "criteria":
             return interfaces_1.IndexTypes.criteria;
-        case "navigation":
-            return interfaces_1.IndexTypes.navigation;
-        case "structure":
-            return interfaces_1.IndexTypes.structure;
+        /*    case "navigation":
+              return IndexTypes.navigation
+        
+            case "structure":
+              return IndexTypes.structure
+        */
         case "publication":
         case "component":
             return interfaces_1.IndexTypes.publication;
@@ -53,7 +55,7 @@ exports.buildIndexes = function (args) {
     debug('build index types: %s', indexTypes);
     return rxjs_1.Observable.from(indexTypes.map(function (indexType) { return mapIndexType(indexType); }))
         .flatMap(function (indexType) {
-        debug('indexType: ', indexType);
+        debug('indexType: ', interfaces_1.IndexTypes[indexType]);
         var source = files.filesForIndexType(indexType).map(function (row, idx) {
             debug('source file #%s: %s', idx, path.relative(process.cwd(), row));
             return row;

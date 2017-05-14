@@ -23,11 +23,11 @@ export const resolveRootByIndexType = ( indexType:IndexType ) => {
     case IndexTypes.criteria:
       return "publication"
     
-    case IndexTypes.structure:
+/*    case IndexTypes.structure:
       return "structure"
     
     case IndexTypes.navigation:
-      return "navigation"
+      return "navigation"*/
     
   }
 }
@@ -131,11 +131,12 @@ export const kioFiles = ( kioPathType:KioComponentsPathType ) => {
   debug('kioFiles for "%s"', kioPathType )  
   const settings = env.resolveKioPathSettings(kioPathType)  
   const pathTypeNames = Object.keys(KioComponentsPathTypes).filter ( isNaN )
-  const excludeKeys = pathTypeNames.filter ( key => key !== kioPathType )
+  const excludeKeys = pathTypeNames.filter ( key => key && key !== kioPathType )
   debug('other path type names "%s"', excludeKeys )  
 
   const excludeFilepaths = excludeKeys
     .map ( key => {
+      debug('key to exclude',key)
       const p = env.resolveKioPath(key)
       return p
     } )
@@ -167,7 +168,7 @@ export const kioFiles = ( kioPathType:KioComponentsPathType ) => {
 export const publicationComponents = ( ):Observable<string> => {
   return kioFiles ( "publication" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
-}
+}/*
 
 export const structureComponents = ( ):Observable<string> => {
   return kioFiles ( "structure" )
@@ -177,7 +178,7 @@ export const structureComponents = ( ):Observable<string> => {
 export const navigationComponents = ( ):Observable<string> => {
   return kioFiles ( "navigation" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
-}
+}*/
 
 export const publicationComponentFiles = ( ):Observable<string[]> => {
   return publicationComponents()

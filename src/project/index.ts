@@ -11,7 +11,6 @@ import testRunner, { ComponentTest, renderTests, execTestAt } from './testing'
 
 import * as env from '../env'
 import * as files from './files'
-import { cache, ComponentCacheFileContent, ComponentFixture } from './cache'
 import * as templates from './templates'
 import * as _ from 'lodash'
 import * as logger from '../console'
@@ -21,9 +20,9 @@ const debug = logger.createDebugger()
 const indexNames = {
   publication: 'PublicationComponents',
   fixture: 'PublicationFixtures',
-  criteria: 'PublicationCriterias',
+  criteria: 'PublicationCriterias'/*,
   navigation: 'NavigationComponents',
-  structure: 'StructureComponents'
+  structure: 'StructureComponents'*/
 }
 
 const mapIndexType = ( indexName:IndexTypes|string ) => {
@@ -38,12 +37,12 @@ const mapIndexType = ( indexName:IndexTypes|string ) => {
     case "criteria":
       return IndexTypes.criteria
 
-    case "navigation":
+/*    case "navigation":
       return IndexTypes.navigation
 
     case "structure":
       return IndexTypes.structure
-
+*/
     case "publication":
     case "component":
       return IndexTypes.publication
@@ -72,7 +71,7 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
   debug('build index types: %s', indexTypes)
   return Observable.from(indexTypes.map(indexType => mapIndexType(indexType)))
             .flatMap ( (indexType:IndexType) => {
-              debug('indexType: ', indexType)
+              debug('indexType: ', IndexTypes[indexType])
 
               const source = files.filesForIndexType(indexType).map ( (row,idx) => {
                 debug ( 'source file #%s: %s', idx, path.relative(process.cwd(),row) )

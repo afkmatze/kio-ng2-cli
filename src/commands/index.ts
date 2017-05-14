@@ -42,7 +42,12 @@ export const exec = ( command:"indexes"|string ) => {
     .options('config-file',{
       type: 'string',
       description: 'cli config file',
-      default: path.resolve('kio-ng2.config.json')      
+      default: path.resolve('kio-ng2.config.json'),
+      coerce: function ( key ):env.config.ConfigFile {
+        const filepath = path.join(process.cwd(),key||'')
+        const data = key && env.config.read(filepath)
+        return data
+      }
     })
     .command(createComponentCommand)
     .command(testComponentsCommand)

@@ -19,9 +19,9 @@ var projectPackage = resolve_1.resolveProjectPackage();
 exports.KIO_PATHS = {
     root: projectPackage.kio.root,
     components: {
-        publication: projectPackage.kio.components.publication,
-        structure: projectPackage.kio.components.structure,
-        navigation: projectPackage.kio.components.navigation
+        publication: projectPackage.kio.components.publication
+        /*structure: projectPackage.kio.components.structure,
+        navigation: projectPackage.kio.components.navigation*/
     }
 };
 exports.KIO_TEMPLATES = path.resolve(__dirname, '../../templates');

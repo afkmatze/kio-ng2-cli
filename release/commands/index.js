@@ -28,7 +28,12 @@ exports.exec = function (command) {
         .options('config-file', {
         type: 'string',
         description: 'cli config file',
-        default: path.resolve('kio-ng2.config.json')
+        default: path.resolve('kio-ng2.config.json'),
+        coerce: function (key) {
+            var filepath = path.join(process.cwd(), key || '');
+            var data = key && env.config.read(filepath);
+            return data;
+        }
     })
         .command(createComponent_1.createComponentCommand)
         .command(testComponents_1.testComponentsCommand)

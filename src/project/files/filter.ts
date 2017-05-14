@@ -5,8 +5,8 @@ export const filterByIndexType = ( indexType:IndexType ) => {
   let expr
   switch (indexType) {
     
-    case IndexTypes.navigation:
-    case IndexTypes.structure:
+    /*case IndexTypes.navigation:
+    case IndexTypes.structure:*/
     case IndexTypes.publication:
       expr = /\.component\.ts$/
       break;

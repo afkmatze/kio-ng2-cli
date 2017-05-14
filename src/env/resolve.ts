@@ -110,12 +110,19 @@ export const resolveProjectCache = () => {
 export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathName?:T ):KioFolderSettings => {
   const packageInfo = resolveProjectPackage()
   const folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root
-  return folderSettings(folder)
+  if ( folder )
+  {
+    return folderSettings(folder)
+  }
+  throw Error(`Config prop "${pathName}" could not be found in kio settings of project package.`)
 }
 
 export const resolveKioPath = ( pathName?:KioComponentsPathType ) => {
   const kioPath = resolveKioPathSettings ( pathName )
-  return kioPath.path
+  if ( kioPath )
+  {
+    return kioPath.path
+  }
 }
 
 export const resolve = ( ...pathNames:string[] ) => {

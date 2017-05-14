@@ -10,16 +10,22 @@ import { CLICommandArgsCreateComponent } from '../../interfaces'
 
 const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates')
 
-const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData ) => {
+import { KioNodeType, nodeType, KioPrimitiveContentType } from 'kio-ng2'
+import { ListQuery,  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
+
+
+const replaceFilepath = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>( filepath:string, data:PublicationComponentTemplateData<T,P> ) => {
   filepath = filepath.replace('__path__',stringUtils.dasherize(data.name))
   return filepath.replace('__name__',stringUtils.dasherize(data.name))
 }
 
-export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData => {
+export const mapCLIArgsToTemplateData = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData<T,P> => {
   const parentName = 'kio-abstract-' + args.contentType
   const componentRoot = path.resolve(env.KIO_PROJECT_ROOT,env.KIO_PATHS.components.publication,args.contentType)
-  return {
+  return undefined
+  /*return {
     ...args,
+    contentType: KioNodeType[args.contentType],
     styles: path.relative(path.join(componentRoot,args.name),path.join(env.KIO_PROJECT_ROOT,'src','scss')),
     selector: 'publication-' + stringUtils.dasherize(args.name),
     classifiedModuleName: stringUtils.classify(args.name),
@@ -27,12 +33,12 @@ export const mapCLIArgsToTemplateData = ( args:CLICommandArgsCreateComponent ):P
     classifiedParentComponentName: stringUtils.classify(parentName) + 'Component',
     dasherizedParentComponentPath: stringUtils.dasherize(parentName),
     pathToStructureComponents: '../../../components/' 
-  }
+  }*/
 }
 
-export const render = ( data:PublicationComponentTemplateData ) => {
+export const render = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  data:PublicationComponentTemplateData<T,P> ) => {
 
-  return rxfs.find(['-type','file'],path.join(TEMPLATE_DIR,data.contentType))
+  return rxfs.find(['-type','file'],path.join(TEMPLATE_DIR,KioNodeType[<number>data.contentType]))
             .map ( streamData => streamData.stdout.toString('utf8') )
             //.filter ( filepath => !/\.\w+$/.test(filepath) )
             .flatMap ( 

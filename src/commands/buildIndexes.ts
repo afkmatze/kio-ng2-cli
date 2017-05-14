@@ -12,8 +12,8 @@ export const buildIndexesCommand:yargs.CommandModule = {
       .usage('Usage: $0 index [publication|structure|fixture|criteria]')
       .option('filter',{
         alias: 'f',
-        choices: ['publication','navigation','structure','fixture','criteria'],
-        default: ['publication','navigation','structure','fixture','criteria'],
+        choices: ['publication',/*'navigation','structure',*/'fixture','criteria'],
+        default: ['publication',/*'navigation','structure',*/'fixture','criteria'],
         demand: true
       })
   },  
