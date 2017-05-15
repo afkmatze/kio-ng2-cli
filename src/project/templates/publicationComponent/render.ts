@@ -14,34 +14,46 @@ import { KioNodeType, nodeType, KioPrimitiveContentType } from 'kio-ng2'
 import { ListQuery,  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
 
 
-const replaceFilepath = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>( filepath:string, data:PublicationComponentTemplateData<T,P> ) => {
+const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData ) => {
   filepath = filepath.replace('__path__',stringUtils.dasherize(data.name))
   return filepath.replace('__name__',stringUtils.dasherize(data.name))
 }
 
-export const mapCLIArgsToTemplateData = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData<T,P> => {
+export const mapCLIArgsToTemplateData = (  args:CLICommandArgsCreateComponent ):PublicationComponentTemplateData => {
   const parentName = 'kio-abstract-' + args.contentType
   return undefined
 }
 
-export const render = <T extends KioPrimitiveContentType, P extends NamedComponentStructure<T>|NamedFragmentComponentStructure>(  data:PublicationComponentTemplateData<T,P> ) => {
+export const render = (  data:PublicationComponentTemplateData ) => {
 
-  return rxfs.find(['-type','file'],path.join(TEMPLATE_DIR,KioNodeType[<number>data.contentType]))
+  const templateDir = path.join(TEMPLATE_DIR,KioNodeType[data.type])
+
+  console.log('templateDir',templateDir)
+
+  const templateData = {
+    ...data ,
+    contentType: KioNodeType[data.type]
+  }
+
+  return rxfs.find(['-type','file'],templateDir)
             .map ( streamData => streamData.stdout.toString('utf8') )
+            .map ( filepath => path.join(templateDir,filepath) )
             //.filter ( filepath => !/\.\w+$/.test(filepath) )
             .flatMap ( 
-              filename => rxfs.readFile<string>(filename).toArray().map ( rows => rows.join('\n') )
+              filename => {
+                return rxfs.readFile<string>(filename).toArray().map ( rows => rows.join('\n') )
                           .map(content => ({
-                                content: ejs.render(content.toString(),data),
+                                content: ejs.render(content.toString(),templateData),
                                 filepath: path.relative ( TEMPLATE_DIR, filename )
                               }) 
-                          ) 
+                          )
+              } 
             )
             .map ( ({filepath,content}) => {
 
               filepath = replaceFilepath(filepath,data)
 
-              //console.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
+              console.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
 
               return ({
                 filepath,

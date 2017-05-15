@@ -3,3 +3,8 @@ import { NamedComponent, NamedComponentStructure, NamedFragmentComponentStructur
 export interface ConfigFile {
   components: NamedComponent[]
 }
+
+export interface ProjectConfig extends ConfigFile {
+  configFilepath?:string
+}
+

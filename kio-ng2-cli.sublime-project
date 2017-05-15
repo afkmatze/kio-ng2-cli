@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "test_target/src/app/kio"
+		},
+		{
+			"path": "node_modules"
 		}
 	]
 }

@@ -27,7 +27,7 @@ export const moduleRoot = () => {
     __moduleRoot = process.env.KIO_NG2_PROJECT
     return __moduleRoot
   }
-  
+
   let resolvedPath:string
   try{
     resolvedPath = require.resolve('./')
@@ -54,6 +54,7 @@ export const moduleRoot = () => {
   }
 
   debug('resolve module root: %s', resolvedPath)
+  
   __moduleRoot = resolvedPath
   return resolvedPath
 }
@@ -122,7 +123,7 @@ export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathNam
   {
     return folderSettings(folder)
   }
-  throw Error(`Config prop "${pathName}" could not be found in kio settings of project package.`)
+  throw Error(`Config prop "${pathName}" could not be found in kio settings of project package.\n(${resolveProjectPackagePath()})`)
 }
 
 export const resolveKioPath = ( pathName?:KioComponentsPathType ) => {

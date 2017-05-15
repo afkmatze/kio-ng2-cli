@@ -9,28 +9,32 @@ export const createComponentCommand = ():yargs.CommandModule => ({
   describe: 'Creates a new publication component',
   builder: ( argv ) => {
     return argv
-      .usage('Usage: $0 <command> <ComponentName>')
-      .demand(1)
+      .usage('Usage: $0 create <ComponentName>')
       .option('contentType',{
         alias: 't',
-        choices: ['txt','src','fragment'],
-        demand: true
+        required: false,
+        default: '',
+        choices: ['txt','src','fragment']
       })
       .option('modifiers',{
         alias: 'm',
+        required: false,
         type: 'array',
+        default: [],
         describe: 'list of modifiers'
       })
       .option('childTypes',{
         alias: 'c',
+        required: false,
+        default: [],
         describe: 'child type content types',
         type: 'array'
       })
   },  
   handler: (args:any|env.CommandConfigCreateComponent) => {
-    const [ command, componentName ] = args._    
+    const [ command, componentName ] = args._
     
-    const sub = project.createComponent({
+    const sub = project.createComponentWithCLIArgs({
       ...args,
       name: componentName
     }).subscribe(value=> {}, error=>{

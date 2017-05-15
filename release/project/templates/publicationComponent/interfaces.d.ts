@@ -1,11 +1,13 @@
-import { ListQuery, NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing';
-import { KioPrimitiveContentType } from 'kio-ng2';
-export interface PublicationComponentTemplateData<T extends KioPrimitiveContentType, P extends NamedComponentStructure<T> | NamedFragmentComponentStructure> {
+import { ListQuery } from 'kio-ng2-component-routing';
+import { KioChildContentType } from 'kio-ng2';
+export interface PublicationComponentTemplateData {
+    [key: string]: any;
     name: string;
-    contentType: T;
+    type: KioChildContentType;
     selector: string;
+    styles: string;
     modifiers: ListQuery<string>;
-    childTypes: ListQuery<P>;
+    childTypes: ListQuery<any>;
     classifiedModuleName: string;
     dasherizedModuleName: string;
     classifiedParentComponentName: string;

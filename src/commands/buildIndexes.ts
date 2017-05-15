@@ -1,6 +1,7 @@
 import * as yargs from 'yargs'
 import * as project from '../project'
 import * as env from '../env'
+import { parseList } from './parseArgs'
 
 
 export const buildIndexesCommand = ():yargs.CommandModule => ({
@@ -14,11 +15,13 @@ export const buildIndexesCommand = ():yargs.CommandModule => ({
         alias: 'f',
         choices: ['publication',/*'navigation','structure',*/'fixture','criteria'],
         default: ['publication',/*'navigation','structure',*/'fixture','criteria'],
+        coerce: parseList,
         demand: true
       })
   },  
   handler: (args:any) => {
     const [ command ] = args._
+    console.log('filter',args.filter)
     return project.buildIndexes(args).toPromise()
       .catch(error => {
         console.error(error)

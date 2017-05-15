@@ -1,13 +1,14 @@
 import { 
   NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure   
 } from 'kio-ng2-component-routing'
-import {  KioNodeType } from 'kio-ng2'
-import { dasherize, classify } from '../../utils/string'
-
+import {  KioNodeType, KioPrimitiveContentType, nodeType } from 'kio-ng2'
+import { Observable } from 'rxjs'
 import * as env from '../../env'
 import * as path from 'path'
-import { existsSync } from 'rxfs'
+import { existsSync, writeFile, mkdir, exists } from 'rxfs'
 import * as templates from '../templates'
+import { dasherize, classify, capitalize, camelize } from '../../utils/string'
+import { PublicationComponentTemplateData } from '../templates/publicationComponent'
 
 
 export const isNamedFragmentComponentStructure = ( other:any ):other is NamedFragmentComponentStructure => {
@@ -18,32 +19,72 @@ export const isNamedFragmentComponentStructure = ( other:any ):other is NamedFra
     )
 }
 
-export const writeNamedComponent = <T extends KioNodeType>( namedComponent:NamedComponent ) => {
+export const pathForNamedComponent = ( type:KioNodeType, name:string ) => {
+  return path.join(KioNodeType[type],dasherize(name))
+}
 
-  const typeName = KioNodeType[namedComponent.type]
-
-  const targetParentDir = path.join(env.resolveKioPath('publication'),typeName)
-  const targetName = dasherize(namedComponent.name)
-  const targetDir = path.join(targetParentDir,targetName)
-  if ( existsSync(targetDir) )
-  {
-    throw Error ( `target "${targetDir}" already exists.` )
-  }
-
-  throw "TODO: Typings for rendering";
-  
-  const parentComponent = classify(typeName)+(typeName==='fragment'?'':'Content')+'Component'
-
-  templates.publicationComponent.render({
+export const dataForNamedFragmentComponent = ( namedComponent:NamedFragmentComponentStructure ):PublicationComponentTemplateData => {
+  const contentType = KioNodeType[KioNodeType.fragment]
+  return {
     name: namedComponent.name,
-    childTypes: (isNamedFragmentComponentStructure(namedComponent) ? namedComponent.childTypes : []),
+    styles: '../../',
+    contentType,
+    type: KioNodeType.fragment,
+    selector: 'kio-'+dasherize(namedComponent.name),
     modifiers: namedComponent.modifiers,
-    contentType: <T>namedComponent.type,
-    selector: 'kio-' + targetName,
-    classifiedModuleName: classify(namedComponent.name),
-    dasherizedModuleName: targetName,
-    classifiedParentComponentName: classify(parentComponent),
-    dasherizedParentComponentPath: dasherize(parentComponent)
-  })
+    childTypes: namedComponent.childTypes,
+    classifiedModuleName: classify(namedComponent.name)+'Component',
+    dasherizedModuleName: dasherize(namedComponent.name),
+    classifiedParentComponentName: classify(contentType+'-content'),
+    dasherizedParentComponentPath: contentType+'-content'
+  }
+}
 
+export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( namedComponent:NamedComponentStructure<T> ):PublicationComponentTemplateData => {
+  const contentType = KioNodeType[<number>namedComponent.type]
+  return {
+    name: namedComponent.name,
+    type: namedComponent.type,
+    contentType,
+    styles: '../../',
+    selector: 'kio-'+dasherize(namedComponent.name),
+    modifiers: namedComponent.modifiers,
+    childTypes: [],
+    classifiedModuleName: classify(namedComponent.name)+'Component',
+    dasherizedModuleName: dasherize(namedComponent.name),
+    classifiedParentComponentName: classify(contentType+'-content'),
+    dasherizedParentComponentPath: contentType+'-content'
+  }
+}
+
+export const namedComponentExists = ( namedComponent:NamedComponent ) => {
+  const publicationPath = env.resolveKioPath('publication')
+  return existsSync ( path.join(publicationPath,pathForNamedComponent(namedComponent.type,namedComponent.name)) )
+}
+
+export const writeComponent = ( componentData:PublicationComponentTemplateData, targetRoot:string ) => {
+  const kioPath = env.resolveKioPath('publication')
+  console.log('kioPath',kioPath)
+  console.log('targetRoot',targetRoot)
+  const componentPath = pathForNamedComponent(componentData.type,componentData.name)
+  console.log('componentPath',componentPath)
+  const targetFolder = path.join(targetRoot, kioPath, componentPath)
+  console.log('targetFolder',targetFolder)
+  const targetName = dasherize(componentData.name)
+  
+  return Observable.concat(
+      exists(targetFolder).switchMap( exists => exists ? Observable.empty() : mkdir(targetFolder) ),
+      templates.publicationComponent.render(componentData).flatMap ( info => {
+        const {
+          content
+        } = info
+        const filepath = path.join(targetRoot, kioPath, info.filepath)
+        console.log('write file', filepath)
+        return writeFile(filepath,Observable.of(new Buffer(content)),'utf8')
+      } ).toArray().map ( () => targetFolder )
+      .catch ( error => {
+        console.error(error)
+        return Observable.throw(error)
+      } )
+    )
 }

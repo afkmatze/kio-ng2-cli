@@ -100,7 +100,7 @@ exports.resolveKioPathSettings = function (pathName) {
     if (folder) {
         return folder_settings_1.folderSettings(folder);
     }
-    throw Error("Config prop \"" + pathName + "\" could not be found in kio settings of project package.");
+    throw Error("Config prop \"" + pathName + "\" could not be found in kio settings of project package.\n(" + exports.resolveProjectPackagePath() + ")");
 };
 exports.resolveKioPath = function (pathName) {
     var kioPath = exports.resolveKioPathSettings(pathName);
