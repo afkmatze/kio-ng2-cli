@@ -97,11 +97,16 @@ exports.resolveProjectCache = function () {
 exports.resolveKioPathSettings = function (pathName) {
     var packageInfo = exports.resolveProjectPackage();
     var folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
-    return folder_settings_1.folderSettings(folder);
+    if (folder) {
+        return folder_settings_1.folderSettings(folder);
+    }
+    throw Error("Config prop \"" + pathName + "\" could not be found in kio settings of project package.\n(" + exports.resolveProjectPackagePath() + ")");
 };
 exports.resolveKioPath = function (pathName) {
     var kioPath = exports.resolveKioPathSettings(pathName);
-    return kioPath.path;
+    if (kioPath) {
+        return kioPath.path;
+    }
 };
 exports.resolve = function () {
     var pathNames = [];

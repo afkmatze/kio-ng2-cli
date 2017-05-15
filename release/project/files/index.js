@@ -16,10 +16,6 @@ exports.resolveRootByIndexType = function (indexType) {
         case interfaces_1.IndexTypes.fixture:
         case interfaces_1.IndexTypes.criteria:
             return "publication";
-        case interfaces_1.IndexTypes.structure:
-            return "structure";
-        case interfaces_1.IndexTypes.navigation:
-            return "navigation";
     }
 };
 /*
@@ -109,10 +105,11 @@ exports.kioFiles = function (kioPathType) {
     debug('kioFiles for "%s"', kioPathType);
     var settings = env.resolveKioPathSettings(kioPathType);
     var pathTypeNames = Object.keys(env_1.KioComponentsPathTypes).filter(isNaN);
-    var excludeKeys = pathTypeNames.filter(function (key) { return key !== kioPathType; });
+    var excludeKeys = pathTypeNames.filter(function (key) { return key && key !== kioPathType; });
     debug('other path type names "%s"', excludeKeys);
     var excludeFilepaths = excludeKeys
         .map(function (key) {
+        debug('key to exclude', key);
         var p = env.resolveKioPath(key);
         return p;
     })
@@ -140,15 +137,17 @@ exports.kioFiles = function (kioPathType) {
 exports.publicationComponents = function () {
     return exports.kioFiles("publication")
         .filter(function (filename) { return /.*\.component\.ts$/.test(filename); });
-};
-exports.structureComponents = function () {
-    return exports.kioFiles("structure")
-        .filter(function (filename) { return /.*\.component\.ts$/.test(filename); });
-};
-exports.navigationComponents = function () {
-    return exports.kioFiles("navigation")
-        .filter(function (filename) { return /.*\.component\.ts$/.test(filename); });
-};
+}; /*
+
+export const structureComponents = ( ):Observable<string> => {
+  return kioFiles ( "structure" )
+        .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
+}
+
+export const navigationComponents = ( ):Observable<string> => {
+  return kioFiles ( "navigation" )
+        .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
+}*/
 exports.publicationComponentFiles = function () {
     return exports.publicationComponents()
         .map(function (filename) {

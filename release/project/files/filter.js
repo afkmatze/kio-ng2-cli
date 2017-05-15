@@ -5,8 +5,8 @@ var path = require("path");
 exports.filterByIndexType = function (indexType) {
     var expr;
     switch (indexType) {
-        case interfaces_1.IndexTypes.navigation:
-        case interfaces_1.IndexTypes.structure:
+        /*case IndexTypes.navigation:
+        case IndexTypes.structure:*/
         case interfaces_1.IndexTypes.publication:
             expr = /\.component\.ts$/;
             break;

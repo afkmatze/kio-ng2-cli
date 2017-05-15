@@ -3,13 +3,13 @@ import { KioProjectPaths } from '../env/interfaces'
 
 export enum IndexTypes {
   publication,
-  structure,
-  navigation,
   criteria,
-  fixture
+  fixture/*,
+  structure,
+  navigation*/
 }
 
-export type IndexType = IndexTypes.publication|IndexTypes.structure|IndexTypes.navigation|IndexTypes.criteria|IndexTypes.fixture
+export type IndexType = IndexTypes.publication|IndexTypes.criteria|IndexTypes.fixture
 
 export interface ProjectEnv {
   MACHINE_ROOT: string;
@@ -42,15 +42,15 @@ export interface CLICommandArgsBuildIndexes extends CLICommandArgs {
 
 export interface CLICommandArgsCreateComponent extends CLICommandArgs {
   name:string
-  contentType:KioContentType
-  childTypes:KioContentType[]
+  contentType:string
+  childTypes:string[]
   modifiers:string[]
 }
 
 
 export enum ComponentType {
-  structure,
-  navigation,
+  /*structure,
+  navigation,*/
   publication
 }
 
@@ -63,11 +63,11 @@ export interface Component<ComponentType> {
 export interface PublicationComponent extends Component<ComponentType.publication> {
   
 }
-
+/*
 export interface NavigationComponent extends Component<ComponentType.navigation> {
   
 }
 
 export interface StructureComponent extends Component<ComponentType.structure> {
   
-}
+}*/

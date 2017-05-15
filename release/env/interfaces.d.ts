@@ -15,12 +15,10 @@ export interface KioComponentsPaths {
      * path to structure components
      * @type {KioFolderSettings}
      */
-    structure: KioFolderSettings;
     /**
      * path to navigation components
      * @type {KioFolderSettings}
      */
-    navigation: KioFolderSettings;
     /**
      * path to publication components
      * @type {KioFolderSettings}
@@ -29,9 +27,7 @@ export interface KioComponentsPaths {
 }
 export declare type KioComponentsPathType = string | keyof KioComponentsPaths;
 export declare enum KioComponentsPathTypes {
-    structure = 0,
-    navigation = 1,
-    publication = 2,
+    publication = 0,
 }
 export interface KioProjectPaths {
     root: string;

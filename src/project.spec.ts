@@ -51,7 +51,7 @@ describe('project api',()=>{
 
     it('emits publication components',(done)=>{
       project.files.publicationComponents().toArray().subscribe ( files => {
-        expect(files).toExist()
+        expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)
         files.forEach ( (file:string) => {
           expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
@@ -60,7 +60,7 @@ describe('project api',()=>{
       }, done, done )
     })
 
-    it('emits structure components',(done)=>{
+   /* it('emits structure components',(done)=>{
       project.files.structureComponents().toArray().subscribe ( files => {
         expect(files).toExist()
         expect(files.length).toBeGreaterThan(0)
@@ -78,11 +78,11 @@ describe('project api',()=>{
           expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
         } )
       }, done, done )
-    })
+    })*/
 
     it('emits publication component files',(done)=>{
       project.files.publicationComponentFiles().subscribe ( fileGroup => {
-        expect(fileGroup).toExist()
+        expect(fileGroup).toExist('No publication component files found.')
         expect(fileGroup.length).toBeGreaterThan(0)
         fileGroup.forEach ( (file:string) => {
           expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
@@ -92,7 +92,7 @@ describe('project api',()=>{
 
     it('emits publication component fixtures',(done)=>{
       project.files.publicationComponentFixtures().toArray().subscribe ( files => {
-        expect(files).toExist()
+        expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)
         console.log('%s files', files.length, files.map ( f => path.basename(f) ))
         files.forEach ( (file:string) => {

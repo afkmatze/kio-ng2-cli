@@ -1,2 +1,2 @@
+export * from './file';
 export * from './interfaces';
-export * from './files';

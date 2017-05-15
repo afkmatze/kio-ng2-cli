@@ -3,15 +3,23 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var IndexTypes;
 (function (IndexTypes) {
     IndexTypes[IndexTypes["publication"] = 0] = "publication";
-    IndexTypes[IndexTypes["structure"] = 1] = "structure";
-    IndexTypes[IndexTypes["navigation"] = 2] = "navigation";
-    IndexTypes[IndexTypes["criteria"] = 3] = "criteria";
-    IndexTypes[IndexTypes["fixture"] = 4] = "fixture";
+    IndexTypes[IndexTypes["criteria"] = 1] = "criteria";
+    IndexTypes[IndexTypes["fixture"] = 2] = "fixture"; /*,
+    structure,
+    navigation*/
 })(IndexTypes = exports.IndexTypes || (exports.IndexTypes = {}));
 var ComponentType;
 (function (ComponentType) {
-    ComponentType[ComponentType["structure"] = 0] = "structure";
-    ComponentType[ComponentType["navigation"] = 1] = "navigation";
-    ComponentType[ComponentType["publication"] = 2] = "publication";
+    /*structure,
+    navigation,*/
+    ComponentType[ComponentType["publication"] = 0] = "publication";
 })(ComponentType = exports.ComponentType || (exports.ComponentType = {}));
+/*
+export interface NavigationComponent extends Component<ComponentType.navigation> {
+  
+}
+
+export interface StructureComponent extends Component<ComponentType.structure> {
+  
+}*/ 
 //# sourceMappingURL=interfaces.js.map

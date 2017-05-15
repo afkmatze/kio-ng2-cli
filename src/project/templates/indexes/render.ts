@@ -5,7 +5,7 @@ import * as ejs from 'ejs'
 import { dasherize, classify, camelize } from '../../../utils/string'
 import { Observable } from 'rxjs'
 import { IndexTemplateData, IndexTemplateDataItem, IndexType, IndexTypes } from './interfaces'
-import { Component, ComponentType, PublicationComponent, StructureComponent, NavigationComponent } from '../../interfaces'
+import { Component, ComponentType, PublicationComponent } from '../../interfaces'
 
 const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/index')
 
