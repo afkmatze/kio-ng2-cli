@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var project = require("../project");
+var project_1 = require("../project");
 var env = require("../env");
 var parseArgs_1 = require("./parseArgs");
 exports.buildIndexesCommand = function () { return ({
@@ -21,7 +21,7 @@ exports.buildIndexesCommand = function () { return ({
     handler: function (args) {
         var command = args._[0];
         console.log('filter', args.filter);
-        return project.buildIndexes(args).toPromise()
+        return project_1.default().buildIndexes(args).toPromise()
             .catch(function (error) {
             console.error(error);
         });

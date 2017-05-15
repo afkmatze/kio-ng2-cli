@@ -3,7 +3,7 @@ import { KioNodeType, KioPrimitiveContentType } from 'kio-ng2';
 import { Observable } from 'rxjs';
 import { PublicationComponentTemplateData } from '../templates/publicationComponent';
 export declare const isNamedFragmentComponentStructure: (other: any) => other is NamedFragmentComponentStructure;
-export declare const pathForNamedComponent: (type: KioNodeType, name: string) => string;
+export declare const pathForNamedComponent: (type: string | KioNodeType, name: string) => any;
 export declare const dataForNamedFragmentComponent: (namedComponent: NamedFragmentComponentStructure) => PublicationComponentTemplateData;
 export declare const dataForNamedComponent: <T extends KioPrimitiveContentType>(namedComponent: NamedComponentStructure<T>) => PublicationComponentTemplateData;
 export declare const namedComponentExists: (namedComponent: NamedComponent) => boolean;

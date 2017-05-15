@@ -13,6 +13,8 @@ exports.isNamedFragmentComponentStructure = function (other) {
             'childTypes' in other);
 };
 exports.pathForNamedComponent = function (type, name) {
+    if ('string' === typeof type)
+        return exports.pathForNamedComponent(kio_ng2_1.KioNodeType[type], name);
     return path.join(kio_ng2_1.KioNodeType[type], string_1.dasherize(name));
 };
 exports.dataForNamedFragmentComponent = function (namedComponent) {
@@ -53,14 +55,14 @@ exports.namedComponentExists = function (namedComponent) {
 };
 exports.writeComponent = function (componentData, targetRoot) {
     var kioPath = env.resolveKioPath('publication');
-    console.log('kioPath', kioPath);
-    console.log('targetRoot', targetRoot);
+    //console.log('kioPath',kioPath)
+    //console.log('targetRoot',targetRoot)
     var componentPath = exports.pathForNamedComponent(componentData.type, componentData.name);
-    console.log('componentPath', componentPath);
+    //console.log('componentPath',componentPath)
     var targetFolder = path.join(targetRoot, kioPath, componentPath);
-    console.log('targetFolder', targetFolder);
+    //console.log('targetFolder',targetFolder)
     var targetName = string_1.dasherize(componentData.name);
-    return rxjs_1.Observable.concat(rxfs_1.exists(targetFolder).switchMap(function (exists) { return exists ? rxjs_1.Observable.empty() : rxfs_1.mkdir(targetFolder); }), templates.publicationComponent.render(componentData).flatMap(function (info) {
+    return rxjs_1.Observable.merge(rxfs_1.exists(targetFolder).switchMap(function (exists) { return exists ? rxjs_1.Observable.empty() : rxfs_1.mkdir(targetFolder); }), templates.publicationComponent.render(componentData).flatMap(function (info) {
         var content = info.content;
         var filepath = path.join(targetRoot, kioPath, info.filepath);
         console.log('write file', filepath);
@@ -69,6 +71,6 @@ exports.writeComponent = function (componentData, targetRoot) {
         .catch(function (error) {
         console.error(error);
         return rxjs_1.Observable.throw(error);
-    }));
+    })).takeLast(1);
 };
 //# sourceMappingURL=index.js.map

@@ -22,22 +22,24 @@ exports.updateProjectCommand = function () { return ({
     handler: function (args) {
         var _a = args._, command = _a[0], projectName = _a[1];
         var target = args.target;
-        console.log('targetPath', target);
         return kio_ng2_env_1.env(target)
             .flatMap(function (store) {
+            console.log('store components', store.get('components'));
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
-                var targetPath = kio_ng2_env_1.api.modules.resolve.rootPath();
                 if (project.namedComponentExists(component)) {
+                    logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     return rxjs_1.Observable.empty();
                 }
-                if (project.isNamedFragmentComponentStructure(component)) {
+                else if (project.isNamedFragmentComponentStructure(component)) {
+                    logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     var data = project.dataForNamedFragmentComponent(component);
-                    return project.writeComponent(data, targetPath).map(function (res) { return component; });
+                    return project.writeComponent(data, target).map(function (res) { return component; });
                 }
                 else {
+                    logger.log('Write Component "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     var data = project.dataForNamedComponent(component);
-                    return project.writeComponent(data, targetPath).map(function (res) { return component; });
+                    return project.writeComponent(data, target).map(function (res) { return component; });
                 }
             })
                 .map(function (component) {

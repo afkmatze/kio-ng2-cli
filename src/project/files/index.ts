@@ -1,5 +1,6 @@
 import { Observable, Scheduler } from 'rxjs'
 import * as rxfs from 'rxfs'
+import { api } from 'kio-ng2-env'
 import * as env from '../../env'
 import { 
   KioFolderSettings, KioFolderSettingArg, KioFileFilter, 
@@ -127,7 +128,7 @@ export const list = ( sourcePath:env.KioFolderSettingArg ):Observable<string> =>
   return source
 }
 
-export const kioFiles = ( kioPathType:KioComponentsPathType ) => {
+export const kioFiles = ( projectPath:string ) => ( kioPathType:KioComponentsPathType ) => {
   debug('kioFiles for "%s"', kioPathType )  
   const settings = env.resolveKioPathSettings(kioPathType)  
   const pathTypeNames = Object.keys(KioComponentsPathTypes).filter ( isNaN )
@@ -165,8 +166,8 @@ export const kioFiles = ( kioPathType:KioComponentsPathType ) => {
   return listSource
 }
 
-export const publicationComponents = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
+export const publicationComponents =  ( projectPath:string ) => ( ):Observable<string> => {
+  return kioFiles ( projectPath ) ( "publication" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
 }/*
 
@@ -180,8 +181,8 @@ export const navigationComponents = ( ):Observable<string> => {
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
 }*/
 
-export const publicationComponentFiles = ( ):Observable<string[]> => {
-  return publicationComponents()
+export const publicationComponentFiles = ( projectPath:string ) => ( ):Observable<string[]> => {
+  return publicationComponents ( projectPath ) ()
         .map ( filename => {
           return path.dirname(filename)
         } )
@@ -190,18 +191,16 @@ export const publicationComponentFiles = ( ):Observable<string[]> => {
 
 }
 
-export const publicationComponentFixtures = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
-        .filter ( filename => /.*\.component\.fixture\.ts$/.test ( filename ) )
-}
-
-export const publicationComponentCriterias = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
-        .filter ( filename => /.*\.component\.criteria\.ts$/.test ( filename ) )
-}
-
-export const filesForIndexType = ( indexType:IndexType ) => {
-  return kioFiles ( resolveRootByIndexType(indexType) )
+export const filesForIndexType = ( projectPath:string ) => ( indexType:IndexType ) => {
+  return kioFiles ( projectPath ) ( resolveRootByIndexType(indexType) )
           .filter ( filterByIndexType(indexType) )
           //.map ( logImage('after filter') )
 }
+
+
+export default ( projectPath:string=api.modules.resolve.rootPath() ) => ({
+  filesForIndexType: filesForIndexType(projectPath),
+  kioFiles: kioFiles(projectPath),
+  publicationComponentFiles: publicationComponentFiles(projectPath),
+  publicationComponents: publicationComponents(projectPath)
+})

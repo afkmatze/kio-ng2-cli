@@ -54,7 +54,7 @@ const nameForType = ( indexType:IndexTypes|number ) => {
   return IndexTypes[indexType]
 }
 
-export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
+export const buildIndexes = ( projectPath:string ) => ( args:CLICommandArgsBuildIndexes={} ) => {
   const indexTypes = _.values(IndexTypes).filter(val => {
       if ( !isNaN(val) )
         return false
@@ -71,7 +71,7 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
             .flatMap ( (indexType:IndexType) => {
               debug('indexType: ', IndexTypes[indexType])
 
-              const source = files.filesForIndexType(indexType).map ( (row,idx) => {
+              const source = files.filesForIndexType (projectPath) (indexType).map ( (row,idx) => {
                 debug ( 'source file #%s: %s', idx, path.relative(process.cwd(),row) )
                 return row
               } )
@@ -103,3 +103,8 @@ export const buildIndexes = ( args:CLICommandArgsBuildIndexes={} ) => {
             )
             
 }
+
+
+export default ( projectPath:string ) => ({
+  buildIndexes: buildIndexes(projectPath)
+})

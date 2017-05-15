@@ -13,6 +13,7 @@
     "prebuild:production": "rm -rf ./release",
     "build:production": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "build:production:watch": "./scripts/watch.sh build:production",
+    "prebuild:release": "rm -rf ./release",
     "build:release": "NODE_ENV=production tsc -p ./tsconfig.prod.json; echo",
     "build:release:watch": "./scripts/watch.sh build:release",
     "doc": "typedoc --tsconfig ./tsconfig.prod.json --out documentation",

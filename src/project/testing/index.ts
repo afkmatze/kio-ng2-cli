@@ -7,7 +7,7 @@ import * as stringUtils from '../../utils/string'
 export * from './Runner.class'
 import { TestRunner, ComponentTest } from './Runner.class'
 import * as templates from '../templates'
-import * as files from '../files'
+import files from '../files'
 
 
 const runner = new TestRunner()
@@ -17,7 +17,7 @@ export default runner
 
 export const renderTests = ( targetFilename:string ) => {
 
-  return files.publicationComponents()
+  return files().publicationComponents()
       .map ( (componentFilepath:string) => path.basename(componentFilepath,'.component.ts') )
       .map ( stringUtils.classify )
       .toArray()

@@ -9,8 +9,8 @@ import {
 import testRunner, { ComponentTest, renderTests, execTestAt } from './testing'
 
 
-export const testComponents = ( args:CLICommandArgsTestComponents ) => {
-  const targetFilepath = path.join(path.resolve('./'),'ComponentTests.spec.ts')
+export const testComponents = (projectPath:string) => ( args:CLICommandArgsTestComponents ) => {
+  const targetFilepath = path.join(path.resolve( projectPath,'./src/app'),'ComponentTests.spec.ts')
   console.log('writing spec file at "%s"', targetFilepath )
   return renderTests(targetFilepath)
           .map( (row,idx) => {

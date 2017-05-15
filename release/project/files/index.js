@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxfs = require("rxfs");
+var kio_ng2_env_1 = require("kio-ng2-env");
 var env = require("../../env");
 var env_1 = require("../../env");
 var path = require("path");
@@ -101,7 +102,7 @@ exports.list = function (sourcePath) {
     }
     return source;
 };
-exports.kioFiles = function (kioPathType) {
+exports.kioFiles = function (projectPath) { return function (kioPathType) {
     debug('kioFiles for "%s"', kioPathType);
     var settings = env.resolveKioPathSettings(kioPathType);
     var pathTypeNames = Object.keys(env_1.KioComponentsPathTypes).filter(isNaN);
@@ -133,11 +134,11 @@ exports.kioFiles = function (kioPathType) {
         debug('%s files for \x1b[1;34m%s\x1b[0m', files.length, kioPathType);
     });
     return listSource;
-};
-exports.publicationComponents = function () {
-    return exports.kioFiles("publication")
+}; };
+exports.publicationComponents = function (projectPath) { return function () {
+    return exports.kioFiles(projectPath)("publication")
         .filter(function (filename) { return /.*\.component\.ts$/.test(filename); });
-}; /*
+}; }; /*
 
 export const structureComponents = ( ):Observable<string> => {
   return kioFiles ( "structure" )
@@ -148,25 +149,26 @@ export const navigationComponents = ( ):Observable<string> => {
   return kioFiles ( "navigation" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
 }*/
-exports.publicationComponentFiles = function () {
-    return exports.publicationComponents()
+exports.publicationComponentFiles = function (projectPath) { return function () {
+    return exports.publicationComponents(projectPath)()
         .map(function (filename) {
         return path.dirname(filename);
     })
         .distinct()
         .flatMap(function (dirpath) { return exports.list(dirpath).toArray(); });
-};
-exports.publicationComponentFixtures = function () {
-    return exports.kioFiles("publication")
-        .filter(function (filename) { return /.*\.component\.fixture\.ts$/.test(filename); });
-};
-exports.publicationComponentCriterias = function () {
-    return exports.kioFiles("publication")
-        .filter(function (filename) { return /.*\.component\.criteria\.ts$/.test(filename); });
-};
-exports.filesForIndexType = function (indexType) {
-    return exports.kioFiles(exports.resolveRootByIndexType(indexType))
+}; };
+exports.filesForIndexType = function (projectPath) { return function (indexType) {
+    return exports.kioFiles(projectPath)(exports.resolveRootByIndexType(indexType))
         .filter(filter_1.filterByIndexType(indexType));
     //.map ( logImage('after filter') )
+}; };
+exports.default = function (projectPath) {
+    if (projectPath === void 0) { projectPath = kio_ng2_env_1.api.modules.resolve.rootPath(); }
+    return ({
+        filesForIndexType: exports.filesForIndexType(projectPath),
+        kioFiles: exports.kioFiles(projectPath),
+        publicationComponentFiles: exports.publicationComponentFiles(projectPath),
+        publicationComponents: exports.publicationComponents(projectPath)
+    });
 };
 //# sourceMappingURL=index.js.map

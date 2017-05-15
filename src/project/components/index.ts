@@ -19,7 +19,9 @@ export const isNamedFragmentComponentStructure = ( other:any ):other is NamedFra
     )
 }
 
-export const pathForNamedComponent = ( type:KioNodeType, name:string ) => {
+export const pathForNamedComponent = ( type:string|KioNodeType, name:string ) => {
+  if ( 'string' === typeof type )
+    return pathForNamedComponent(KioNodeType[type],name)
   return path.join(KioNodeType[type],dasherize(name))
 }
 
@@ -64,15 +66,15 @@ export const namedComponentExists = ( namedComponent:NamedComponent ) => {
 
 export const writeComponent = ( componentData:PublicationComponentTemplateData, targetRoot:string ) => {
   const kioPath = env.resolveKioPath('publication')
-  console.log('kioPath',kioPath)
-  console.log('targetRoot',targetRoot)
+  //console.log('kioPath',kioPath)
+  //console.log('targetRoot',targetRoot)
   const componentPath = pathForNamedComponent(componentData.type,componentData.name)
-  console.log('componentPath',componentPath)
+  //console.log('componentPath',componentPath)
   const targetFolder = path.join(targetRoot, kioPath, componentPath)
-  console.log('targetFolder',targetFolder)
+  //console.log('targetFolder',targetFolder)
   const targetName = dasherize(componentData.name)
   
-  return Observable.concat(
+  return Observable.merge(
       exists(targetFolder).switchMap( exists => exists ? Observable.empty() : mkdir(targetFolder) ),
       templates.publicationComponent.render(componentData).flatMap ( info => {
         const {
@@ -86,5 +88,5 @@ export const writeComponent = ( componentData:PublicationComponentTemplateData, 
         console.error(error)
         return Observable.throw(error)
       } )
-    )
+    ).takeLast(1)
 }

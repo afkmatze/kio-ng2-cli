@@ -1,5 +1,5 @@
 import * as yargs from 'yargs'
-import * as project from '../project'
+import project from '../project'
 import * as env from '../env'
 
 
@@ -34,7 +34,7 @@ export const createComponentCommand = ():yargs.CommandModule => ({
   handler: (args:any|env.CommandConfigCreateComponent) => {
     const [ command, componentName ] = args._
     
-    const sub = project.createComponentWithCLIArgs({
+    const sub = project().createComponent({
       ...args,
       name: componentName
     }).subscribe(value=> {}, error=>{
