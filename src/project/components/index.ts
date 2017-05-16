@@ -35,10 +35,9 @@ export const dataForNamedFragmentComponent = ( namedComponent:NamedFragmentCompo
     selector: 'kio-'+dasherize(namedComponent.name),
     modifiers: namedComponent.modifiers,
     childTypes: namedComponent.childTypes,
-    classifiedModuleName: classify(namedComponent.name)+'Component',
+    classifiedModuleName: classify(namedComponent.name),
     dasherizedModuleName: dasherize(namedComponent.name),
-    classifiedParentComponentName: classify(contentType+'-content'),
-    dasherizedParentComponentPath: contentType+'-content'
+    classifiedParentComponentName: classify(contentType+'-component')
   }
 }
 
@@ -52,10 +51,9 @@ export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( named
     selector: 'kio-'+dasherize(namedComponent.name),
     modifiers: namedComponent.modifiers,
     childTypes: [],
-    classifiedModuleName: classify(namedComponent.name)+'Component',
+    classifiedModuleName: classify(namedComponent.name),
     dasherizedModuleName: dasherize(namedComponent.name),
-    classifiedParentComponentName: classify(contentType+'-content'),
-    dasherizedParentComponentPath: contentType+'-content'
+    classifiedParentComponentName: classify(contentType+'-content-component')
   }
 }
 

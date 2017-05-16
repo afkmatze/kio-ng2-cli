@@ -27,10 +27,9 @@ exports.dataForNamedFragmentComponent = function (namedComponent) {
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
         modifiers: namedComponent.modifiers,
         childTypes: namedComponent.childTypes,
-        classifiedModuleName: string_1.classify(namedComponent.name) + 'Component',
+        classifiedModuleName: string_1.classify(namedComponent.name),
         dasherizedModuleName: string_1.dasherize(namedComponent.name),
-        classifiedParentComponentName: string_1.classify(contentType + '-content'),
-        dasherizedParentComponentPath: contentType + '-content'
+        classifiedParentComponentName: string_1.classify(contentType + '-component')
     };
 };
 exports.dataForNamedComponent = function (namedComponent) {
@@ -43,10 +42,9 @@ exports.dataForNamedComponent = function (namedComponent) {
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
         modifiers: namedComponent.modifiers,
         childTypes: [],
-        classifiedModuleName: string_1.classify(namedComponent.name) + 'Component',
+        classifiedModuleName: string_1.classify(namedComponent.name),
         dasherizedModuleName: string_1.dasherize(namedComponent.name),
-        classifiedParentComponentName: string_1.classify(contentType + '-content'),
-        dasherizedParentComponentPath: contentType + '-content'
+        classifiedParentComponentName: string_1.classify(contentType + '-content-component')
     };
 };
 exports.namedComponentExists = function (namedComponent) {
