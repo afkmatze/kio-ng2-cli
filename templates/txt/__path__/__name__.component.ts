@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { <%= classifiedParentComponentName %> } from '<%= pathToStructureComponents %>/<%= dasherizedParentComponentPath %>/<%= dasherizedParentComponentPath %>.component'
+import { TxtComponent } from '<%= pathToStructureComponents %>'
 
 @Component({
   selector: '<%= selector %>',

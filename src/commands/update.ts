@@ -1,6 +1,8 @@
 import * as yargs from 'yargs'
 import * as project from '../project'
 import { env, api } from 'kio-ng2-env'
+import { resolveKioPath } from '../env'
+import * as path from 'path'
 import * as logger from '../console'
 import { NamedComponent } from 'kio-ng2-component-routing'
 
@@ -29,26 +31,33 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
     const {
       target
     } = args
-    console.log('targetPath',target)
+    
+    const componentPath = project.pathForNamedComponent('fragment','bar')
+    const targetFolder = path.join(resolveKioPath('publication'), componentPath)
 
+    const pathToStructureComponents = path.relative(
+      path.join(targetFolder),
+      resolveKioPath('structure')
+    )
     return env(target)
       .flatMap ( store => {
         return Observable.from(store.get('components'))
           .flatMap ( (component:NamedComponent) => {
-            const targetPath = api.modules.resolve.rootPath()
             if ( project.namedComponentExists(component) )
             {
+              logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type,component.name))
               return Observable.empty()
-            }
-            if ( project.isNamedFragmentComponentStructure(component) )
+            }else if ( project.isNamedFragmentComponentStructure(component) )
             {
-              const data = project.dataForNamedFragmentComponent(component)
-              return project.writeComponent(data,targetPath).map ( res => component )
+              logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type,component.name))
+              const data = project.dataForNamedFragmentComponent(pathToStructureComponents,component)
+              return project.writeComponent(data,target).map ( res => component )
             }
             else
             {
-              const data = project.dataForNamedComponent(component)
-              return project.writeComponent(data,targetPath).map ( res => component )
+              logger.log('Write Component "%s" at %s', component.name, project.pathForNamedComponent(component.type,component.name))
+              const data = project.dataForNamedComponent(pathToStructureComponents,component)
+              return project.writeComponent(data,target).map ( res => component )
             }
           } )
           .map ( (component:NamedComponent) => {

@@ -96,7 +96,7 @@ exports.resolveProjectCache = function () {
 };
 exports.resolveKioPathSettings = function (pathName) {
     var packageInfo = exports.resolveProjectPackage();
-    var folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
+    var folder = (pathName && pathName !== 'root') ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
     if (folder) {
         return folder_settings_1.folderSettings(folder);
     }

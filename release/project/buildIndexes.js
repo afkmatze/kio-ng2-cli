@@ -39,7 +39,7 @@ var mapIndexType = function (indexName) {
 var nameForType = function (indexType) {
     return interfaces_1.IndexTypes[indexType];
 };
-exports.buildIndexes = function (args) {
+exports.buildIndexes = function (projectPath) { return function (args) {
     if (args === void 0) { args = {}; }
     var indexTypes = _.values(interfaces_1.IndexTypes).filter(function (val) {
         if (!isNaN(val))
@@ -53,7 +53,7 @@ exports.buildIndexes = function (args) {
     return rxjs_1.Observable.from(indexTypes.map(function (indexType) { return mapIndexType(indexType); }))
         .flatMap(function (indexType) {
         debug('indexType: ', interfaces_1.IndexTypes[indexType]);
-        var source = files.filesForIndexType(indexType).map(function (row, idx) {
+        var source = files.filesForIndexType(projectPath)(indexType).map(function (row, idx) {
             debug('source file #%s: %s', idx, path.relative(process.cwd(), row));
             return row;
         });
@@ -80,5 +80,8 @@ exports.buildIndexes = function (args) {
         var indexFileName = _a.indexFileName, status = _a.status;
         return indexFileName;
     }); });
-};
+}; };
+exports.default = function (projectPath) { return ({
+    buildIndexes: exports.buildIndexes(projectPath)
+}); };
 //# sourceMappingURL=buildIndexes.js.map

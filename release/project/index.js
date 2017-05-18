@@ -5,17 +5,23 @@ function __export(m) {
 Object.defineProperty(exports, "__esModule", { value: true });
 __export(require("./create"));
 __export(require("./interfaces"));
+__export(require("./templates"));
 __export(require("./components"));
 __export(require("./config"));
-var files = require("./files");
-exports.files = files;
+var files_1 = require("./files");
 var templates = require("./templates");
 exports.templates = templates;
 var buildIndexes_1 = require("./buildIndexes");
-exports.buildIndexes = buildIndexes_1.buildIndexes;
 var createComponent_1 = require("./createComponent");
-exports.createComponent = createComponent_1.createComponent;
-exports.createComponentWithCLIArgs = createComponent_1.createComponentWithCLIArgs;
 var testComponents_1 = require("./testComponents");
-exports.testComponents = testComponents_1.testComponents;
+var kio_ng2_env_1 = require("kio-ng2-env");
+exports.default = function (projectPath) {
+    if (projectPath === void 0) { projectPath = kio_ng2_env_1.api.modules.resolve.rootPath(); }
+    return {
+        createComponent: createComponent_1.createComponent(projectPath),
+        testComponents: testComponents_1.testComponents(projectPath),
+        buildIndexes: buildIndexes_1.buildIndexes(projectPath),
+        files: files_1.default(projectPath)
+    };
+};
 //# sourceMappingURL=index.js.map

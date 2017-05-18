@@ -13,7 +13,7 @@ import * as path from 'path'
 import * as files from './files'
 import { buildIndexes } from './buildIndexes'
 
-export const createComponentWithCLIArgs = ( args:CLICommandArgsCreateComponent ) => {
+export const createComponentWithCLIArgs = (projectPath:string) => ( args:CLICommandArgsCreateComponent ) => {
   const {
     name ,
     contentType,
@@ -22,11 +22,10 @@ export const createComponentWithCLIArgs = ( args:CLICommandArgsCreateComponent )
   } = args
 
   const templateData = templates.publicationComponent.mapCLIArgsToTemplateData(args)
-  return createComponent ( templateData )
+  return createComponent ( projectPath ) ( templateData )
 }
 
-export function createComponent ( data:PublicationComponentTemplateData ) {
-
+export const createComponent = (projectPath:string) => ( data:PublicationComponentTemplateData ) => {
   return templates.publicationComponent.render(data)
         .flatMap ( (template,idx) => {
           const targetFile = path.join(env.resolveKioPath('publication'),template.filepath)
@@ -34,6 +33,6 @@ export function createComponent ( data:PublicationComponentTemplateData ) {
         } )
         .toArray()
         .flatMap ( list => {
-          return list.indexOf(true) > -1 ? buildIndexes({}).toPromise() : Observable.empty()
+          return list.indexOf(true) > -1 ? buildIndexes(projectPath)({}).toPromise() : Observable.empty()
         } )
 }

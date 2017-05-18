@@ -1,5 +1,5 @@
 import * as yargs from 'yargs'
-import * as project from '../project'
+import project from '../project'
 import * as env from '../env'
 import { parseList } from './parseArgs'
 
@@ -22,7 +22,7 @@ export const buildIndexesCommand = ():yargs.CommandModule => ({
   handler: (args:any) => {
     const [ command ] = args._
     console.log('filter',args.filter)
-    return project.buildIndexes(args).toPromise()
+    return project().buildIndexes(args).toPromise()
       .catch(error => {
         console.error(error)
       })

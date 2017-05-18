@@ -8,7 +8,7 @@ var __assign = (this && this.__assign) || Object.assign || function(t) {
     return t;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-var project = require("../project");
+var project_1 = require("../project");
 exports.createComponentCommand = function () { return ({
     command: 'createComponent',
     aliases: ['create'],
@@ -39,7 +39,7 @@ exports.createComponentCommand = function () { return ({
     },
     handler: function (args) {
         var _a = args._, command = _a[0], componentName = _a[1];
-        var sub = project.createComponentWithCLIArgs(__assign({}, args, { name: componentName })).subscribe(function (value) { }, function (error) {
+        var sub = project_1.default().createComponent(__assign({}, args, { name: componentName })).subscribe(function (value) { }, function (error) {
             console.error(error);
         }, function () {
             if (sub) {

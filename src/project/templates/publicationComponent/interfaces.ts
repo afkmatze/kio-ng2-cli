@@ -16,7 +16,5 @@ export interface PublicationComponentTemplateData {
   classifiedModuleName:string
   dasherizedModuleName:string
   classifiedParentComponentName:string
-  dasherizedParentComponentPath:string
-  pathToStructureComponents?:string
-
+  pathToStructureComponents:string
 }

@@ -2,7 +2,8 @@
   "name": "kio-ng2-cli",
   "version": "0.0.9",
   "description": "cli tool for kio ng2 projects",
-  "main": "index.js",
+  "main": "release/index.js",
+  "typings": "release/index.d.ts",
   "bin": {
     "kio-ng2": "./bin/exec.js"
   },
@@ -13,6 +14,7 @@
     "prebuild:production": "rm -rf ./release",
     "build:production": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "build:production:watch": "./scripts/watch.sh build:production",
+    "prebuild:release": "rm -rf ./release",
     "build:release": "NODE_ENV=production tsc -p ./tsconfig.prod.json; echo",
     "build:release:watch": "./scripts/watch.sh build:release",
     "doc": "typedoc --tsconfig ./tsconfig.prod.json --out documentation",

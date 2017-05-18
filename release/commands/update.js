@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var project = require("../project");
 var kio_ng2_env_1 = require("kio-ng2-env");
+var env_1 = require("../env");
+var path = require("path");
 var logger = require("../console");
 var rxjs_1 = require("rxjs");
 exports.updateProjectCommand = function () { return ({
@@ -22,22 +24,26 @@ exports.updateProjectCommand = function () { return ({
     handler: function (args) {
         var _a = args._, command = _a[0], projectName = _a[1];
         var target = args.target;
-        console.log('targetPath', target);
+        var componentPath = project.pathForNamedComponent('fragment', 'bar');
+        var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
+        var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
         return kio_ng2_env_1.env(target)
             .flatMap(function (store) {
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
-                var targetPath = kio_ng2_env_1.api.modules.resolve.rootPath();
                 if (project.namedComponentExists(component)) {
+                    logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     return rxjs_1.Observable.empty();
                 }
-                if (project.isNamedFragmentComponentStructure(component)) {
-                    var data = project.dataForNamedFragmentComponent(component);
-                    return project.writeComponent(data, targetPath).map(function (res) { return component; });
+                else if (project.isNamedFragmentComponentStructure(component)) {
+                    logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
+                    var data = project.dataForNamedFragmentComponent(pathToStructureComponents, component);
+                    return project.writeComponent(data, target).map(function (res) { return component; });
                 }
                 else {
-                    var data = project.dataForNamedComponent(component);
-                    return project.writeComponent(data, targetPath).map(function (res) { return component; });
+                    logger.log('Write Component "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
+                    var data = project.dataForNamedComponent(pathToStructureComponents, component);
+                    return project.writeComponent(data, target).map(function (res) { return component; });
                 }
             })
                 .map(function (component) {

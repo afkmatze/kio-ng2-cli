@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var rxjs_1 = require("rxjs");
-var project = require("../project");
+var project_1 = require("../project");
 var logger = require("../console");
 exports.testComponentsCommand = function () { return ({
     command: 'testComponents',
@@ -13,7 +13,7 @@ exports.testComponentsCommand = function () { return ({
         var t = setInterval(function () {
             console.log('check interval');
         }, 1000);
-        return project.testComponents(args)
+        return project_1.default().testComponents(args)
             .catch(function (error) {
             console.error(error);
             return rxjs_1.Observable.throw(error);

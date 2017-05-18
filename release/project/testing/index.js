@@ -11,11 +11,11 @@ var stringUtils = require("../../utils/string");
 __export(require("./Runner.class"));
 var Runner_class_1 = require("./Runner.class");
 var templates = require("../templates");
-var files = require("../files");
+var files_1 = require("../files");
 var runner = new Runner_class_1.TestRunner();
 exports.default = runner;
 exports.renderTests = function (targetFilename) {
-    return files.publicationComponents()
+    return files_1.default().publicationComponents()
         .map(function (componentFilepath) { return path.basename(componentFilepath, '.component.ts'); })
         .map(stringUtils.classify)
         .toArray()
