@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { <%= classifiedParentComponentName %> } from '<%= pathToStructureComponents %>/<%= dasherizedParentComponentPath %>/<%= dasherizedParentComponentPath %>.component'
+import { SrcComponent } from '<%= pathToStructureComponents %>'
 
 @Component({
   selector: '<%= selector %>',

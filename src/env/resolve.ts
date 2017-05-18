@@ -118,7 +118,7 @@ export const resolveProjectCache = () => {
 
 export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathName?:T ):KioFolderSettings => {
   const packageInfo = resolveProjectPackage()
-  const folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root
+  const folder = (pathName && pathName !== 'root' ) ? packageInfo.kio.components[pathName] : packageInfo.kio.root
   if ( folder )
   {
     return folderSettings(folder)

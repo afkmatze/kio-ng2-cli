@@ -2,6 +2,8 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var project = require("../project");
 var kio_ng2_env_1 = require("kio-ng2-env");
+var env_1 = require("../env");
+var path = require("path");
 var logger = require("../console");
 var rxjs_1 = require("rxjs");
 exports.updateProjectCommand = function () { return ({
@@ -22,9 +24,11 @@ exports.updateProjectCommand = function () { return ({
     handler: function (args) {
         var _a = args._, command = _a[0], projectName = _a[1];
         var target = args.target;
+        var componentPath = project.pathForNamedComponent('fragment', 'bar');
+        var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
+        var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
         return kio_ng2_env_1.env(target)
             .flatMap(function (store) {
-            console.log('store components', store.get('components'));
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
                 if (project.namedComponentExists(component)) {
@@ -33,12 +37,12 @@ exports.updateProjectCommand = function () { return ({
                 }
                 else if (project.isNamedFragmentComponentStructure(component)) {
                     logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
-                    var data = project.dataForNamedFragmentComponent(component);
+                    var data = project.dataForNamedFragmentComponent(pathToStructureComponents, component);
                     return project.writeComponent(data, target).map(function (res) { return component; });
                 }
                 else {
                     logger.log('Write Component "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
-                    var data = project.dataForNamedComponent(component);
+                    var data = project.dataForNamedComponent(pathToStructureComponents, component);
                     return project.writeComponent(data, target).map(function (res) { return component; });
                 }
             })

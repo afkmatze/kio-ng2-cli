@@ -25,7 +25,7 @@ export const pathForNamedComponent = ( type:string|KioNodeType, name:string ) =>
   return path.join(KioNodeType[type],dasherize(name))
 }
 
-export const dataForNamedFragmentComponent = ( namedComponent:NamedFragmentComponentStructure ):PublicationComponentTemplateData => {
+export const dataForNamedFragmentComponent = ( pathToStructureComponents:string, namedComponent:NamedFragmentComponentStructure ):PublicationComponentTemplateData => {
   const contentType = KioNodeType[KioNodeType.fragment]
   return {
     name: namedComponent.name,
@@ -37,11 +37,12 @@ export const dataForNamedFragmentComponent = ( namedComponent:NamedFragmentCompo
     childTypes: namedComponent.childTypes,
     classifiedModuleName: classify(namedComponent.name),
     dasherizedModuleName: dasherize(namedComponent.name),
-    classifiedParentComponentName: classify(contentType+'-component')
+    classifiedParentComponentName: classify(contentType+'-component'),
+    pathToStructureComponents
   }
 }
 
-export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( namedComponent:NamedComponentStructure<T> ):PublicationComponentTemplateData => {
+export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( pathToStructureComponents:string, namedComponent:NamedComponentStructure<T> ):PublicationComponentTemplateData => {
   const contentType = KioNodeType[<number>namedComponent.type]
   return {
     name: namedComponent.name,
@@ -53,7 +54,8 @@ export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( named
     childTypes: [],
     classifiedModuleName: classify(namedComponent.name),
     dasherizedModuleName: dasherize(namedComponent.name),
-    classifiedParentComponentName: classify(contentType+'-content-component')
+    classifiedParentComponentName: classify(contentType+'-content-component'),
+    pathToStructureComponents
   }
 }
 

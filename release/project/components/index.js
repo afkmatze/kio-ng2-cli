@@ -17,7 +17,7 @@ exports.pathForNamedComponent = function (type, name) {
         return exports.pathForNamedComponent(kio_ng2_1.KioNodeType[type], name);
     return path.join(kio_ng2_1.KioNodeType[type], string_1.dasherize(name));
 };
-exports.dataForNamedFragmentComponent = function (namedComponent) {
+exports.dataForNamedFragmentComponent = function (pathToStructureComponents, namedComponent) {
     var contentType = kio_ng2_1.KioNodeType[kio_ng2_1.KioNodeType.fragment];
     return {
         name: namedComponent.name,
@@ -29,10 +29,11 @@ exports.dataForNamedFragmentComponent = function (namedComponent) {
         childTypes: namedComponent.childTypes,
         classifiedModuleName: string_1.classify(namedComponent.name),
         dasherizedModuleName: string_1.dasherize(namedComponent.name),
-        classifiedParentComponentName: string_1.classify(contentType + '-component')
+        classifiedParentComponentName: string_1.classify(contentType + '-component'),
+        pathToStructureComponents: pathToStructureComponents
     };
 };
-exports.dataForNamedComponent = function (namedComponent) {
+exports.dataForNamedComponent = function (pathToStructureComponents, namedComponent) {
     var contentType = kio_ng2_1.KioNodeType[namedComponent.type];
     return {
         name: namedComponent.name,
@@ -44,7 +45,8 @@ exports.dataForNamedComponent = function (namedComponent) {
         childTypes: [],
         classifiedModuleName: string_1.classify(namedComponent.name),
         dasherizedModuleName: string_1.dasherize(namedComponent.name),
-        classifiedParentComponentName: string_1.classify(contentType + '-content-component')
+        classifiedParentComponentName: string_1.classify(contentType + '-content-component'),
+        pathToStructureComponents: pathToStructureComponents
     };
 };
 exports.namedComponentExists = function (namedComponent) {

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FragmentComponent } from 'kio-ng2-structure'
+import { FragmentComponent } from '<%= pathToStructureComponents %>'
 
 @Component({
   selector: '<%= selector %>',
