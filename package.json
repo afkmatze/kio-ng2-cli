@@ -1,6 +1,6 @@
 {
   "name": "kio-ng2-cli",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "cli tool for kio ng2 projects",
   "main": "index.js",
   "bin": {
