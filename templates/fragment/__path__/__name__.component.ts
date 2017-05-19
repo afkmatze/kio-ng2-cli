@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { KioAbstractFragmentComponent } from '<%= pathToStructureComponents %>'
+import { KioAbstractFragmentComponent } from '<%= pathToStructureComponents %>/kio-abstract-fragment/kio-abstract-fragment.component'
 
 @Component({
   selector: '<%= selector %>',

@@ -21,7 +21,7 @@ exports.dataForNamedFragmentComponent = function (pathToStructureComponents, nam
     var contentType = kio_ng2_1.KioNodeType[kio_ng2_1.KioNodeType.fragment];
     return {
         name: namedComponent.name,
-        styles: '../../',
+        styles: '../../../',
         contentType: contentType,
         type: kio_ng2_1.KioNodeType.fragment,
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
@@ -39,7 +39,7 @@ exports.dataForNamedComponent = function (pathToStructureComponents, namedCompon
         name: namedComponent.name,
         type: namedComponent.type,
         contentType: contentType,
-        styles: '../../',
+        styles: '../../../',
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
         modifiers: namedComponent.modifiers,
         childTypes: [],

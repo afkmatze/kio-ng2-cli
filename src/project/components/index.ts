@@ -29,7 +29,7 @@ export const dataForNamedFragmentComponent = ( pathToStructureComponents:string,
   const contentType = KioNodeType[KioNodeType.fragment]
   return {
     name: namedComponent.name,
-    styles: '../../',
+    styles: '../../../',
     contentType,
     type: KioNodeType.fragment,
     selector: 'kio-'+dasherize(namedComponent.name),
@@ -48,7 +48,7 @@ export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( pathT
     name: namedComponent.name,
     type: namedComponent.type,
     contentType,
-    styles: '../../',
+    styles: '../../../',
     selector: 'kio-'+dasherize(namedComponent.name),
     modifiers: namedComponent.modifiers,
     childTypes: [],
