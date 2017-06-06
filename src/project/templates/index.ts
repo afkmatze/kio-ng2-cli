@@ -66,9 +66,9 @@ export const renderTemplateWithData = ( templateName:string, data:any ) => {
   return files.list(TEMPLATE_DIR)
        .flatMap( file => {
          return rxfs.readFile<string>(file, 'utf8')
-         .map ( content => ({ 
+         .map ( (content:Buffer|string) => ({ 
            file: path.relative(TEMPLATE_DIR, file),
-           content 
+           content: ( content instanceof Buffer ) ? content.toString('utf8') : content
          }))
        } )
        .map( ({file,content},idx) => {

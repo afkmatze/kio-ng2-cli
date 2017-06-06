@@ -84,7 +84,7 @@ export const FileSystemAssertions:FSAssertion = {
   toExist: (not:boolean=false, actual:string, message?:string ) => {
     const stats = getStats(actual)
     assert({
-      assertion: !!stats !== not,
+      assertion: (stats !== emptyStats) !== not,
       message: message || `expected ${actual} ${not?'not ':''}to be a existing`,
     })
   },
@@ -144,14 +144,17 @@ export const getStats = ( filepath:string ):fs.Stats => {
   let stats:fs.Stats = emptyStats
   try{
     stats = fs.statSync(filepath)
-  }catch(e){}
+  }catch(e){
+    stats = emptyStats
+  }
 
   return stats
 }
 
 export const assertExists = ( filepath:string, message?:string ) => {
+  const fileStats = getStats(filepath)
   assert({
-    assertion: getStats(filepath) !== emptyStats ,
+    assertion: fileStats !== emptyStats ,
     message: message || `expected ${filepath} to exist`
   })
 }

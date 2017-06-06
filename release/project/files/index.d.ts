@@ -8,7 +8,7 @@ export declare const kioFiles: (projectPath: string) => (kioPathType: string) =>
 export declare const publicationComponents: (projectPath: string) => () => Observable<string>;
 export declare const publicationComponentFiles: (projectPath: string) => () => Observable<string[]>;
 export declare const filesForIndexType: (projectPath: string) => (indexType: IndexTypes) => Observable<string>;
-declare var _default: (projectPath?: string) => {
+declare const _default: (projectPath?: string) => {
     filesForIndexType: (indexType: IndexTypes) => Observable<string>;
     kioFiles: (kioPathType: string) => Observable<string>;
     publicationComponentFiles: () => Observable<string[]>;

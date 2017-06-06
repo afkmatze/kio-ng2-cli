@@ -47,15 +47,28 @@ export const execTestAt = ( specFilename:string ) => {
 
   const specDirpath = path.dirname(specFilename)
   const command = `ts-node "./${path.basename(specFilename)}"`
+  console.log('Exec "%s"', command)
   return rxfs.exec(command,{
     cwd: specDirpath
   })
   .map ( (row:ExecData,idx) => {
-    console.log('<------------------------------------------------')
-    console.log('- row: %s ', idx )
-    console.log('-------------------------------------------------')
-    console.log(row)
-    console.log('------------------------------------------------->')
-    return row
+    const {
+      stderr ,
+      stdout
+    } = row
+    let text:string
+    if ( stdout )
+    {
+      text = stdout.toString('utf8')
+      console.log('<------------------------------------------------')
+      console.log('- row: %s ', idx )
+      console.log('-------------------------------------------------')
+      console.log('%s',text)
+      console.log('------------------------------------------------->')
+    }
+    else {
+      console.error(stderr.toString('utf8'))
+    }
+    return text
   } )
 }

@@ -41,16 +41,25 @@ exports.renderTests = function (targetFilename) {
 exports.execTestAt = function (specFilename) {
     var specDirpath = path.dirname(specFilename);
     var command = "ts-node \"./" + path.basename(specFilename) + "\"";
+    console.log('Exec "%s"', command);
     return rxfs.exec(command, {
         cwd: specDirpath
     })
         .map(function (row, idx) {
-        console.log('<------------------------------------------------');
-        console.log('- row: %s ', idx);
-        console.log('-------------------------------------------------');
-        console.log(row);
-        console.log('------------------------------------------------->');
-        return row;
+        var stderr = row.stderr, stdout = row.stdout;
+        var text;
+        if (stdout) {
+            text = stdout.toString('utf8');
+            console.log('<------------------------------------------------');
+            console.log('- row: %s ', idx);
+            console.log('-------------------------------------------------');
+            console.log('%s', text);
+            console.log('------------------------------------------------->');
+        }
+        else {
+            console.error(stderr.toString('utf8'));
+        }
+        return text;
     });
 };
 //# sourceMappingURL=index.js.map

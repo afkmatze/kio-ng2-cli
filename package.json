@@ -48,6 +48,8 @@
     "test:str:watch": "./scripts/watch.sh test:str",
     "test:tmpl": "NODE_ENV=test ts-mocha ./src/project/templates/template.spec.ts",
     "test:tmpl:watch": "./scripts/watch.sh test:tmpl",
+    "test:componentTests": "NODE_ENV=test ts-mocha ./src/project/testComponents.spec.ts",
+    "test:componentTests:watch": "nodemon -w ./src -e ts --exec \"npm run test:componentTests\"",
     "test:resolve": "NODE_ENV=test ts-mocha ./src/env/resolve.spec.ts",
     "test:resolve:watch": "nodemon -w ./src -e ts --exec \"npm run test:resolve\"",
     "test:init": "NODE_ENV=test ts-mocha ./src/project.init.spec.ts",
