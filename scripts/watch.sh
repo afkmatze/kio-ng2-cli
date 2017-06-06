@@ -10,7 +10,8 @@ NPM_COMMAND=${1:-build}
 
 function main() {
   cd "${CLI_ROOT}"
-  $NODEMON_BIN -w ./src -e ts --exec "npm run ${NPM_COMMAND}"
+  printf 'NPM_COMMAND: "%s"\n' "${NPM_COMMAND}" 
+  "$NODEMON_BIN" -w ./src -w ./node_modules/kio-ng2* -e ts --exec "npm run ${NPM_COMMAND}"
 }
 
 main

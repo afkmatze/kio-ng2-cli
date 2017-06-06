@@ -1,8 +1,8 @@
-import * as logger from '../console'
 import * as path from './path'
 import * as fs from 'fs'
 import { KioComponentsPaths, KioComponentsPathType, KioProjectPaths, KioFolderSettingArg, KioFileFilter, KioFolderSettings } from './interfaces'
 import { folderSettings } from './folder-settings'
+import * as logger from '../console'
 
 const debug = logger.createDebugger()
 
@@ -24,10 +24,10 @@ export const moduleRoot = () => {
   if ( process.env.KIO_NG2_PROJECT )
   {
     debug('Use project path from environment variable KIO_NG2_PROJECT: "%s"', process.env.KIO_NG2_PROJECT )
-    __moduleRoot = process.env.KIO_NG2_PROJECT
+    __moduleRoot = path.resolve(process.env.KIO_NG2_PROJECT)
     return __moduleRoot
   }
-  
+
   let resolvedPath:string
   try{
     resolvedPath = require.resolve('./')
@@ -54,8 +54,17 @@ export const moduleRoot = () => {
   }
 
   debug('resolve module root: %s', resolvedPath)
+  
   __moduleRoot = resolvedPath
   return resolvedPath
+}
+
+export const isProjectEnv = () => {
+  let __env_path
+  try{
+    __env_path = resolveProjectPackage()
+  }catch(e){}
+  return !!__env_path
 }
 
 /**
@@ -97,9 +106,8 @@ export const resolveProjectPackage = ():any => {
     const json = fs.readFileSync(packagePath,'utf8')
     debug('json:',json)
     projectPackage = JSON.parse ( json ) || require('./'+packagePath)
-    debug('package contents: ', projectPackage)
+    debug('package key config: ', projectPackage.kio)
   }
-
   return projectPackage  
 }
 
@@ -110,14 +118,20 @@ export const resolveProjectCache = () => {
 
 export const resolveKioPathSettings = <T extends KioComponentsPathType>( pathName?:T ):KioFolderSettings => {
   const packageInfo = resolveProjectPackage()
-  debug('package info: %s', packageInfo)
-  const folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root
-  return folderSettings(folder)
+  const folder = (pathName && pathName !== 'root' ) ? packageInfo.kio.components[pathName] : packageInfo.kio.root
+  if ( folder )
+  {
+    return folderSettings(folder)
+  }
+  throw Error(`Config prop "${pathName}" could not be found in kio settings of project package.\n(${resolveProjectPackagePath()})`)
 }
 
 export const resolveKioPath = ( pathName?:KioComponentsPathType ) => {
   const kioPath = resolveKioPathSettings ( pathName )
-  return kioPath.path
+  if ( kioPath )
+  {
+    return kioPath.path
+  }
 }
 
 export const resolve = ( ...pathNames:string[] ) => {

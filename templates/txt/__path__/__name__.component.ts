@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
-import { <%= classifiedParentComponentName %> } from '<%= pathToStructureComponents %>/<%= dasherizedParentComponentPath %>/<%= dasherizedParentComponentPath %>.component'
+import { KioAbstractTxtComponent } from '<%= pathToStructureComponents %>'
 
 @Component({
   selector: '<%= selector %>',
   templateUrl: './<%= dasherizedModuleName %>.component.html',
   styleUrls: ['./<%= dasherizedModuleName %>.component.scss']
 })
-export class <%= classifiedModuleName %>Component extends <%= classifiedParentComponentName %> {
+export class <%= classifiedModuleName %>Component extends KioAbstractTxtComponent {
 
   onNodeUpdate(){
     super.onNodeUpdate()    

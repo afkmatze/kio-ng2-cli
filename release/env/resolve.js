@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var logger = require("../console");
 var path = require("./path");
 var fs = require("fs");
 var folder_settings_1 = require("./folder-settings");
+var logger = require("../console");
 var debug = logger.createDebugger();
 exports.isInstalled = function () {
     if (process && process.argv && /\/kio\-ng2$/.test(process.argv[1] || ""))
@@ -19,7 +19,7 @@ exports.moduleRoot = function () {
         return __moduleRoot;
     if (process.env.KIO_NG2_PROJECT) {
         debug('Use project path from environment variable KIO_NG2_PROJECT: "%s"', process.env.KIO_NG2_PROJECT);
-        __moduleRoot = process.env.KIO_NG2_PROJECT;
+        __moduleRoot = path.resolve(process.env.KIO_NG2_PROJECT);
         return __moduleRoot;
     }
     var resolvedPath;
@@ -45,6 +45,14 @@ exports.moduleRoot = function () {
     debug('resolve module root: %s', resolvedPath);
     __moduleRoot = resolvedPath;
     return resolvedPath;
+};
+exports.isProjectEnv = function () {
+    var __env_path;
+    try {
+        __env_path = exports.resolveProjectPackage();
+    }
+    catch (e) { }
+    return !!__env_path;
 };
 /**
  * @brief      resolves path in target project
@@ -79,7 +87,7 @@ exports.resolveProjectPackage = function () {
         var json = fs.readFileSync(packagePath, 'utf8');
         debug('json:', json);
         projectPackage = JSON.parse(json) || require('./' + packagePath);
-        debug('package contents: ', projectPackage);
+        debug('package key config: ', projectPackage.kio);
     }
     return projectPackage;
 };
@@ -88,13 +96,17 @@ exports.resolveProjectCache = function () {
 };
 exports.resolveKioPathSettings = function (pathName) {
     var packageInfo = exports.resolveProjectPackage();
-    debug('package info: %s', packageInfo);
-    var folder = pathName ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
-    return folder_settings_1.folderSettings(folder);
+    var folder = (pathName && pathName !== 'root') ? packageInfo.kio.components[pathName] : packageInfo.kio.root;
+    if (folder) {
+        return folder_settings_1.folderSettings(folder);
+    }
+    throw Error("Config prop \"" + pathName + "\" could not be found in kio settings of project package.\n(" + exports.resolveProjectPackagePath() + ")");
 };
 exports.resolveKioPath = function (pathName) {
     var kioPath = exports.resolveKioPathSettings(pathName);
-    return kioPath.path;
+    if (kioPath) {
+        return kioPath.path;
+    }
 };
 exports.resolve = function () {
     var pathNames = [];

@@ -1,11 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var Formatter_class_1 = require("./Formatter.class");
-var defaultTypes_1 = require("./defaultTypes");
+var types_1 = require("./types");
 var formatter = new Formatter_class_1.Formatter();
 exports.formatter = formatter;
-Object.keys(defaultTypes_1.defaultTypes).forEach(function (key) {
-    var defaultType = defaultTypes_1.defaultTypes[key];
-    formatter.addType(defaultType.matcher, defaultType.formatter);
+types_1.default.forEach(function (defaultType) {
+    formatter.addType(defaultType);
 });
 //# sourceMappingURL=formatter.js.map

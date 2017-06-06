@@ -19,7 +19,7 @@ exports.evalProject = function (recompile) {
     var tsconf = require(env.resolve('./tsconfig.json'));
     var compilerOpts = tsconf.compilerOptions;
     var outpath = env.resolve(compilerOpts.outDir);
-    var tmp_outpath = path.resolve(env.KIO_PROJECT_CACHE, 'tsc-out');
+    var tmp_outpath = path.resolve(env.resolveProjectCache(), 'tsc-out');
     if (recompile || !exports.shellCheck('-d ', tmp_outpath)) {
         var cp = shelljs.exec("tsc --outDir \"" + tmp_outpath + "\"", {
             cwd: env.KIO_PROJECT_ROOT,

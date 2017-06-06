@@ -1,20 +1,14 @@
-import { ValueType, TypeMatcher, ValueMatcher, ValueFormatter, ValueTypeMatcher, ValueTypeFormatter } from './interfaces'
+import { 
+  ValueType, ValueTypeSimple, TypeMatcher, ValueMatcher, 
+  ValueFormatter, ValueTypeMatcher, ValueTypeFormatter,
+  FormatterFunction,
+  TypeFormat
+ } from './interfaces'
+
 import { format } from 'util'
 
-const makeSimpleTypeMatcher = ( typeName:string ):ValueTypeMatcher => ( dataType , value? ) => {
+const makeSimpleTypeMatcher = <T extends ValueTypeSimple>( typeName:string ):ValueMatcher<T> => ( value?:any, ...args:any[] ):boolean => {
   return typeName === typeof (value||undefined)
-}
-
-const valueFormatter = (value:any,...args:any[]):string => {
-  return stringFormatter('%s',value,...args)
-}
-
-const stringFormatter = ( value:string, ...args:any[] ):string => {
-  return format(value,...args)
-}
-
-const numberFormatter = ( value:number, dec?:number ):string => {
-  return stringFormatter('%s',value)
 }
 
 export const defaultMatcher = {
@@ -24,16 +18,34 @@ export const defaultMatcher = {
   "object": makeSimpleTypeMatcher("object")
 }
 
-export const defaultFormatter = {
-  "string": stringFormatter,
-  "number": numberFormatter,
-  "boolean": valueFormatter,
-  "object": valueFormatter
+
+const valueFormatter:FormatterFunction<ValueTypeSimple> = <T extends ValueTypeSimple>(value:T,...args:any[]):string => {
+  return stringFormatter('%s',value,...args)
 }
 
-export const defaultTypes = {
- "string": {formatter: defaultFormatter.string, matcher: defaultMatcher.string },
-  "number": {formatter: defaultFormatter.number, matcher: defaultMatcher.number },
-  "boolean": {formatter: defaultFormatter.boolean, matcher: defaultMatcher.boolean },
-  "object": {formatter: defaultFormatter.object, matcher: defaultMatcher.object } 
+const stringFormatter:FormatterFunction<string> = ( value:string, ...args:any[] ):string => {
+  return format(value,...args)
+}
+
+const numberFormatter:FormatterFunction<number> = ( value:number, dec?:number ):string => {
+  return stringFormatter('%s',value)
+}
+
+const objectFormatter:FormatterFunction<object> = ( value:object ):string => {
+  return JSON.stringify ( value, null, '  ' )
+}
+
+export const defaultFormatter = {
+  "string": {
+    formatValue: stringFormatter
+  },
+  "number": {
+    formatValue: numberFormatter
+  },
+  "boolean": {
+    formatValue: valueFormatter
+  },
+  "object": {
+    formatValue: objectFormatter
+  }
 }

@@ -1,25 +1,26 @@
 import { IndexTypes, IndexType } from '../interfaces'
+import * as path from 'path'
 
 export const filterByIndexType = ( indexType:IndexType ) => {
   let expr
   switch (indexType) {
     
-    case IndexTypes.navigation:
-    case IndexTypes.structure:
+    /*case IndexTypes.navigation:
+    case IndexTypes.structure:*/
     case IndexTypes.publication:
       expr = /\.component\.ts$/
       break;
 
     case IndexTypes.fixture:
-      expr = /\.component\.fixture\.ts$/
+      expr = /\.fixture\.ts$/
       break;
 
     case IndexTypes.criteria:
-      expr = /\.component\.criteria\.ts$/
+      expr = /\.criteria\.ts$/
       break;    
   }
 
   return ( filename:string="", idx?:number, files?:string[] ) => {
-    return filename ? expr.test(filename) : false
+    return filename ? expr.test(path.basename(filename)) : false
   }
 }

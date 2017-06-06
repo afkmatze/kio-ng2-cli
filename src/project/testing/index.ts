@@ -7,7 +7,7 @@ import * as stringUtils from '../../utils/string'
 export * from './Runner.class'
 import { TestRunner, ComponentTest } from './Runner.class'
 import * as templates from '../templates'
-import * as files from '../files'
+import files from '../files'
 
 
 const runner = new TestRunner()
@@ -17,7 +17,12 @@ export default runner
 
 export const renderTests = ( targetFilename:string ) => {
 
-  return files.publicationComponents()
+  return files().publicationComponents()
+      .catch ( error => {
+        console.log('Failed to list publication components.')
+        console.error(error)
+        return Observable.throw(error)
+      } )
       .map ( (componentFilepath:string) => path.basename(componentFilepath,'.component.ts') )
       .map ( stringUtils.classify )
       .toArray()
@@ -26,7 +31,7 @@ export const renderTests = ( targetFilename:string ) => {
         const targetDir:string = path.resolve(path.dirname(targetFilename))
         return templates
           .renderTemplateWithData('test',{
-            pathToKioIndexes: './'+path.relative(targetDir,env.resolve(env.KIO_PATHS.root)),
+            pathToKioIndexes: './'+path.relative(targetDir,env.resolve(env.resolveKioPath('root'))),
             componentNames 
           })
           .flatMap (

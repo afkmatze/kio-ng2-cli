@@ -1,5 +1,6 @@
 import { Observable, Scheduler } from 'rxjs'
 import * as rxfs from 'rxfs'
+import { api } from 'kio-ng2-env'
 import * as env from '../../env'
 import { 
   KioFolderSettings, KioFolderSettingArg, KioFileFilter, 
@@ -9,6 +10,11 @@ import {
 import * as path from 'path'
 import { ProjectEnv, IndexTypes, IndexType } from '../interfaces'
 import { filterByIndexType } from './filter'
+import { createDebugger } from '../../console'
+
+const debug = createDebugger({
+  debugKey: 'files'
+})
 
 export const resolveRootByIndexType = ( indexType:IndexType ) => {
   switch (indexType) {
@@ -16,13 +22,13 @@ export const resolveRootByIndexType = ( indexType:IndexType ) => {
     case IndexTypes.publication:
     case IndexTypes.fixture:
     case IndexTypes.criteria:
-      return env.KIO_PATHS.components.publication
+      return "publication"
     
-    case IndexTypes.structure:
-      return env.KIO_PATHS.components.structure
+/*    case IndexTypes.structure:
+      return "structure"
     
     case IndexTypes.navigation:
-      return env.KIO_PATHS.components.navigation
+      return "navigation"*/
     
   }
 }
@@ -58,27 +64,40 @@ const assertFile = ( file:string, idx:number ) => {
   return file
 }
 
-export const filepathFilter = ( filter:env.KioFileFilter|env.KioFileFilter[] ) => {
+export const filepathFilter = ( filter:env.KioFileFilter|env.KioFileFilter[], include:boolean=false ) => {
   if ( !Array.isArray(filter) )
     return filepathFilter ( [filter] )
 
   const filterExpression = ( filter:env.KioFileFilter ):RegExp => {
     if ( 'string' === typeof filter )
-      return new RegExp("^"+filter)
+      return new RegExp(filter)
     return filter
   }
 
+//  const doDebug = filter.indexOf ( 'abstract' ) > -1
+
   const match = ( filepathOrName:string ) => {
-    const matchingFilter = filter.find ( filterItem => {
-      return filterExpression(filterItem).test ( filepathOrName )
+    const matchingFilter = filter.find ( (filterItem,idx) => {
+      const expr = filterExpression(filterItem)
+      const result = expr.test ( filepathOrName )
+//      doDebug && console.log('expr: %s', idx, expr )
+      //include && debug('%s.test(%s) = %s', expr, filepathOrName, (result ? 'true' : 'false'))
+      return result
     } )
-    return !!matchingFilter
+//    doDebug && console.log('test match for "%s"', filepathOrName )
+//    doDebug && console.log('matching: ', matchingFilter )
+    return !matchingFilter === include
   }
+
+  //debug('filter: %s', filter )
   return ( filepath:string ) => {
+//    doDebug && console.log('filepath', filepath)
     if ( match (filepath) || match ( path.basename(filepath) ) )
     {
+      //debug('matched: %s', filepath )
       return false
     }
+    //debug('not matched: %s', filepath )
     return true
   }
 }
@@ -91,9 +110,9 @@ export const list = ( sourcePath:env.KioFolderSettingArg ):Observable<string> =>
   {
     sourceFolder.path = env.resolve ( sourceFolder.path )
   }
-  //console.log('files at "%s"', sourceFolder.path)
+  //debug('files at "%s"', sourceFolder.path)
   //console.log('exclude', sourceFolder.exclude)
-  return rxfs.find(['-type','file'],sourceFolder.path)
+  const source = rxfs.find(['-type','file'],sourceFolder.path)
       .map ( streamData => streamData.stdout.toString('utf8') )
       .filter ( filepathFilter ( sourceFolder.exclude ) )
       .map ( (filename,idx) => {
@@ -102,36 +121,55 @@ export const list = ( sourcePath:env.KioFolderSettingArg ):Observable<string> =>
       } )      
       .map ( assertFile )
       //.map ( filename => './'+path.relative(env.KIO_PROJECT_ROOT,filename) )
+  if ( sourceFolder.include )
+  {
+    return source.filter ( filepathFilter ( sourceFolder.include, true ) )
+  }
+  return source
 }
 
-export const kioFiles = ( kioPathType:KioComponentsPathType ) => {
-  //console.log('kioFiles for "%s"', kioPathType )
-  
+export const kioFiles = ( projectPath:string ) => ( kioPathType:KioComponentsPathType ) => {
+  debug('kioFiles for "%s"', kioPathType )  
   const settings = env.resolveKioPathSettings(kioPathType)  
-  
   const pathTypeNames = Object.keys(KioComponentsPathTypes).filter ( isNaN )
-  const excludeFilepaths = pathTypeNames
-    .filter ( key => key !== kioPathType )
+  const excludeKeys = pathTypeNames.filter ( key => key && key !== kioPathType )
+  debug('other path type names "%s"', excludeKeys )  
+
+  const excludeFilepaths = excludeKeys
     .map ( key => {
+      debug('key to exclude',key)
       const p = env.resolveKioPath(key)
       return p
     } )
-    .filter ( filepath => settings.path.indexOf(filepath) === -1 )
+    .filter ( filepath => {
+      return filepath.indexOf(settings.path) !== -1
+    } )
+    .map ( (filepath:string) => env.resolve(filepath) )
+  debug('excludeFilepaths "%s"', excludeFilepaths.join('\n') )  
 
+  settings.exclude = settings.exclude.concat(excludeFilepaths)
+  debug('settings - \npath: %s\nexclude: %s', settings.path, settings.exclude )  
   //console.log('exclude filepaths', excludeFilepaths )
   //console.log('settings', settings )
 
-  return list(settings).filter ( filepath => {
-    return !excludeFilepaths.find ( excludeFilepath => {
-      return filepath.indexOf ( excludeFilepath ) > -1
-    } )
-  } ) 
+  let listSource = list(settings)
+    .filter ( filepath => {
+      const fp = excludeFilepaths.find ( excludeFilepath => filepath.indexOf ( excludeFilepath ) !== -1 )
+      return !fp
+    } ) 
+  listSource.share()
+    .map(fp => path.relative(process.cwd(),fp) )
+    .toArray().subscribe ( files => {
+    debug('%s files for \x1b[1;34m%s\x1b[0m', files.length, kioPathType )
+  } )
+
+  return listSource
 }
 
-export const publicationComponents = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
+export const publicationComponents =  ( projectPath:string ) => ( ):Observable<string> => {
+  return kioFiles ( projectPath ) ( "publication" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
-}
+}/*
 
 export const structureComponents = ( ):Observable<string> => {
   return kioFiles ( "structure" )
@@ -141,10 +179,10 @@ export const structureComponents = ( ):Observable<string> => {
 export const navigationComponents = ( ):Observable<string> => {
   return kioFiles ( "navigation" )
         .filter ( filename => /.*\.component\.ts$/.test ( filename ) )
-}
+}*/
 
-export const publicationComponentFiles = ( ):Observable<string[]> => {
-  return publicationComponents()
+export const publicationComponentFiles = ( projectPath:string ) => ( ):Observable<string[]> => {
+  return publicationComponents ( projectPath ) ()
         .map ( filename => {
           return path.dirname(filename)
         } )
@@ -153,18 +191,16 @@ export const publicationComponentFiles = ( ):Observable<string[]> => {
 
 }
 
-export const publicationComponentFixtures = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
-        .filter ( filename => /.*\.component\.fixture\.ts$/.test ( filename ) )
-}
-
-export const publicationComponentCriterias = ( ):Observable<string> => {
-  return kioFiles ( "publication" )
-        .filter ( filename => /.*\.component\.criteria\.ts$/.test ( filename ) )
-}
-
-export const filesForIndexType = ( indexType:IndexType ) => {
-  return list ( resolveRootByIndexType(indexType) )
+export const filesForIndexType = ( projectPath:string ) => ( indexType:IndexType ) => {
+  return kioFiles ( projectPath ) ( resolveRootByIndexType(indexType) )
           .filter ( filterByIndexType(indexType) )
           //.map ( logImage('after filter') )
 }
+
+
+export default ( projectPath:string=api.modules.resolve.rootPath() ) => ({
+  filesForIndexType: filesForIndexType(projectPath),
+  kioFiles: kioFiles(projectPath),
+  publicationComponentFiles: publicationComponentFiles(projectPath),
+  publicationComponents: publicationComponents(projectPath)
+})

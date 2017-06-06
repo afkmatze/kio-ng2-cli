@@ -11,11 +11,16 @@ var stringUtils = require("../../utils/string");
 __export(require("./Runner.class"));
 var Runner_class_1 = require("./Runner.class");
 var templates = require("../templates");
-var files = require("../files");
+var files_1 = require("../files");
 var runner = new Runner_class_1.TestRunner();
 exports.default = runner;
 exports.renderTests = function (targetFilename) {
-    return files.publicationComponents()
+    return files_1.default().publicationComponents()
+        .catch(function (error) {
+        console.log('Failed to list publication components.');
+        console.error(error);
+        return rxjs_1.Observable.throw(error);
+    })
         .map(function (componentFilepath) { return path.basename(componentFilepath, '.component.ts'); })
         .map(stringUtils.classify)
         .toArray()
@@ -24,7 +29,7 @@ exports.renderTests = function (targetFilename) {
         var targetDir = path.resolve(path.dirname(targetFilename));
         return templates
             .renderTemplateWithData('test', {
-            pathToKioIndexes: './' + path.relative(targetDir, env.resolve(env.KIO_PATHS.root)),
+            pathToKioIndexes: './' + path.relative(targetDir, env.resolve(env.resolveKioPath('root'))),
             componentNames: componentNames
         })
             .flatMap(function (_a) {

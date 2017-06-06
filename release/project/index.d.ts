@@ -1,9 +1,23 @@
 import { Observable } from 'rxjs';
-import { ExecData } from 'rxfs';
-import { CLICommandArgsBuildIndexes, CLICommandArgsTestComponents, CLICommandArgsCreateComponent } from './interfaces';
-import * as files from './files';
+export * from './create';
+export * from './interfaces';
+export * from './templates';
+export * from './components';
+export * from './config';
 import * as templates from './templates';
-export declare const buildIndexes: (args?: CLICommandArgsBuildIndexes) => Observable<string>;
-export declare const createComponent: (args: CLICommandArgsCreateComponent) => Observable<{}>;
-export declare const testComponents: (args: CLICommandArgsTestComponents) => Observable<ExecData>;
-export { templates, files };
+import { PublicationComponentTemplateData } from './templates/publicationComponent';
+import { ExecData } from 'rxfs';
+import { CLICommandArgsTestComponents, CLICommandArgsBuildIndexes, IndexTypes } from './interfaces';
+export { templates };
+declare var _default: (projectPath?: string) => {
+    createComponent: (data: PublicationComponentTemplateData) => Observable<{}>;
+    testComponents: (args: CLICommandArgsTestComponents) => Observable<ExecData>;
+    buildIndexes: (args?: CLICommandArgsBuildIndexes) => Observable<string>;
+    files: {
+        filesForIndexType: (indexType: IndexTypes) => Observable<string>;
+        kioFiles: (kioPathType: string) => Observable<string>;
+        publicationComponentFiles: () => Observable<string[]>;
+        publicationComponents: () => Observable<string>;
+    };
+};
+export default _default;

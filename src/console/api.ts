@@ -3,20 +3,14 @@ import * as path from 'path'
 import * as readline from 'readline'
 import { RequestCallback } from './interfaces'
 import { formatter } from './format'
+import { writer } from './writer'
+import { createDebugger, DebuggerOptions, DebuggerOptionsDefault } from './debug/create'
 
 const pckg = require('../../package.json')
-
-
 const ROOT_PATH = path.resolve(__dirname,'../../')
 
 export const banner = () => {
   console.log( '%s v%s', chalk.yellow(pckg.name), pckg.version )
-}
-
-const writer = ( prefix:string ) => ( format:string, ...args:any[] ):void => {
-  const out = formatter.printf(format,...args)
-  //console.log ( chalk.dim(prefix) + format, ...args )  
-  console.log ( chalk.dim(prefix) + out )  
 }
 
 export const log = writer('[kio-ng2-cli] ')
@@ -66,30 +60,6 @@ export const printStackItem = ( item=getStack()[0], short:boolean=true ) => {
   return `(./${item.filepath ? path.relative(ROOT_PATH,item.filepath) : ''}:${item.line}:${item.column})`
 }
 
-export interface DebuggerOptions {
-  debugKey?:string
-  envKey?:string
-}
-
-export const DebuggerOptionsDefault = {
-  debugKey: 'debug',
-  envKey: 'KIO_CLI_ENV'
-}
-
-export function createDebugger( opts?:DebuggerOptions ){
-  const {
-    debugKey=DebuggerOptionsDefault.debugKey,
-    envKey=DebuggerOptionsDefault.envKey
-  } = opts || {}
-
-  const envValue = process.env[envKey]
-  const envExpression = new RegExp(debugKey)
-  if ( envExpression.test(envValue) )
-  {
-    return writer(`[${debugKey}:${envKey}]`)
-  }
-  return ( ...args:any[] ) => {}
-}
 
 export const debug = process.env.NODE_ENV === 'debug' ? writer(`[DEBUG:kio-ng2-cli] `) : ( ...args:any[] )=>{}
 
@@ -119,5 +89,5 @@ export const request = ( message:string, callback:RequestCallback ):Promise<any>
     rl.question(message,validateAnswer)
   })
 }
-
+export { createDebugger }
 export default createDebugger
