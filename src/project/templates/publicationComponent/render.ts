@@ -11,7 +11,7 @@ import { CLICommandArgsCreateComponent } from '../../interfaces'
 const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates')
 
 import { KioNodeType, nodeType, KioPrimitiveContentType } from 'kio-ng2'
-import { ListQuery,  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
+import {  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
 
 
 const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData ) => {

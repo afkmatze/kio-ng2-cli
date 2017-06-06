@@ -19,7 +19,7 @@ exports.moduleRoot = function () {
         return __moduleRoot;
     if (process.env.KIO_NG2_PROJECT) {
         debug('Use project path from environment variable KIO_NG2_PROJECT: "%s"', process.env.KIO_NG2_PROJECT);
-        __moduleRoot = process.env.KIO_NG2_PROJECT;
+        __moduleRoot = path.resolve(process.env.KIO_NG2_PROJECT);
         return __moduleRoot;
     }
     var resolvedPath;

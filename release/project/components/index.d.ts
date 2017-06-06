@@ -5,6 +5,6 @@ import { PublicationComponentTemplateData } from '../templates/publicationCompon
 export declare const isNamedFragmentComponentStructure: (other: any) => other is NamedFragmentComponentStructure;
 export declare const pathForNamedComponent: (type: string | KioNodeType, name: string) => any;
 export declare const dataForNamedFragmentComponent: (pathToStructureComponents: string, namedComponent: NamedFragmentComponentStructure) => PublicationComponentTemplateData;
-export declare const dataForNamedComponent: <T extends KioPrimitiveContentType>(pathToStructureComponents: string, namedComponent: NamedComponentStructure<T>) => PublicationComponentTemplateData;
+export declare const dataForNamedComponent: <T extends KioPrimitiveContentType>(pathToStructureComponents: string, namedComponent: NamedComponentStructure) => PublicationComponentTemplateData;
 export declare const namedComponentExists: (namedComponent: NamedComponent) => boolean;
 export declare const writeComponent: (componentData: PublicationComponentTemplateData, targetRoot: string) => Observable<any>;

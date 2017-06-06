@@ -1,7 +1,10 @@
 import { 
   NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure   
 } from 'kio-ng2-component-routing'
-import {  KioNodeType, KioPrimitiveContentType, nodeType } from 'kio-ng2'
+import {  
+  KioNodeType, KioPrimitiveContentType, 
+  nodeType, KioChildContentType
+} from 'kio-ng2'
 import { Observable } from 'rxjs'
 import * as env from '../../env'
 import * as path from 'path'
@@ -42,12 +45,13 @@ export const dataForNamedFragmentComponent = ( pathToStructureComponents:string,
   }
 }
 
-export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( pathToStructureComponents:string, namedComponent:NamedComponentStructure<T> ):PublicationComponentTemplateData => {
-  const contentType = KioNodeType[<number>namedComponent.type]
+export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( pathToStructureComponents:string, namedComponent:NamedComponentStructure ):PublicationComponentTemplateData => {
+  const contentType:KioChildContentType = nodeType<T>(namedComponent.type)
+  const contentTypeName:string = KioNodeType[contentType]
   return {
     name: namedComponent.name,
-    type: namedComponent.type,
-    contentType,
+    type: contentType,
+    contentType: contentTypeName,
     styles: '../../../',
     selector: 'kio-'+dasherize(namedComponent.name),
     modifiers: namedComponent.modifiers,

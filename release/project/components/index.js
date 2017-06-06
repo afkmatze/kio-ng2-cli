@@ -34,11 +34,12 @@ exports.dataForNamedFragmentComponent = function (pathToStructureComponents, nam
     };
 };
 exports.dataForNamedComponent = function (pathToStructureComponents, namedComponent) {
-    var contentType = kio_ng2_1.KioNodeType[namedComponent.type];
+    var contentType = kio_ng2_1.nodeType(namedComponent.type);
+    var contentTypeName = kio_ng2_1.KioNodeType[contentType];
     return {
         name: namedComponent.name,
-        type: namedComponent.type,
-        contentType: contentType,
+        type: contentType,
+        contentType: contentTypeName,
         styles: '../../../',
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
         modifiers: namedComponent.modifiers,

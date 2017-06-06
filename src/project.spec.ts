@@ -3,7 +3,8 @@ import * as env from './env/constants'
 import * as path from 'path'
 import expect, { assertExists } from './assert';
 import assertFs from './assert/fs';
-import * as project from './project'
+import project from './project'
+import { ProjectEnv, IndexTypes, IndexType } from './project'
 
 
 describe('project api',()=>{
@@ -36,21 +37,23 @@ describe('project api',()=>{
   describe('init',function(){
 
     this.timeout(10000)
+
+    let testProject = project(env.KIO_PROJECT_ROOT)
  
-    it('exists',()=>{ expect(project).toExist() })
+    it('exists',()=>{ expect(testProject).toExist() })
     
     it('has env',()=>{ expect(env).toExist() })
     
-    it('has files',()=>{ expect(project).toContainKey('files') })
+    it('has files',()=>{ expect(testProject).toContainKey('files') })
 
     it('emits files',(done)=>{ 
-      project.files.list('src').subscribe( file => {
+      testProject.files.publicationComponentFiles().subscribe( file => {
         //console.log('file',file)
       },done,done)
     })
 
     it('emits publication components',(done)=>{
-      project.files.publicationComponents().toArray().subscribe ( files => {
+      testProject.files.publicationComponents().toArray().subscribe ( files => {
         expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)
         files.forEach ( (file:string) => {
@@ -81,7 +84,7 @@ describe('project api',()=>{
     })*/
 
     it('emits publication component files',(done)=>{
-      project.files.publicationComponentFiles().subscribe ( fileGroup => {
+      testProject.files.publicationComponentFiles().subscribe ( fileGroup => {
         expect(fileGroup).toExist('No publication component files found.')
         expect(fileGroup.length).toBeGreaterThan(0)
         fileGroup.forEach ( (file:string) => {
@@ -91,10 +94,10 @@ describe('project api',()=>{
     })
 
     it('emits publication component fixtures',(done)=>{
-      project.files.publicationComponentFixtures().toArray().subscribe ( files => {
+      testProject.files.filesForIndexType(IndexTypes.fixture).toArray().subscribe ( files => {
         expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)
-        console.log('%s files', files.length, files.map ( f => path.basename(f) ))
+        //console.log('%s files', files.length, files.map ( f => path.basename(f) ))
         files.forEach ( (file:string) => {
           expect(file).toNotMatch(/\.DS_Store/,'.DS_Store files should be ignored')
         } )

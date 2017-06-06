@@ -18,6 +18,11 @@ export default runner
 export const renderTests = ( targetFilename:string ) => {
 
   return files().publicationComponents()
+      .catch ( error => {
+        console.log('Failed to list publication components.')
+        console.error(error)
+        return Observable.throw(error)
+      } )
       .map ( (componentFilepath:string) => path.basename(componentFilepath,'.component.ts') )
       .map ( stringUtils.classify )
       .toArray()

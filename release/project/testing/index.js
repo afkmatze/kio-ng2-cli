@@ -16,6 +16,11 @@ var runner = new Runner_class_1.TestRunner();
 exports.default = runner;
 exports.renderTests = function (targetFilename) {
     return files_1.default().publicationComponents()
+        .catch(function (error) {
+        console.log('Failed to list publication components.');
+        console.error(error);
+        return rxjs_1.Observable.throw(error);
+    })
         .map(function (componentFilepath) { return path.basename(componentFilepath, '.component.ts'); })
         .map(stringUtils.classify)
         .toArray()
