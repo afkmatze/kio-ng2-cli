@@ -112,8 +112,7 @@ export const list = ( sourcePath:env.KioFolderSettingArg ):Observable<string> =>
   }
   //debug('files at "%s"', sourceFolder.path)
   //console.log('exclude', sourceFolder.exclude)
-  const source = rxfs.find(['-type','file'],sourceFolder.path)
-      .map ( streamData => streamData.stdout.toString('utf8') )
+  const source = rxfs.find({types: ['file'],cwd: sourceFolder.path})
       .filter ( filepathFilter ( sourceFolder.exclude ) )
       .map ( (filename,idx) => {
         //console.log('file #%s', idx, filename, path.join(sourceFolder.path, filename) )

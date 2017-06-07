@@ -26,8 +26,7 @@ exports.render = function (data) {
     var templateDir = path.join(TEMPLATE_DIR, kio_ng2_1.KioNodeType[data.type]);
     console.log('templateDir', templateDir);
     var templateData = __assign({}, data, { contentType: kio_ng2_1.KioNodeType[data.type] });
-    return rxfs.find(['-type', 'file'], templateDir)
-        .map(function (streamData) { return streamData.stdout.toString('utf8'); })
+    return rxfs.find({ types: ['file'], cwd: templateDir })
         .map(function (filepath) { return path.join(templateDir, filepath); })
         .flatMap(function (filename) {
         return rxfs.readFile(filename).toArray().map(function (rows) { return rows.join('\n'); })

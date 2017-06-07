@@ -88,8 +88,7 @@ exports.list = function (sourcePath) {
     }
     //debug('files at "%s"', sourceFolder.path)
     //console.log('exclude', sourceFolder.exclude)
-    var source = rxfs.find(['-type', 'file'], sourceFolder.path)
-        .map(function (streamData) { return streamData.stdout.toString('utf8'); })
+    var source = rxfs.find({ types: ['file'], cwd: sourceFolder.path })
         .filter(exports.filepathFilter(sourceFolder.exclude))
         .map(function (filename, idx) {
         //console.log('file #%s', idx, filename, path.join(sourceFolder.path, filename) )

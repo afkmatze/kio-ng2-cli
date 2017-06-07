@@ -18,7 +18,7 @@ import {
   Query, isQueryableAnnotation, isQueryableFragmentAnnotation
 } from 'kio-ng2-component-routing'
 
-import * as testComponents from './testComponents'
+import * as testComponents from './testing/resolve'
 
 
 const PUBLICATION_COMPONENT_PATH = resolveRoot(resolveKioPath('publication'))
@@ -35,7 +35,7 @@ const getStore = ( ) => {
   return kioEnv().toPromise()
 }
 
-const assertComponent = ( component:NamedComponent ) => {
+const assertComponent = ( component:NamedComponent, otherComponents?:NamedComponent[] ) => {
 
   describe(component.name,()=>{
 
@@ -81,6 +81,23 @@ const assertComponent = ( component:NamedComponent ) => {
         expect(queryResult).toNotExist(queryResult ? queryResult.join('\n') : undefined)
 
       })
+
+    })
+
+    otherComponents && describe('interference tests',()=>{
+
+      let componentFixture = testComponents.componentFixture(component)
+
+      otherComponents.forEach ( otherComponent => {
+        if ( otherComponent !== component )
+        {
+          it(`does not interfere with "${otherComponent.name}"`, () => {            
+            
+            const queryResult = Query.assertComponent(otherComponent)(componentFixture)
+            expect(Array.isArray(queryResult)).toBeTrue('queryResult should be an array.')
+          })
+        }
+      } )
 
     })
 
@@ -144,7 +161,7 @@ describe('test component testing', () => {
 
     components.forEach ( (component:NamedComponent) => {
 
-      assertComponent(component)
+      assertComponent(component,components)
 
     } )
 

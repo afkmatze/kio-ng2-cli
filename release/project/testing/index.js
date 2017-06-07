@@ -12,6 +12,7 @@ __export(require("./Runner.class"));
 var Runner_class_1 = require("./Runner.class");
 var templates = require("../templates");
 var files_1 = require("../files");
+__export(require("./resolve"));
 var runner = new Runner_class_1.TestRunner();
 exports.default = runner;
 exports.renderTests = function (targetFilename) {

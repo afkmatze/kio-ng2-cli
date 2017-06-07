@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var rxjs_1 = require("rxjs");
-var project_1 = require("../project");
+var env = require("../env");
 var logger = require("../console");
+var component_1 = require("../project/testing/component");
 exports.testComponentsCommand = function () { return ({
     command: 'testComponents',
     aliases: ['test'],
@@ -10,18 +10,10 @@ exports.testComponentsCommand = function () { return ({
     handler: function (args) {
         var command = args._[0];
         logger.log('Running component tests');
-        var t = setInterval(function () {
-            console.log('check interval');
-        }, 1000);
-        return project_1.default().testComponents(args)
-            .catch(function (error) {
-            console.error(error);
-            return rxjs_1.Observable.throw(error);
-        })
-            .toPromise()
-            .then(function (result) {
-            console.log('tests finished', result);
-            clearInterval(t);
+        var componentTest = new component_1.ComponentTests(env.moduleRoot());
+        componentTest.components.subscribe(function (component) {
+            logger.log('Test component: ' + component.name);
+            componentTest.assertComponent(component);
         });
     }
 }); };

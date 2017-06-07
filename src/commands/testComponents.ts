@@ -3,6 +3,7 @@ import * as yargs from 'yargs'
 import project from '../project'
 import * as env from '../env'
 import * as logger from '../console'
+import { ComponentTests } from '../project/testing/component'
 
 
 export const testComponentsCommand = ():yargs.CommandModule => ({
@@ -14,21 +15,11 @@ export const testComponentsCommand = ():yargs.CommandModule => ({
       
     logger.log('Running component tests')
 
-
-    let t = setInterval(()=>{
-      console.log('check interval')
-    },1000)
-    
-    return project().testComponents(args)
-      .catch ( error => {
-        console.error(error)
-        return Observable.throw(error)
-      })
-      .toPromise()
-      .then ( result => {
-        console.log('tests finished', result)
-        clearInterval(t)
-      } )
+    const componentTest = new ComponentTests(env.moduleRoot())
+    componentTest.components.subscribe ( component => {
+      logger.log('Test component: ' + component.name )
+      componentTest.assertComponent(component)
+    } )
       
   }
 })

@@ -9,6 +9,7 @@ import { TestRunner, ComponentTest } from './Runner.class'
 import * as templates from '../templates'
 import files from '../files'
 
+export * from './resolve'
 
 const runner = new TestRunner()
 
