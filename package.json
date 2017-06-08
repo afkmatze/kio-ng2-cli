@@ -15,6 +15,7 @@
     "build:production": "NODE_ENV=production tsc -p ./tsconfig.prod.json",
     "build:production:watch": "./scripts/watch.sh build:production",
     "prebuild:release": "rm -rf ./release",
+    "postbuild:release": "./scripts/copy_release.sh",
     "build:release": "NODE_ENV=production tsc -p ./tsconfig.prod.json; echo",
     "build:release:watch": "./scripts/watch.sh build:release",
     "doc": "typedoc --tsconfig ./tsconfig.prod.json --out documentation",

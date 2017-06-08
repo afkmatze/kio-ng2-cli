@@ -1,5 +1,6 @@
 import { Observable } from 'rxjs'
 import { resolveKioPath, resolveRoot } from '../../env'
+import { req } from './tsc'
 import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import * as path from 'path'
 import * as stringUtil from '../../utils/string'
@@ -33,7 +34,7 @@ export const resolveComponentFile = ( component:NamedComponent, componentFileTyp
 
 export const getComponentFixture = ( component:NamedComponent ):ComponentFixture => {
   const fixtureFile = resolveComponentFile(component,'fixture')
-  const fixtureModule = require(resolveRoot(fixtureFile))
+  const fixtureModule = req(resolveRoot(fixtureFile))
   return fixtureModule.Fixture
 }
 

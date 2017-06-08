@@ -38,5 +38,5 @@ if [[ -d "${MODULE_RELEASE_DIR}" ]]; then
   rm -rf ./release
 fi
 
-printf 'copy \x1b[1m%s\x1b[0m to release destination...' "${MODULE_RELEASE_SRC}"
+printf 'copy \x1b[1;34m%s\x1b[0m to release destination at \x1b[1m%s\x1b[0m...\n' "${MODULE_NAME}" "${MODULE_RELEASE_ROOT}"
 scp -r "${MODULE_RELEASE_SRC}" "${MODULE_RELEASE_ROOT}"

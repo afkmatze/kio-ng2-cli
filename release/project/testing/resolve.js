@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var env_1 = require("../../env");
+var tsc_1 = require("./tsc");
 var kio_ng2_env_1 = require("kio-ng2-env");
 var path = require("path");
 var stringUtil = require("../../utils/string");
@@ -27,7 +28,7 @@ exports.resolveComponentFile = function (component, componentFileType) {
 };
 exports.getComponentFixture = function (component) {
     var fixtureFile = exports.resolveComponentFile(component, 'fixture');
-    var fixtureModule = require(env_1.resolveRoot(fixtureFile));
+    var fixtureModule = tsc_1.req(env_1.resolveRoot(fixtureFile));
     return fixtureModule.Fixture;
 };
 exports.listComponents = function () {
