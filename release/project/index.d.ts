@@ -6,12 +6,11 @@ export * from './components';
 export * from './config';
 import * as templates from './templates';
 import { PublicationComponentTemplateData } from './templates/publicationComponent';
-import { ExecData } from 'rxfs';
 import { CLICommandArgsTestComponents, CLICommandArgsBuildIndexes, IndexTypes } from './interfaces';
 export { templates };
-declare var _default: (projectPath?: string) => {
+declare const _default: (projectPath?: string) => {
     createComponent: (data: PublicationComponentTemplateData) => Observable<{}>;
-    testComponents: (args: CLICommandArgsTestComponents) => Observable<ExecData>;
+    testComponents: (args: CLICommandArgsTestComponents) => Observable<string>;
     buildIndexes: (args?: CLICommandArgsBuildIndexes) => Observable<string>;
     files: {
         filesForIndexType: (indexType: IndexTypes) => Observable<string>;

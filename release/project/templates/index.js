@@ -56,7 +56,7 @@ exports.renderTemplateWithData = function (templateName, data) {
         return rxfs.readFile(file, 'utf8')
             .map(function (content) { return ({
             file: path.relative(TEMPLATE_DIR, file),
-            content: content
+            content: (content instanceof Buffer) ? content.toString('utf8') : content
         }); });
     })
         .map(function (_a, idx) {

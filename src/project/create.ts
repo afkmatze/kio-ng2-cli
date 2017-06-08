@@ -21,8 +21,5 @@ export const createProject = ( opts:{name:string} ) => {
       return `\x1b[31mError: ${s.stderr.toString('utf8')}\x1b[0m`
     }
     return s.stdout.toString('utf8')
-  } ).map ( row => {
-    console.log('row', row)
-    return row
   } )
 }

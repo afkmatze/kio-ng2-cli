@@ -46,14 +46,14 @@ describe('project api',()=>{
     
     it('has files',()=>{ expect(testProject).toContainKey('files') })
 
-    it('emits files',(done)=>{ 
+    xit('emits files',(done)=>{ 
       testProject.files.publicationComponentFiles().subscribe( file => {
         //console.log('file',file)
       },done,done)
     })
-
+/*
     it('emits publication components',(done)=>{
-      testProject.files.publicationComponents().toArray().subscribe ( files => {
+      testProject.files.publicationComponents().take(4).toArray().subscribe ( files => {
         expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)
         files.forEach ( (file:string) => {
@@ -61,7 +61,7 @@ describe('project api',()=>{
         } )
         //console.log('publication components',files)
       }, done, done )
-    })
+    })*/
 
    /* it('emits structure components',(done)=>{
       project.files.structureComponents().toArray().subscribe ( files => {
@@ -83,7 +83,7 @@ describe('project api',()=>{
       }, done, done )
     })*/
 
-    it('emits publication component files',(done)=>{
+    xit('emits publication component files',(done)=>{
       testProject.files.publicationComponentFiles().subscribe ( fileGroup => {
         expect(fileGroup).toExist('No publication component files found.')
         expect(fileGroup.length).toBeGreaterThan(0)
@@ -93,7 +93,7 @@ describe('project api',()=>{
       }, done, done )
     })
 
-    it('emits publication component fixtures',(done)=>{
+    xit('emits publication component fixtures',(done)=>{
       testProject.files.filesForIndexType(IndexTypes.fixture).toArray().subscribe ( files => {
         expect(files).toExist('No publication component files found.')
         expect(files.length).toBeGreaterThan(0)

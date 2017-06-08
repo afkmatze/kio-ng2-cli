@@ -56,7 +56,7 @@ exports.FileSystemAssertions = {
         if (not === void 0) { not = false; }
         var stats = exports.getStats(actual);
         ceylon_1.assert({
-            assertion: !!stats !== not,
+            assertion: (stats !== exports.emptyStats) !== not,
             message: message || "expected " + actual + " " + (not ? 'not ' : '') + "to be a existing",
         });
     },
@@ -116,12 +116,15 @@ exports.getStats = function (filepath) {
     try {
         stats = fs.statSync(filepath);
     }
-    catch (e) { }
+    catch (e) {
+        stats = exports.emptyStats;
+    }
     return stats;
 };
 exports.assertExists = function (filepath, message) {
+    var fileStats = exports.getStats(filepath);
     ceylon_1.assert({
-        assertion: exports.getStats(filepath) !== exports.emptyStats,
+        assertion: fileStats !== exports.emptyStats,
         message: message || "expected " + filepath + " to exist"
     });
 };

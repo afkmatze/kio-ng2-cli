@@ -48,6 +48,8 @@
     "test:str:watch": "./scripts/watch.sh test:str",
     "test:tmpl": "NODE_ENV=test ts-mocha ./src/project/templates/template.spec.ts",
     "test:tmpl:watch": "./scripts/watch.sh test:tmpl",
+    "test:componentTests": "NODE_ENV=test ts-mocha ./src/project/testComponents.spec.ts",
+    "test:componentTests:watch": "nodemon -w ./src -e ts --exec \"npm run test:componentTests\"",
     "test:resolve": "NODE_ENV=test ts-mocha ./src/env/resolve.spec.ts",
     "test:resolve:watch": "nodemon -w ./src -e ts --exec \"npm run test:resolve\"",
     "test:init": "NODE_ENV=test ts-mocha ./src/project.init.spec.ts",
@@ -57,9 +59,6 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/mocha": "^2.2.41",
-    "ceylon": "^0.9.1",
-    "mocha": "^3.3.0",
     "nodemon": "^1.11.0",
     "ts-mocha": "^1.0.3",
     "tslint": "^5.2.0",
@@ -67,6 +66,9 @@
     "typescript": "^2.3.2"
   },
   "dependencies": {
+    "@types/mocha": "^2.2.41",
+    "ceylon": "^0.9.1",
+    "mocha": "^3.3.0",
     "@types/ejs": "^2.3.33",
     "@types/ember": "^2.7.41",
     "@types/node": "^7.0.18",

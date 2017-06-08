@@ -1,4 +1,3 @@
-import { QueryableAnnotation } from 'kio-ng2-component-routing'
 import { Observable, Scheduler } from 'rxjs'
 
 export interface ComponentTest {

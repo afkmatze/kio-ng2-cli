@@ -18,9 +18,6 @@ exports.createProject = function (opts) {
             return "\u001B[31mError: " + s.stderr.toString('utf8') + "\u001B[0m";
         }
         return s.stdout.toString('utf8');
-    }).map(function (row) {
-        console.log('row', row);
-        return row;
     });
 };
 //# sourceMappingURL=create.js.map

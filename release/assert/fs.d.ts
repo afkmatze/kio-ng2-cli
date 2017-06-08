@@ -47,7 +47,7 @@ export declare const emptyStats: fs.Stats;
 export declare const getStats: (filepath: string) => fs.Stats;
 export declare const assertExists: (filepath: string, message?: string) => void;
 export declare const expectFile: (filepath: string) => void;
-declare var _default: (filepath: string) => {
+declare const _default: (filepath: string) => {
     toExist: (message?: string) => void;
     toBeNewerThan: (datetime: Date, message?: string) => void;
     toBeFSType: (fsType: FSType, message?: string) => void;
