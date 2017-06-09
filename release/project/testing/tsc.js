@@ -39,7 +39,7 @@ exports.evalSource = function (source) {
     return rxfs.writeFile(tmpFile, rxjs_1.Observable.of(new Buffer(source)), 'utf8')
         .map(function (success) { return exports.evalTsFile(tmpFile); })
         .map(function (data) {
-        //shelljs.rm(tmpFile)
+        shelljs.rm(tmpFile);
         //console.log('removed tmp file: "%s"',tmpFile,'\n---\n',data)
         return data;
     });
