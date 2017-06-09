@@ -31,6 +31,12 @@ exports.getComponentFixture = function (component) {
     var fixtureModule = tsc_1.req(env_1.resolveRoot(fixtureFile));
     return fixtureModule.Fixture;
 };
+exports.getComponentFixtures = function (components) {
+    return tsc_1.reqGroup(components.map(function (component) {
+        var fixtureFile = exports.resolveComponentFile(component, 'fixture');
+        return env_1.resolveRoot(fixtureFile);
+    })).map(function (contents) { return contents.map(function (content) { return content.Fixture; }); });
+};
 exports.listComponents = function () {
     return kio_ng2_env_1.env().map(function (store) { return store.get('components'); });
 };

@@ -11,5 +11,6 @@ export declare const componentFolderName: (component: NamedComponent) => string;
 export declare const resolveComponentPath: (component: NamedComponent) => string;
 export declare const resolveComponentFile: (component: NamedComponent, componentFileType?: "fixture" | "criteria" | "component" | "spec") => string;
 export declare const getComponentFixture: (component: NamedComponent) => ComponentFixture;
+export declare const getComponentFixtures: (components: NamedComponent[]) => Observable<ComponentFixture[]>;
 export declare const listComponents: () => Observable<NamedComponent[]>;
 export declare const getComponentFixtureFile: (component: NamedComponent) => string;
