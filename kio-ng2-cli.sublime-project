@@ -5,15 +5,10 @@
 			"folder_exclude_patterns":
 			[
 				"node_modules",
+				"test_target",
 				"release"
 			],
 			"path": "."
-		},
-		{
-			"path": "test_target/src/app/kio"
-		},
-		{
-			"path": "node_modules"
 		}
 	]
 }

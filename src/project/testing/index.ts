@@ -11,11 +11,6 @@ import files from '../files'
 
 export * from './resolve'
 
-const runner = new TestRunner()
-
-export default runner
-
-
 export const renderTests = ( targetFilename:string ) => {
 
   return files().publicationComponents()

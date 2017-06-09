@@ -7,7 +7,7 @@ import {
   IndexType, IndexTypes
 } from './interfaces'
 
-import testRunner, { ComponentTest, renderTests, execTestAt } from './testing'
+import { ComponentTest, renderTests, execTestAt, TestRunner } from './testing'
 
 export const testComponents = (projectPath:string) => ( args:CLICommandArgsTestComponents ) => {
   const targetFilepath = path.join(path.resolve( projectPath,'./src/app'),'ComponentTests.spec.ts')

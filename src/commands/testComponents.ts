@@ -4,6 +4,8 @@ import project from '../project'
 import * as env from '../env'
 import * as logger from '../console'
 import { ComponentTests } from '../project/testing/component'
+import { TestRunner } from '../project/testing/Runner.class'
+import { EnvFile } from '../env/file.class'
 
 
 export const testComponentsCommand = ():yargs.CommandModule => ({
@@ -15,10 +17,21 @@ export const testComponentsCommand = ():yargs.CommandModule => ({
       
     logger.log('Running component tests')
 
-    const componentTest = new ComponentTests(env.moduleRoot())
-    componentTest.components.subscribe ( component => {
-      logger.log('Test component: ' + component.name )
-      componentTest.assertComponent(component)
+    const envFile = EnvFile.FromProjectPath (env.moduleRoot())
+    //const componentTest = new ComponentTests(env.moduleRoot())
+    setTimeout(()=>{
+      console.log('timeout')
+    },5000)
+    const testRunner = new TestRunner(envFile.components)
+    testRunner.fixtures.subscribe ( fixture => {
+      const componentTest = testRunner.mapFixtureToTest(fixture)
+      logger.log('Test component: ' + componentTest.component.name )
+      testRunner.assertComponent(componentTest.component)
+    }, error => {
+      console.error (error)
+      process.exit(1)
+    }, () => {
+      process.exit()
     } )
       
   }
