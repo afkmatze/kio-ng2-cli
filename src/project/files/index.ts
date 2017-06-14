@@ -92,7 +92,7 @@ export const filepathFilter = ( filter:env.KioFileFilter|env.KioFileFilter[], in
   //debug('filter: %s', filter )
   return ( filepath:string ) => {
 //    doDebug && console.log('filepath', filepath)
-    if ( match (filepath) || match ( path.basename(filepath) ) )
+    if ( filepath && ( match (filepath) || match ( path.basename(filepath) ) ) )
     {
       //debug('matched: %s', filepath )
       return false
@@ -112,9 +112,9 @@ export const list = ( sourcePath:env.KioFolderSettingArg ):Observable<string> =>
   }
   //debug('files at "%s"', sourceFolder.path)
   //console.log('exclude', sourceFolder.exclude)
-  const source = rxfs.find({types: ['file'],cwd: sourceFolder.path})
+  const source = rxfs.find(['-type','file'],sourceFolder.path)
       .filter ( filepathFilter ( sourceFolder.exclude ) )
-      .map ( (filename,idx) => {
+      .map ( (filename:string,idx) => {
         //console.log('file #%s', idx, filename, path.join(sourceFolder.path, filename) )
         return path.join(sourceFolder.path, filename)
       } )      

@@ -73,7 +73,7 @@ exports.filepathFilter = function (filter, include) {
     //debug('filter: %s', filter )
     return function (filepath) {
         //    doDebug && console.log('filepath', filepath)
-        if (match(filepath) || match(path.basename(filepath))) {
+        if (filepath && (match(filepath) || match(path.basename(filepath)))) {
             //debug('matched: %s', filepath )
             return false;
         }
@@ -88,7 +88,7 @@ exports.list = function (sourcePath) {
     }
     //debug('files at "%s"', sourceFolder.path)
     //console.log('exclude', sourceFolder.exclude)
-    var source = rxfs.find({ types: ['file'], cwd: sourceFolder.path })
+    var source = rxfs.find(['-type', 'file'], sourceFolder.path)
         .filter(exports.filepathFilter(sourceFolder.exclude))
         .map(function (filename, idx) {
         //console.log('file #%s', idx, filename, path.join(sourceFolder.path, filename) )

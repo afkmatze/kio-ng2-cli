@@ -15,7 +15,7 @@ const logUpdateReason = ( reason:string, targetFilepath:string ) => {
   logger.log('update %s for reason: %s ', path.basename(targetFilepath), reason )
 }
 
-export const shouldUpdateFile = ( targetFilepath:string, contents:string ) => {
+export const shouldUpdateFile = ( targetFilepath:string, contents:string ):Observable<boolean> => {
   if ( !rxfs.existsSync(targetFilepath) )
   {
     logUpdateReason('does not exist', targetFilepath)
@@ -26,15 +26,15 @@ export const shouldUpdateFile = ( targetFilepath:string, contents:string ) => {
     if ( currentContents.length !== contents.length )
     {
       logUpdateReason(`different size. current size: ${currentContents.length}, next size: ${contents.length} `, targetFilepath)
-      return Observable.of(true)
+      return Observable.of<boolean>(true)
     }
 
     if ( currentContents === contents )
     {
-      return Observable.empty()
+      return <Observable<boolean>>Observable.empty()
     }
     
-    return rxfs.diff({},contents, targetFilepath).map ( diffs => {
+    return <Observable<boolean>>rxfs.diff({},contents, targetFilepath).map ( diffs => {
       if ( diffs.length > 0 )
       {
         logUpdateReason(`${diffs.length} differences in content`, targetFilepath)
