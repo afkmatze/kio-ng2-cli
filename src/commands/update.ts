@@ -39,6 +39,8 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
       path.join(targetFolder),
       resolveKioPath('structure')
     )
+
+    logger.log('Init env at "%s"', target)
     return env(target)
       .flatMap ( store => {
         return Observable.from(store.get('components'))
@@ -73,7 +75,8 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
       } )
       .toPromise()
       .then( envStore => {
-        console.log('envStore',envStore.get('components'))
+        console.log('envStore',envStore)
+        return envStore.get('components')
       })
       .catch ( error => {
         console.error(error)
