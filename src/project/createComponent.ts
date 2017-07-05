@@ -4,8 +4,8 @@ import {
   CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsTestComponents, CLICommandArgsCreateComponent,
   IndexType, IndexTypes
 } from './interfaces'
-import { ListQuery,  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
-import { KioNodeType, KioPrimitiveContentType } from 'kio-ng2'
+import { ListQuery } from 'kio-ng2-component-routing'
+import { KioNodeType, KioPrimitiveContentType, NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2'
 import * as templates from './templates'
 import { PublicationComponentTemplateData } from './templates/publicationComponent'
 import * as env from '../env'

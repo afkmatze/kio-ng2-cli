@@ -15,9 +15,9 @@ exports.createProject = function (opts) {
     };
     return rxshell.exec({ command: command, cwd: process.cwd() }).map(function (s) {
         if (s.stderr) {
-            return "\u001B[31mError: " + s.stderr.toString('utf8') + "\u001B[0m";
+            return "\u001B[31mError: " + s.stderr + "\u001B[0m";
         }
-        return s.stdout.toString('utf8');
+        return "" + s.stdout;
     });
 };
 //# sourceMappingURL=create.js.map

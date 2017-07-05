@@ -5,8 +5,8 @@ import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import * as path from 'path'
 import * as stringUtil from '../../utils/string'
 import { 
-  NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure, ComponentFixture
-} from 'kio-ng2-component-routing'
+  NamedComponent, ComponentAnnotation, ComponentStructure, ComponentFragmentStructure, isComponentStructure, isComponentFragmentStructure
+} from 'kio-ng2'
 
 /**
  * @brief      resolve component's folder name
@@ -32,13 +32,13 @@ export const resolveComponentFile = ( component:NamedComponent, componentFileTyp
   return [baseName,'component',componentFileType,'ts'].join('.')
 }
 
-export const getComponentFixture = ( component:NamedComponent ):ComponentFixture => {
+export const getComponentFixture = ( component:NamedComponent ):ComponentStructure => {
   const fixtureFile = resolveComponentFile(component,'fixture')
-  const fixtureModule = req<{Fixture:ComponentFixture}>(resolveRoot(fixtureFile))
+  const fixtureModule = req<{Fixture:ComponentStructure}>(resolveRoot(fixtureFile))
   return fixtureModule.Fixture
 }
 
-export const getComponentFixtures = ( components:NamedComponent[] ):Observable<ComponentFixture[]> => {
+export const getComponentFixtures = ( components:NamedComponent[] ):Observable<ComponentStructure[]> => {
   return reqGroup(components.map ( component => {
     const fixtureFile = resolveComponentFile(component,'fixture')
     return resolveRoot(fixtureFile)

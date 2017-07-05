@@ -6,12 +6,9 @@ import { it, describe } from '../../assert/reporting';
 import * as path from 'path'
 import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import { 
-  ComponentStructure, ComponentFragmentStructure, 
-  isComponentFragmentStructure, isComponentStructure,
-  NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure,
-  isNamedFragmentComponentStructure, isNamedComponentStructure ,
   Query, isQueryableAnnotation, isQueryableFragmentAnnotation
 } from 'kio-ng2-component-routing'
+import { NamedComponent, ComponentStructure, ComponentFragmentStructure, ComponentFixture, isNamedComponentStructure, isNamedFragmentComponentStructure } from 'kio-ng2'
 
 import { resolveKioPath, resolveRoot } from '../../env'
 import { EnvFile } from '../../env/file.class'

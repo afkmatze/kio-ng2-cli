@@ -27,6 +27,7 @@ exports.updateProjectCommand = function () { return ({
         var componentPath = project.pathForNamedComponent('fragment', 'bar');
         var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
         var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
+        logger.log('Init env at "%s"', target);
         return kio_ng2_env_1.env(target)
             .flatMap(function (store) {
             return rxjs_1.Observable.from(store.get('components'))
@@ -57,7 +58,8 @@ exports.updateProjectCommand = function () { return ({
         })
             .toPromise()
             .then(function (envStore) {
-            console.log('envStore', envStore.get('components'));
+            console.log('envStore', envStore);
+            return envStore.get('components');
         })
             .catch(function (error) {
             console.error(error);

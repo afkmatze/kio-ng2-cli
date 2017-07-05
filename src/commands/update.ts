@@ -4,7 +4,7 @@ import { env, api } from 'kio-ng2-env'
 import { resolveKioPath } from '../env'
 import * as path from 'path'
 import * as logger from '../console'
-import { NamedComponent } from 'kio-ng2-component-routing'
+import { NamedComponent } from 'kio-ng2'
 
 import { Observable } from 'rxjs'
 

@@ -1,8 +1,8 @@
 import { 
   ComponentType, PublicationComponent, IndexTypes, IndexType, CLICommandArgsCreateComponent 
 } from '../../interfaces'
-import { ListQuery,  NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-component-routing'
-import { KioNodeType, KioPrimitiveContentType, KioChildContentType } from 'kio-ng2'
+import { ListQuery } from 'kio-ng2-component-routing'
+import { KioNodeType, KioPrimitiveContentType, KioChildContentType, NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2'
 
 
 export interface PublicationComponentTemplateData {

@@ -34,7 +34,10 @@ exports.dataForNamedFragmentComponent = function (pathToStructureComponents, nam
     };
 };
 exports.dataForNamedComponent = function (pathToStructureComponents, namedComponent) {
-    var contentType = kio_ng2_1.KioNodeType[namedComponent.type];
+    var nodeType = kio_ng2_1.KioNodeType[namedComponent.type];
+    if (!kio_ng2_1.isChildContentType(nodeType))
+        return undefined;
+    var contentType = nodeType;
     var contentTypeName = kio_ng2_1.KioNodeType[contentType];
     return {
         name: namedComponent.name,

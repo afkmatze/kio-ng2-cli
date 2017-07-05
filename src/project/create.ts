@@ -18,8 +18,8 @@ export const createProject = ( opts:{name:string} ) => {
   return rxshell.exec({command,cwd: process.cwd()}).map ( s => {
     if ( s.stderr )
     {
-      return `\x1b[31mError: ${s.stderr.toString('utf8')}\x1b[0m`
+      return `\x1b[31mError: ${s.stderr}\x1b[0m`
     }
-    return s.stdout.toString('utf8')
+    return `${s.stdout}`
   } )
 }

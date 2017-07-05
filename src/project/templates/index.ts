@@ -4,7 +4,8 @@ import * as files from '../files'
 import * as indexes from './indexes'
 import * as logger from '../../console'
 import * as publicationComponent from './publicationComponent'
-import { Observable } from 'rxjs'
+import { Observable } from 'rxjs/Observable'
+import { ErrorObservable } from 'rxjs/observable/ErrorObservable'
 import * as rxfs from 'rxfs'
 
 const TEMPLATES_ROOT = path.resolve(__dirname,'../../../templates')

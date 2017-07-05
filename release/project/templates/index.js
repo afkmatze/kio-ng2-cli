@@ -8,7 +8,7 @@ exports.indexes = indexes;
 var logger = require("../../console");
 var publicationComponent = require("./publicationComponent");
 exports.publicationComponent = publicationComponent;
-var rxjs_1 = require("rxjs");
+var Observable_1 = require("rxjs/Observable");
 var rxfs = require("rxfs");
 var TEMPLATES_ROOT = path.resolve(__dirname, '../../../templates');
 var logUpdateReason = function (reason, targetFilepath) {
@@ -17,15 +17,15 @@ var logUpdateReason = function (reason, targetFilepath) {
 exports.shouldUpdateFile = function (targetFilepath, contents) {
     if (!rxfs.existsSync(targetFilepath)) {
         logUpdateReason('does not exist', targetFilepath);
-        return rxjs_1.Observable.of(true);
+        return Observable_1.Observable.of(true);
     }
     return rxfs.readFile(targetFilepath).toArray().map(function (rows) { return rows.join('\n'); }).flatMap(function (currentContents) {
         if (currentContents.length !== contents.length) {
             logUpdateReason("different size. current size: " + currentContents.length + ", next size: " + contents.length + " ", targetFilepath);
-            return rxjs_1.Observable.of(true);
+            return Observable_1.Observable.of(true);
         }
         if (currentContents === contents) {
-            return rxjs_1.Observable.empty();
+            return Observable_1.Observable.empty();
         }
         return rxfs.diff({}, contents, targetFilepath).map(function (diffs) {
             if (diffs.length > 0) {
@@ -39,13 +39,13 @@ exports.replaceFile = function (targetFilepath, contents) {
     var targetDirpath = path.dirname(targetFilepath);
     var targetDirParent = path.dirname(targetDirpath);
     if (!rxfs.existsSync(targetDirParent))
-        return rxjs_1.Observable.throw('Invalid target path. ' + targetDirParent + ' is not a directory.');
+        return Observable_1.Observable.throw('Invalid target path. ' + targetDirParent + ' is not a directory.');
     return rxfs
         .mkdir(targetDirpath)
         .flatMap(function (dir) {
         return exports.shouldUpdateFile(targetFilepath, contents)
             .flatMap(function (result) {
-            return result ? rxfs.writeFile(targetFilepath, rxjs_1.Observable.of(new Buffer(contents))).map(function () { return true; }) : rxjs_1.Observable.of(false);
+            return result ? rxfs.writeFile(targetFilepath, Observable_1.Observable.of(new Buffer(contents))).map(function () { return true; }) : Observable_1.Observable.of(false);
         });
     });
 };

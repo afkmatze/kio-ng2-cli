@@ -3,10 +3,11 @@ import expect, { assertExists } from '../../assert'
 import assertFs from '../../assert/fs';
 import { it, describe } from '../../assert/reporting';
 import { 
-  ComponentFixture, NamedComponent, 
+  ComponentFixture, 
   isQueryableAnnotation, isQueryableFragmentAnnotation,
   Query
 } from 'kio-ng2-component-routing'
+import { NamedComponent } from 'kio-ng2'
 import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import * as path from 'path'
 
