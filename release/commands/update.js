@@ -62,7 +62,7 @@ exports.updateProjectCommand = function () { return ({
             return envStore.get('components');
         })
             .catch(function (error) {
-            console.log("Failed with " + error);
+            console.log("Failed to update " + target);
             console.error(error);
         });
     }
