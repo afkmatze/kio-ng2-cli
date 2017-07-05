@@ -79,7 +79,8 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
         return envStore.get('components')
       })
       .catch ( error => {
-        console.log(`Failed! ${error}`)
+        console.log(`Failed with ${error}`)
+        console.error(error)
       } )
   }
 })

@@ -10,7 +10,7 @@ export const underscore = (str:string):string => stringUtils.underscore(str)
 export const capitalize = (str:string):string => stringUtils.capitalize(str)
 
 
-const wrapFileContent = (content:string) => {
+const wrapFileContent = (content:string):Observable<string> => {
   if ( content.length <= 255 && rxfs.existsSync(content) )
   {
     return Observable.of(content)
