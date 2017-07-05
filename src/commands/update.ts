@@ -75,11 +75,11 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
       } )
       .toPromise()
       .then( envStore => {
-        console.log('envStore',envStore)
+        //console.log('envStore',envStore)
         return envStore.get('components')
       })
       .catch ( error => {
-        console.error(error)
+        console.log(`Failed! ${error}`)
       } )
   }
 })

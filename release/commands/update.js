@@ -58,11 +58,11 @@ exports.updateProjectCommand = function () { return ({
         })
             .toPromise()
             .then(function (envStore) {
-            console.log('envStore', envStore);
+            //console.log('envStore',envStore)
             return envStore.get('components');
         })
             .catch(function (error) {
-            console.error(error);
+            console.log("Failed! " + error);
         });
     }
 }); };
