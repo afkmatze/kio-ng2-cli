@@ -1,6 +1,6 @@
 import * as yargs from 'yargs'
 import * as project from '../project'
-import { env, api } from 'kio-ng2-env'
+import { env, api, EnvStore, Project } from 'kio-ng2-env'
 import { resolveKioPath } from '../env'
 import * as path from 'path'
 import * as logger from '../console'
@@ -31,18 +31,23 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
     const {
       target
     } = args
-    
-    const componentPath = project.pathForNamedComponent('fragment','bar')
-    const targetFolder = path.join(resolveKioPath('publication'), componentPath)
-
-    const pathToStructureComponents = path.relative(
-      path.join(targetFolder),
-      resolveKioPath('structure')
-    )
+        
 
     logger.log('Init env at "%s"', target)
     return env(target)
-      .flatMap ( store => {
+      .catch ( error => {
+        return Observable.throw(Error(`Failed to init environment. ${error}`))
+      } )
+      .flatMap ( (store:EnvStore<Project>) => {
+
+        const componentPath = project.pathForNamedComponent('fragment','bar')
+        const targetFolder = path.join(resolveKioPath('publication'), componentPath)
+
+        const pathToStructureComponents = path.relative(
+          path.join(targetFolder),
+          resolveKioPath('structure')
+        )
+
         return Observable.from(store.get('components'))
           .flatMap ( (component:NamedComponent) => {
             if ( project.namedComponentExists(component) )

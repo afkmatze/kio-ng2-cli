@@ -1,6 +1,7 @@
 import { read } from './file'
 import { ProjectConfig, ConfigFile } from './interfaces'
 import * as kioEnv from 'kio-ng2-env'
+import * as logger from '../../console'
 
 const isConfigKey = ( key:string ):key is keyof ConfigFile => {
   return key === 'components'
@@ -25,7 +26,7 @@ export const init = ( projectConfig:ProjectConfig ) => {
 
   const info = kioEnv.api.modules.resolve.rootModule()
 
-  console.log('project config info: ', info)
+  logger.log('project config info: ', info)
 
   return projectConfig  
 }
