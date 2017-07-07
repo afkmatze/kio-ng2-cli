@@ -19,8 +19,6 @@ import * as stringUtil from '../../utils/string'
 import { resolveComponentFile, getComponentFixture } from './resolve'
 import * as logger from '../../console'
 
-const PUBLICATION_COMPONENT_PATH = resolveRoot(resolveKioPath('publication'))
-
 export interface ComponentTest {
   component:NamedComponent
   fixture:ComponentFixture;
@@ -101,7 +99,7 @@ export class TestRunner {
       it('has modifiers',()=>{ expect(component).toIncludeKey('modifiers') })
       component.type === 'fragment' && it('has childTypes',()=>{ expect(component).toIncludeKey('childTypes') })
 
-      let componentTypePath:string = path.join(PUBLICATION_COMPONENT_PATH,component.type)
+      let componentTypePath:string = path.join(resolveRoot(resolveKioPath('publication')),component.type)
       let componentFilePath:string = path.join(componentTypePath,stringUtil.dasherize(component.name))
 
       let componentCriteriaFile = resolveComponentFile(component,'criteria')

@@ -11,7 +11,6 @@ var env_1 = require("../../env");
 var stringUtil = require("../../utils/string");
 var resolve_2 = require("./resolve");
 var logger = require("../../console");
-var PUBLICATION_COMPONENT_PATH = env_1.resolveRoot(env_1.resolveKioPath('publication'));
 var TestRunner = (function () {
     function TestRunner(components) {
         this.components = components;
@@ -72,7 +71,7 @@ var TestRunner = (function () {
             reporting_1.it('has type', function () { assert_1.default(component).toIncludeKey('type'); });
             reporting_1.it('has modifiers', function () { assert_1.default(component).toIncludeKey('modifiers'); });
             component.type === 'fragment' && reporting_1.it('has childTypes', function () { assert_1.default(component).toIncludeKey('childTypes'); });
-            var componentTypePath = path.join(PUBLICATION_COMPONENT_PATH, component.type);
+            var componentTypePath = path.join(env_1.resolveRoot(env_1.resolveKioPath('publication')), component.type);
             var componentFilePath = path.join(componentTypePath, stringUtil.dasherize(component.name));
             var componentCriteriaFile = resolve_2.resolveComponentFile(component, 'criteria');
             var componentFixtureFile = resolve_2.resolveComponentFile(component, 'fixture');

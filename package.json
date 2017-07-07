@@ -65,7 +65,7 @@
     "ts-mocha": "^1.0.3",
     "tslint": "^5.2.0",
     "typedoc": "^0.6.0",
-    "typescript": "^2.3.2"
+    "typescript": "^2.4.1"
   },
   "dependencies": {
     "@types/ejs": "^2.3.33",

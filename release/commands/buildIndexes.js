@@ -1,12 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 var project_1 = require("../project");
-var env = require("../env");
 var parseArgs_1 = require("./parseArgs");
 exports.buildIndexesCommand = function () { return ({
     command: 'buildIndexes',
     aliases: ['index'],
-    describe: 'Updates index files in ' + env.resolveKioPath(),
+    describe: 'Updates index files',
     builder: function (argv) {
         return argv
             .usage('Usage: $0 index [publication|structure|fixture|criteria]')

@@ -24,12 +24,15 @@ exports.updateProjectCommand = function () { return ({
     handler: function (args) {
         var _a = args._, command = _a[0], projectName = _a[1];
         var target = args.target;
-        var componentPath = project.pathForNamedComponent('fragment', 'bar');
-        var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
-        var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
         logger.log('Init env at "%s"', target);
         return kio_ng2_env_1.env(target)
+            .catch(function (error) {
+            return rxjs_1.Observable.throw(Error("Failed to init environment. " + error));
+        })
             .flatMap(function (store) {
+            var componentPath = project.pathForNamedComponent('fragment', 'bar');
+            var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
+            var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
                 if (project.namedComponentExists(component)) {
@@ -62,7 +65,8 @@ exports.updateProjectCommand = function () { return ({
             return envStore.get('components');
         })
             .catch(function (error) {
-            console.log("Failed! " + error);
+            console.log("Failed to update " + target);
+            console.error(error);
         });
     }
 }); };

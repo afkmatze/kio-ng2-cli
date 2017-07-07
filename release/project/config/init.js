@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var file_1 = require("./file");
 var kioEnv = require("kio-ng2-env");
+var logger = require("../../console");
 var isConfigKey = function (key) {
     return key === 'components';
 };
@@ -18,7 +19,7 @@ exports.init = function (projectConfig) {
         projectConfig = mergeConfig(projectConfig, file_1.read(projectConfig.configFilepath));
     }
     var info = kioEnv.api.modules.resolve.rootModule();
-    console.log('project config info: ', info);
+    logger.log('project config info: ', info);
     return projectConfig;
 };
 //# sourceMappingURL=init.js.map
