@@ -10,7 +10,7 @@ import { CLICommandArgsTestComponents, CLICommandArgsBuildIndexes, IndexTypes } 
 export { templates };
 declare const _default: (projectPath?: string) => {
     createComponent: (data: PublicationComponentTemplateData) => Observable<{}>;
-    testComponents: (args: CLICommandArgsTestComponents) => Observable<string>;
+    testComponents: (args: CLICommandArgsTestComponents) => Observable<{}>;
     buildIndexes: (args?: CLICommandArgsBuildIndexes) => Observable<string>;
     files: {
         filesForIndexType: (indexType: IndexTypes) => Observable<string>;

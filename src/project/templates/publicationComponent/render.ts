@@ -34,7 +34,7 @@ export const render = (  data:PublicationComponentTemplateData ) => {
     contentType: KioNodeType[data.type]
   }
 
-  return rxfs.find(['-type','file'],templateDir)
+  return rxfs.find(['-type','file'],templateDir).map ( data => `${data}` )
             .map ( (filepath:string) => path.join(templateDir, filepath) )
             //.filter ( filepath => !/\.\w+$/.test(filepath) )
             .flatMap ( 
