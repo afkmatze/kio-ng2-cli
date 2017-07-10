@@ -23,7 +23,7 @@ export const shouldUpdateFile = ( targetFilepath:string, contents:string ):Obser
     return Observable.of(true)
   }
 
-  return rxfs.readFile(targetFilepath).toArray().map(rows => rows.join('\n')).flatMap ( currentContents => {
+  return rxfs.readFile(targetFilepath,'utf8').toArray().map(rows => rows.join('\n')).flatMap ( currentContents => {
     if ( currentContents.length !== contents.length )
     {
       logUpdateReason(`different size. current size: ${currentContents.length}, next size: ${contents.length} `, targetFilepath)
@@ -66,7 +66,7 @@ export const renderTemplateWithData = ( templateName:string, data:any ) => {
   const TEMPLATE_DIR = path.join(TEMPLATES_ROOT,templateName)
   return files.list(TEMPLATE_DIR)
        .flatMap( file => {
-         return rxfs.readFile<string>(file, 'utf8')
+         return rxfs.readFile(file, 'utf8')
          .map ( (content:Buffer|string) => ({ 
            file: path.relative(TEMPLATE_DIR, file),
            content: ( content instanceof Buffer ) ? content.toString('utf8') : content

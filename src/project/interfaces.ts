@@ -1,4 +1,4 @@
-import { KioContentType } from 'kio-ng2'
+import { KioContentType } from 'kio-ng2-data'
 import { KioProjectPaths } from '../env/interfaces'
 
 export enum IndexTypes {

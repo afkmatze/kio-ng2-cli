@@ -3,7 +3,7 @@ import {
   NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure ,
   isChildContentType,
   KioChildContentType
-} from 'kio-ng2'
+} from 'kio-ng2-data'
 import { Observable } from 'rxjs'
 import * as env from '../../env'
 import * as path from 'path'
@@ -66,9 +66,15 @@ export const dataForNamedComponent = <T extends KioPrimitiveContentType> ( pathT
   }
 }
 
+export const resolveComponentPath = ( namedComponent:NamedComponent, targetRoot:string=env.moduleRoot() ) => {
+  const kioPath = env.resolveKioPath('publication')
+  const componentPath = pathForNamedComponent(namedComponent.type,namedComponent.name)
+  return path.join(targetRoot, kioPath, componentPath)
+}
+
 export const namedComponentExists = ( namedComponent:NamedComponent ) => {
-  const publicationPath = env.resolveKioPath('publication')
-  return existsSync ( path.join(publicationPath,pathForNamedComponent(namedComponent.type,namedComponent.name)) )
+  const publicationPath = resolveComponentPath(namedComponent)
+  return existsSync ( publicationPath )
 }
 
 export const writeComponent = ( componentData:PublicationComponentTemplateData, targetRoot:string ) => {
@@ -81,19 +87,22 @@ export const writeComponent = ( componentData:PublicationComponentTemplateData, 
   //console.log('targetFolder',targetFolder)
   const targetName = dasherize(componentData.name)
   
-  return Observable.merge(
-      exists(targetFolder).switchMap( exists => exists ? Observable.empty() : mkdir(targetFolder) ),
-      templates.publicationComponent.render(componentData).flatMap ( info => {
-        const {
-          content
-        } = info
-        const filepath = path.join(targetRoot, kioPath, info.filepath)
-        console.log('write file', filepath)
-        return writeFile(filepath,Observable.of(new Buffer(content)),'utf8')
-      } ).toArray().map ( () => targetFolder )
-      .catch ( error => {
-        console.error(error)
-        return Observable.throw(error)
-      } )
-    ).takeLast(1)
+  return exists(targetFolder).switchMap( exists => 
+        exists 
+        ? Observable.empty() 
+        : mkdir(targetFolder).flatMap( () => {
+          return templates.publicationComponent.render(componentData).flatMap ( info => {
+            const {
+              content
+            } = info
+            const filepath = path.join(targetRoot, kioPath, info.filepath)
+            console.log('write file', filepath)
+            return writeFile(filepath,Observable.of(new Buffer(content)),'utf8')
+          } ).toArray().map ( () => targetFolder )
+          .catch ( error => {
+            console.error(error)
+            return Observable.throw(error)
+          } )
+        } )
+    )
 }

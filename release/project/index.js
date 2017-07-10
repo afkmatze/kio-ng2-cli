@@ -13,13 +13,13 @@ var templates = require("./templates");
 exports.templates = templates;
 var buildIndexes_1 = require("./buildIndexes");
 var createComponent_1 = require("./createComponent");
-var testComponents_1 = require("./testComponents");
+//import { testComponents } from './testComponents'
 var kio_ng2_env_1 = require("kio-ng2-env");
 exports.default = function (projectPath) {
     if (projectPath === void 0) { projectPath = kio_ng2_env_1.api.modules.resolve.rootPath(); }
     return {
         createComponent: createComponent_1.createComponent(projectPath),
-        testComponents: testComponents_1.testComponents(projectPath),
+        //testComponents: testComponents(projectPath),
         buildIndexes: buildIndexes_1.buildIndexes(projectPath),
         files: files_1.default(projectPath)
     };

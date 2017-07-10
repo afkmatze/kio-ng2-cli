@@ -6,7 +6,7 @@ import {
   CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsTestComponents, CLICommandArgsCreateComponent,
   IndexType, IndexTypes
 } from './interfaces'
-
+/*
 import { ComponentTest, renderTests, execTestAt, TestRunner } from './testing'
 
 export const testComponents = (projectPath:string) => ( args:CLICommandArgsTestComponents ) => {
@@ -18,12 +18,5 @@ export const testComponents = (projectPath:string) => ( args:CLICommandArgsTestC
             return row
           } ).flatMap(
             row => execTestAt(targetFilepath)
-          )
-
-  /*return Observable.zip(
-      files.filesForIndexType(IndexTypes.fixture),
-      files.filesForIndexType(IndexTypes.criteria)
-    ).toArray()
-  */
-  
-}
+          )  
+}*/

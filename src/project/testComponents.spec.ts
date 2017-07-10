@@ -1,6 +1,6 @@
 import 'mocha'
 import * as path from 'path'
-import { KioNodeType } from 'kio-ng2'
+import { KioNodeType } from 'kio-ng2-data'
 
 import { Observable, Scheduler } from 'rxjs'
 

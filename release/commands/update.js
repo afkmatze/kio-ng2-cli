@@ -18,6 +18,11 @@ exports.updateProjectCommand = function () { return ({
                 type: 'string',
                 default: process.env.KIO_NG2_PROJECT || process.cwd(),
                 describe: 'Project root'
+            },
+            force: {
+                type: 'boolean',
+                default: false,
+                describe: 'Overwrite existing components'
             }
         });
     },
@@ -35,6 +40,7 @@ exports.updateProjectCommand = function () { return ({
             var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
+                var p = project.resolveComponentPath(component);
                 if (project.namedComponentExists(component)) {
                     logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     return rxjs_1.Observable.empty();

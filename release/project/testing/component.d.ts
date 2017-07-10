@@ -1,6 +1,6 @@
 import 'mocha';
 import { Observable } from 'rxjs';
-import { NamedComponent } from 'kio-ng2';
+import { NamedComponent } from 'kio-ng2-data';
 import { EnvFile } from '../../env/file.class';
 export interface ComponentTestPaths {
     projectRoot: string;

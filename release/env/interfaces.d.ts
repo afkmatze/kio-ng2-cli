@@ -1,4 +1,4 @@
-import { KioContentType } from 'kio-ng2';
+import { KioContentType } from 'kio-ng2-data';
 import { IndexType } from '../project/interfaces';
 export declare type KioFileFilter = string | RegExp;
 export interface KioFolderSettings {

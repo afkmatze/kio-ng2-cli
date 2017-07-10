@@ -4,7 +4,7 @@ import { env, api, EnvStore, Project } from 'kio-ng2-env'
 import { resolveKioPath } from '../env'
 import * as path from 'path'
 import * as logger from '../console'
-import { NamedComponent } from 'kio-ng2'
+import { NamedComponent } from 'kio-ng2-data'
 
 import { Observable } from 'rxjs'
 
@@ -21,6 +21,11 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
           type: 'string',
           default: process.env.KIO_NG2_PROJECT || process.cwd(),
           describe: 'Project root'
+        },
+        force: {
+          type: 'boolean',
+          default: false,
+          describe: 'Overwrite existing components'
         }
       })
       
@@ -50,6 +55,7 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
 
         return Observable.from(store.get('components'))
           .flatMap ( (component:NamedComponent) => {
+            const p = project.resolveComponentPath(component)
             if ( project.namedComponentExists(component) )
             {
               logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type,component.name))

@@ -1,5 +1,5 @@
 import { Project, RootModuleInfo, BuildInfo, api } from 'kio-ng2-env'
-import { NamedComponent } from 'kio-ng2'
+import { NamedComponent } from 'kio-ng2-data'
 import * as path from 'path'
 
 export class EnvFile implements Project {

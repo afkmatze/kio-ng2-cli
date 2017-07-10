@@ -16,7 +16,7 @@ import {
 } from './interfaces'
 import { buildIndexes } from './buildIndexes'
 import { createComponent } from './createComponent'
-import { testComponents } from './testComponents'
+//import { testComponents } from './testComponents'
 import { api } from 'kio-ng2-env'
 
 export { templates }
@@ -24,7 +24,7 @@ export { templates }
 export default ( projectPath:string=api.modules.resolve.rootPath() ) => { 
   return {
     createComponent: createComponent(projectPath),
-    testComponents: testComponents(projectPath),
+    //testComponents: testComponents(projectPath),
     buildIndexes: buildIndexes(projectPath),
     files: files(projectPath)
   }

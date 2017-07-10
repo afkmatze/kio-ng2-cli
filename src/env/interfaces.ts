@@ -1,5 +1,5 @@
 import * as path from 'path'
-import { KioContentType } from 'kio-ng2'
+import { KioContentType } from 'kio-ng2-data'
 import { IndexType, IndexTypes } from '../project/interfaces'
 
 export type KioFileFilter = string|RegExp

@@ -8,7 +8,7 @@ var rxjs_1 = require("rxjs");
 var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates/index');
 exports.render = function (indexName, data) {
     return rxfs
-        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'))
+        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'), 'utf8')
         .toArray().map(function (rows) { return rows.join('\n'); })
         .flatMap(function (contents) {
         //console.log('render(%s)\n-----\n\x1b[2m', indexName, contents,'\n-----\x1b[0m')

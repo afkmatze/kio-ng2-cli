@@ -13,7 +13,7 @@ const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/index')
 
 export const render = ( indexName:string, data:IndexTemplateData ) => {
   return rxfs
-    .readFile<Buffer>(path.join(TEMPLATE_DIR,'ComponentIndex.ts'))
+    .readFile(path.join(TEMPLATE_DIR,'ComponentIndex.ts'),'utf8')
     .toArray().map ( rows => rows.join('\n') )
     .flatMap( 
       contents => {

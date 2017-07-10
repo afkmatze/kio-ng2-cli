@@ -1,4 +1,4 @@
-import { NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2'
+import { NamedComponent, NamedComponentStructure, NamedFragmentComponentStructure } from 'kio-ng2-data'
 
 export interface ConfigFile {
   components: NamedComponent[]

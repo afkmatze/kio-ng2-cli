@@ -7,7 +7,7 @@ import {
   isQueryableAnnotation, isQueryableFragmentAnnotation,
   Query
 } from 'kio-ng2-component-routing'
-import { NamedComponent } from 'kio-ng2'
+import { NamedComponent } from 'kio-ng2-data'
 import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import * as path from 'path'
 

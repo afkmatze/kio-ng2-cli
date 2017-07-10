@@ -1,6 +1,6 @@
 import { Observable } from 'rxjs';
 import { ComponentFixture } from 'kio-ng2-component-routing';
-import { NamedComponent } from 'kio-ng2';
+import { NamedComponent } from 'kio-ng2-data';
 export interface ComponentTest {
     component: NamedComponent;
     fixture: ComponentFixture;

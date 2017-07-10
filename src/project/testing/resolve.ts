@@ -6,7 +6,7 @@ import * as path from 'path'
 import * as stringUtil from '../../utils/string'
 import { 
   NamedComponent, ComponentAnnotation, ComponentStructure, ComponentFragmentStructure, isComponentStructure, isComponentFragmentStructure
-} from 'kio-ng2'
+} from 'kio-ng2-data'
 
 /**
  * @brief      resolve component's folder name

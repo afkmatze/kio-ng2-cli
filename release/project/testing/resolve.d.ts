@@ -1,4 +1,5 @@
 import { Observable } from 'rxjs';
+import { NamedComponent, ComponentStructure } from 'kio-ng2-data';
 /**
  * @brief      resolve component's folder name
  *
@@ -6,10 +7,10 @@ import { Observable } from 'rxjs';
  *
  * @return     dasherized folder name for component
  */
-export declare const componentFolderName: (component: any) => string;
-export declare const resolveComponentPath: (component: any) => string;
-export declare const resolveComponentFile: (component: any, componentFileType?: "fixture" | "criteria" | "component" | "spec") => string;
-export declare const getComponentFixture: (component: any) => any;
-export declare const getComponentFixtures: (components: any[]) => Observable<any[]>;
-export declare const listComponents: () => Observable<any[]>;
-export declare const getComponentFixtureFile: (component: any) => string;
+export declare const componentFolderName: (component: NamedComponent) => string;
+export declare const resolveComponentPath: (component: NamedComponent) => string;
+export declare const resolveComponentFile: (component: NamedComponent, componentFileType?: "fixture" | "criteria" | "component" | "spec") => string;
+export declare const getComponentFixture: (component: NamedComponent) => ComponentStructure;
+export declare const getComponentFixtures: (components: NamedComponent[]) => Observable<ComponentStructure[]>;
+export declare const listComponents: () => Observable<NamedComponent[]>;
+export declare const getComponentFixtureFile: (component: NamedComponent) => string;

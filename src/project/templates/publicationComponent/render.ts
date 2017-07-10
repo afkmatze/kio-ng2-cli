@@ -10,7 +10,7 @@ import { CLICommandArgsCreateComponent } from '../../interfaces'
 
 const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates')
 
-import { NamedComponentStructure, NamedFragmentComponentStructure, KioNodeType, KioPrimitiveContentType } from 'kio-ng2'
+import { NamedComponentStructure, NamedFragmentComponentStructure, KioNodeType, KioPrimitiveContentType } from 'kio-ng2-data'
 
 
 const replaceFilepath = ( filepath:string, data:PublicationComponentTemplateData ) => {
@@ -39,7 +39,7 @@ export const render = (  data:PublicationComponentTemplateData ) => {
             //.filter ( filepath => !/\.\w+$/.test(filepath) )
             .flatMap ( 
               filename => {
-                return rxfs.readFile<string>(filename).toArray().map ( rows => rows.join('\n') )
+                return rxfs.readFile(filename,'utf8').toArray().map ( rows => rows.join('\n') )
                           .map(content => ({
                                 content: ejs.render(content.toString(),templateData),
                                 filepath: path.relative ( TEMPLATE_DIR, filename )

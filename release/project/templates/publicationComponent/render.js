@@ -13,7 +13,7 @@ var stringUtils = require("../../../utils/string");
 var path = require("path");
 var ejs = require("ejs");
 var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates');
-var kio_ng2_1 = require("kio-ng2");
+var kio_ng2_data_1 = require("kio-ng2-data");
 var replaceFilepath = function (filepath, data) {
     filepath = filepath.replace('__path__', stringUtils.dasherize(data.name));
     return filepath.replace('__name__', stringUtils.dasherize(data.name));
@@ -23,13 +23,13 @@ exports.mapCLIArgsToTemplateData = function (args) {
     return undefined;
 };
 exports.render = function (data) {
-    var templateDir = path.join(TEMPLATE_DIR, kio_ng2_1.KioNodeType[data.type]);
+    var templateDir = path.join(TEMPLATE_DIR, kio_ng2_data_1.KioNodeType[data.type]);
     console.log('templateDir', templateDir);
-    var templateData = __assign({}, data, { contentType: kio_ng2_1.KioNodeType[data.type] });
+    var templateData = __assign({}, data, { contentType: kio_ng2_data_1.KioNodeType[data.type] });
     return rxfs.find(['-type', 'file'], templateDir).map(function (data) { return "" + data; })
         .map(function (filepath) { return path.join(templateDir, filepath); })
         .flatMap(function (filename) {
-        return rxfs.readFile(filename).toArray().map(function (rows) { return rows.join('\n'); })
+        return rxfs.readFile(filename, 'utf8').toArray().map(function (rows) { return rows.join('\n'); })
             .map(function (content) { return ({
             content: ejs.render(content.toString(), templateData),
             filepath: path.relative(TEMPLATE_DIR, filename)

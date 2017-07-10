@@ -38,14 +38,18 @@ export const renderTests = ( targetFilename:string ) => {
       }, 1 )
 }
 
-
+/*
 export const execTestAt = ( specFilename:string ) => {
 
   const specDirpath = path.dirname(specFilename)
   const command = `ts-node "./${path.basename(specFilename)}"`
   console.log('Exec "%s"', command)
-  return rxfs.exec(command,{
-    cwd: specDirpath
+  const commandOpts = {
+    commandName: 'ts-node',
+    args: [ `./${path.basename(specFilename)}` ]
+  }
+  return rxfs.exec({
+    command: commandOpts
   })
   .map ( (row:ExecData,idx) => {
     const {
@@ -67,4 +71,4 @@ export const execTestAt = ( specFilename:string ) => {
     }
     return text
   } )
-}
+}*/

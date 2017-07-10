@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var kio_ng2_1 = require("kio-ng2");
+var kio_ng2_data_1 = require("kio-ng2-data");
 var rxjs_1 = require("rxjs");
 var env = require("../../env");
 var path = require("path");
@@ -14,16 +14,16 @@ exports.isNamedFragmentComponentStructure = function (other) {
 };
 exports.pathForNamedComponent = function (type, name) {
     if ('string' === typeof type)
-        return exports.pathForNamedComponent(kio_ng2_1.KioNodeType[type], name);
-    return path.join(kio_ng2_1.KioNodeType[type], string_1.dasherize(name));
+        return exports.pathForNamedComponent(kio_ng2_data_1.KioNodeType[type], name);
+    return path.join(kio_ng2_data_1.KioNodeType[type], string_1.dasherize(name));
 };
 exports.dataForNamedFragmentComponent = function (pathToStructureComponents, namedComponent) {
-    var contentType = kio_ng2_1.KioNodeType[kio_ng2_1.KioNodeType.fragment];
+    var contentType = kio_ng2_data_1.KioNodeType[kio_ng2_data_1.KioNodeType.fragment];
     return {
         name: namedComponent.name,
         styles: '../../../',
         contentType: contentType,
-        type: kio_ng2_1.KioNodeType.fragment,
+        type: kio_ng2_data_1.KioNodeType.fragment,
         selector: 'kio-' + string_1.dasherize(namedComponent.name),
         modifiers: namedComponent.modifiers,
         childTypes: namedComponent.childTypes,
@@ -34,11 +34,11 @@ exports.dataForNamedFragmentComponent = function (pathToStructureComponents, nam
     };
 };
 exports.dataForNamedComponent = function (pathToStructureComponents, namedComponent) {
-    var nodeType = kio_ng2_1.KioNodeType[namedComponent.type];
-    if (!kio_ng2_1.isChildContentType(nodeType))
+    var nodeType = kio_ng2_data_1.KioNodeType[namedComponent.type];
+    if (!kio_ng2_data_1.isChildContentType(nodeType))
         return undefined;
     var contentType = nodeType;
-    var contentTypeName = kio_ng2_1.KioNodeType[contentType];
+    var contentTypeName = kio_ng2_data_1.KioNodeType[contentType];
     return {
         name: namedComponent.name,
         type: contentType,
@@ -53,9 +53,15 @@ exports.dataForNamedComponent = function (pathToStructureComponents, namedCompon
         pathToStructureComponents: pathToStructureComponents
     };
 };
+exports.resolveComponentPath = function (namedComponent, targetRoot) {
+    if (targetRoot === void 0) { targetRoot = env.moduleRoot(); }
+    var kioPath = env.resolveKioPath('publication');
+    var componentPath = exports.pathForNamedComponent(namedComponent.type, namedComponent.name);
+    return path.join(targetRoot, kioPath, componentPath);
+};
 exports.namedComponentExists = function (namedComponent) {
-    var publicationPath = env.resolveKioPath('publication');
-    return rxfs_1.existsSync(path.join(publicationPath, exports.pathForNamedComponent(namedComponent.type, namedComponent.name)));
+    var publicationPath = exports.resolveComponentPath(namedComponent);
+    return rxfs_1.existsSync(publicationPath);
 };
 exports.writeComponent = function (componentData, targetRoot) {
     var kioPath = env.resolveKioPath('publication');
@@ -66,15 +72,21 @@ exports.writeComponent = function (componentData, targetRoot) {
     var targetFolder = path.join(targetRoot, kioPath, componentPath);
     //console.log('targetFolder',targetFolder)
     var targetName = string_1.dasherize(componentData.name);
-    return rxjs_1.Observable.merge(rxfs_1.exists(targetFolder).switchMap(function (exists) { return exists ? rxjs_1.Observable.empty() : rxfs_1.mkdir(targetFolder); }), templates.publicationComponent.render(componentData).flatMap(function (info) {
-        var content = info.content;
-        var filepath = path.join(targetRoot, kioPath, info.filepath);
-        console.log('write file', filepath);
-        return rxfs_1.writeFile(filepath, rxjs_1.Observable.of(new Buffer(content)), 'utf8');
-    }).toArray().map(function () { return targetFolder; })
-        .catch(function (error) {
-        console.error(error);
-        return rxjs_1.Observable.throw(error);
-    })).takeLast(1);
+    return rxfs_1.exists(targetFolder).switchMap(function (exists) {
+        return exists
+            ? rxjs_1.Observable.empty()
+            : rxfs_1.mkdir(targetFolder).flatMap(function () {
+                return templates.publicationComponent.render(componentData).flatMap(function (info) {
+                    var content = info.content;
+                    var filepath = path.join(targetRoot, kioPath, info.filepath);
+                    console.log('write file', filepath);
+                    return rxfs_1.writeFile(filepath, rxjs_1.Observable.of(new Buffer(content)), 'utf8');
+                }).toArray().map(function () { return targetFolder; })
+                    .catch(function (error) {
+                    console.error(error);
+                    return rxjs_1.Observable.throw(error);
+                });
+            });
+    });
 };
 //# sourceMappingURL=index.js.map

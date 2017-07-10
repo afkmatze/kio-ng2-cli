@@ -19,7 +19,7 @@ exports.buildIndexesCommand = function () { return ({
     },
     handler: function (args) {
         var command = args._[0];
-        console.log('filter', args.filter);
+        //console.log('filter',args.filter)
         return project_1.default().buildIndexes(args).toPromise()
             .catch(function (error) {
             console.error(error);

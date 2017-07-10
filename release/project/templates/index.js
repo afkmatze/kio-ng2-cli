@@ -19,7 +19,7 @@ exports.shouldUpdateFile = function (targetFilepath, contents) {
         logUpdateReason('does not exist', targetFilepath);
         return Observable_1.Observable.of(true);
     }
-    return rxfs.readFile(targetFilepath).toArray().map(function (rows) { return rows.join('\n'); }).flatMap(function (currentContents) {
+    return rxfs.readFile(targetFilepath, 'utf8').toArray().map(function (rows) { return rows.join('\n'); }).flatMap(function (currentContents) {
         if (currentContents.length !== contents.length) {
             logUpdateReason("different size. current size: " + currentContents.length + ", next size: " + contents.length + " ", targetFilepath);
             return Observable_1.Observable.of(true);

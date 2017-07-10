@@ -21,7 +21,7 @@ export const buildIndexesCommand = ():yargs.CommandModule => ({
   },  
   handler: (args:any) => {
     const [ command ] = args._
-    console.log('filter',args.filter)
+    //console.log('filter',args.filter)
     return project().buildIndexes(args).toPromise()
       .catch(error => {
         console.error(error)

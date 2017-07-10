@@ -79,7 +79,7 @@
     "ejs": "^2.5.6",
     "ember-source": "^2.13.0",
     "kio-ng2-component-routing": "github:afkmatze/kio-ng2-component-routing",
-    "kio-ng2-data": "github:afkmatze/kio-ng2-data",
+    "kio-ng2-data": "github:afkm/kio-ng2-data",
     "kio-ng2-env": "github:afkmatze/kio-ng2-env",
     "mocha": "^3.3.0",
     "rxfs": "github:afkmatze/rxfs",

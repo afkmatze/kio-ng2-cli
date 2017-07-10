@@ -8,7 +8,7 @@ import { env as kioEnv, EnvStore, Project } from 'kio-ng2-env'
 import { 
   Query, isQueryableAnnotation, isQueryableFragmentAnnotation
 } from 'kio-ng2-component-routing'
-import { NamedComponent, ComponentStructure, ComponentFragmentStructure, ComponentFixture, isNamedComponentStructure, isNamedFragmentComponentStructure } from 'kio-ng2'
+import { NamedComponent, ComponentStructure, ComponentFragmentStructure, ComponentFixture, isNamedComponentStructure, isNamedFragmentComponentStructure } from 'kio-ng2-data'
 
 import { resolveKioPath, resolveRoot } from '../../env'
 import { EnvFile } from '../../env/file.class'
