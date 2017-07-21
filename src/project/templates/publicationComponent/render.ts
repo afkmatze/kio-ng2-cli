@@ -4,6 +4,7 @@ import * as env from '../../../env'
 import * as stringUtils from '../../../utils/string'
 import * as path from 'path'
 import * as ejs from 'ejs'
+import * as logger from '../../../console'
 
 import { PublicationComponentTemplateData } from './interfaces'
 import { CLICommandArgsCreateComponent } from '../../interfaces'
@@ -27,12 +28,12 @@ export const render = (  data:PublicationComponentTemplateData ) => {
 
   const templateDir = path.join(TEMPLATE_DIR,KioNodeType[data.type])
 
-  console.log('templateDir',templateDir)
-
   const templateData = {
     ...data ,
     contentType: KioNodeType[data.type]
   }
+
+  logger.log('template data', templateData)
 
   return rxfs.find(['-type','file'],templateDir).map ( data => `${data}` )
             .map ( (filepath:string) => path.join(templateDir, filepath) )
@@ -51,7 +52,7 @@ export const render = (  data:PublicationComponentTemplateData ) => {
 
               filepath = replaceFilepath(filepath,data)
 
-              console.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
+              logger.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
 
               return ({
                 filepath,

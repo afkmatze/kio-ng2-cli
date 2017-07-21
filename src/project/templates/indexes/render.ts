@@ -7,13 +7,13 @@ import { Observable } from 'rxjs'
 import { IndexTemplateData, IndexTemplateDataItem, IndexType, IndexTypes } from './interfaces'
 import { Component, ComponentType, PublicationComponent } from '../../interfaces'
 
-const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/index')
+const TEMPLATE_DIR = path.resolve(__dirname,'../../../../templates/publication-module')
 
 
 
 export const render = ( indexName:string, data:IndexTemplateData ) => {
   return rxfs
-    .readFile(path.join(TEMPLATE_DIR,'ComponentIndex.ts'),'utf8')
+    .readFile(path.join(TEMPLATE_DIR,'module.ts'),'utf8')
     .toArray().map ( rows => rows.join('\n') )
     .flatMap( 
       contents => {

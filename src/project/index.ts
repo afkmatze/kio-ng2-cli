@@ -14,7 +14,7 @@ import {
   CLICommandArgsTestComponents, CLICommandArgs, CLICommandArgsBuildIndexes, CLICommandArgsCreateComponent,
   IndexType, IndexTypes  
 } from './interfaces'
-import { buildIndexes } from './buildIndexes'
+import { buildIndexes } from './buildModule'
 import { createComponent } from './createComponent'
 //import { testComponents } from './testComponents'
 import { api } from 'kio-ng2-env'
