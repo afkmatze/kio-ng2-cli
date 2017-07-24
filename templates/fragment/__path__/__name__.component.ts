@@ -1,12 +1,18 @@
 import { Component, OnInit } from '@angular/core';
-import { KioAbstractFragmentComponent } from '<%= pathToStructureComponents %>/kio-abstract-fragment/kio-abstract-fragment.component'
+import { RoutableComponent, FragmentDataComponent } from '../../../component-routing/module'
+import { KioContentModel, KioFragmentModel } from 'kio-ng2-data'
 
-@Component({
+@RoutableComponent({
+  queryable: {
+    type: '<%= contentType %>' ,
+    modifiers: [<% for(var i=0; i<modifiers.length; i++) {%><%= i > 0 ? "," : "" %>'<%= modifiers[i] %>'<% } %> ] <% if(childTypes!==undefined) {%>,
+    childTypes: [<% for(var i=0; i<childTypes.length; i++) {%><%= i > 0 ? "," : "" %>'<%= childTypes[i] %>'<% } %> ]  <% } %>
+  },
   selector: '<%= selector %>',
   templateUrl: './<%= dasherizedModuleName %>.component.html',
   styleUrls: ['./<%= dasherizedModuleName %>.component.scss']
 })
-export class <%= classifiedModuleName %>Component extends KioAbstractFragmentComponent {
+export class <%= classifiedModuleName %>Component extends FragmentDataComponent {
 
   onNodeUpdate(){
     super.onNodeUpdate()    

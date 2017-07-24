@@ -5,10 +5,10 @@ var path = require("path");
 var ejs = require("ejs");
 var string_1 = require("../../../utils/string");
 var rxjs_1 = require("rxjs");
-var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates/index');
+var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates/publication-module');
 exports.render = function (indexName, data) {
     return rxfs
-        .readFile(path.join(TEMPLATE_DIR, 'ComponentIndex.ts'), 'utf8')
+        .readFile(path.join(TEMPLATE_DIR, 'module.ts'), 'utf8')
         .toArray().map(function (rows) { return rows.join('\n'); })
         .flatMap(function (contents) {
         //console.log('render(%s)\n-----\n\x1b[2m', indexName, contents,'\n-----\x1b[0m')

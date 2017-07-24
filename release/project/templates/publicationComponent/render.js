@@ -12,6 +12,7 @@ var rxfs = require("rxfs");
 var stringUtils = require("../../../utils/string");
 var path = require("path");
 var ejs = require("ejs");
+var logger = require("../../../console");
 var TEMPLATE_DIR = path.resolve(__dirname, '../../../../templates');
 var kio_ng2_data_1 = require("kio-ng2-data");
 var replaceFilepath = function (filepath, data) {
@@ -24,8 +25,8 @@ exports.mapCLIArgsToTemplateData = function (args) {
 };
 exports.render = function (data) {
     var templateDir = path.join(TEMPLATE_DIR, kio_ng2_data_1.KioNodeType[data.type]);
-    console.log('templateDir', templateDir);
     var templateData = __assign({}, data, { contentType: kio_ng2_data_1.KioNodeType[data.type] });
+    logger.log('template data', templateData);
     return rxfs.find(['-type', 'file'], templateDir).map(function (data) { return "" + data; })
         .map(function (filepath) { return path.join(templateDir, filepath); })
         .flatMap(function (filename) {
@@ -38,7 +39,7 @@ exports.render = function (data) {
         .map(function (_a) {
         var filepath = _a.filepath, content = _a.content;
         filepath = replaceFilepath(filepath, data);
-        console.log('render "%s"', filepath, '\n---------\n', content, '\n--------\n');
+        logger.log('render "%s"', filepath, '\n---------\n', content, '\n--------\n');
         return ({
             filepath: filepath,
             content: content

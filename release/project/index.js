@@ -11,7 +11,7 @@ __export(require("./config"));
 var files_1 = require("./files");
 var templates = require("./templates");
 exports.templates = templates;
-var buildIndexes_1 = require("./buildIndexes");
+var buildModule_1 = require("./buildModule");
 var createComponent_1 = require("./createComponent");
 //import { testComponents } from './testComponents'
 var kio_ng2_env_1 = require("kio-ng2-env");
@@ -20,7 +20,7 @@ exports.default = function (projectPath) {
     return {
         createComponent: createComponent_1.createComponent(projectPath),
         //testComponents: testComponents(projectPath),
-        buildIndexes: buildIndexes_1.buildIndexes(projectPath),
+        buildIndexes: buildModule_1.buildIndexes(projectPath),
         files: files_1.default(projectPath)
     };
 };
