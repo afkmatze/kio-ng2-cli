@@ -15,7 +15,7 @@ export declare class TestRunner {
     private _components;
     private _fixtures;
     readonly fixtures: Observable<TestFixture>;
-    getComponentForFixture(fixture: TestFixture): NamedComponent;
+    getComponentForFixture(fixture: TestFixture): any;
     mapFixtureToTest(testFixture: TestFixture): ComponentTest;
     readonly componentTests: Observable<ComponentTest>;
     testComponent(component: NamedComponent): void;
