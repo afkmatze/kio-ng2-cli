@@ -95,5 +95,23 @@
   "bugs": {
     "url": "https://github.com/afkmatze/kio-ng2-cli/issues"
   },
-  "homepage": "https://github.com/afkmatze/kio-ng2-cli#readme"
+  "homepage": "https://github.com/afkmatze/kio-ng2-cli#readme",
+  "resolutions": {
+    "@types/node": "7.0.39",
+    "yargs": "7.1.0",
+    "typescript": "2.4.2",
+    "supports-color": "2.0.0",
+    "rsvp": "3.6.2",
+    "simple-html-tokenizer": "0.4.1",
+    "minimist": "0.0.8",
+    "source-map": "0.4.4",
+    "wordwrap": "0.0.3",
+    "camelcase": "3.0.0",
+    "cliui": "3.2.0",
+    "lazy-cache": "1.0.4",
+    "kind-of": "3.2.2",
+    "regex-not": "1.0.0",
+    "to-regex": "2.1.0",
+    "isobject": "2.1.0"
+  }
 }

@@ -38,6 +38,7 @@ exports.updateProjectCommand = function () { return ({
             var componentPath = project.pathForNamedComponent('fragment', 'bar');
             var targetFolder = path.join(env_1.resolveKioPath('publication'), componentPath);
             var pathToStructureComponents = path.relative(path.join(targetFolder), env_1.resolveKioPath('structure'));
+            console.log('store', store);
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
                 var p = project.resolveComponentPath(component);
@@ -67,7 +68,7 @@ exports.updateProjectCommand = function () { return ({
         })
             .toPromise()
             .then(function (envStore) {
-            //console.log('envStore',envStore)
+            console.log('envStore', envStore);
             return envStore.get('components');
         })
             .catch(function (error) {
