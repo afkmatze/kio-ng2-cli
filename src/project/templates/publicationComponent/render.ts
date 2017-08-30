@@ -30,7 +30,9 @@ export const render = (  data:PublicationComponentTemplateData ) => {
 
   const templateData = {
     ...data ,
-    contentType: KioNodeType[data.type]
+    contentType: KioNodeType[data.type],
+    modifiers: JSON.stringify(data.modifiers,null,'  '),
+    childTypes: JSON.stringify(data.childTypes,null,'  ')
   }
 
   logger.log('template data', templateData)
@@ -52,7 +54,7 @@ export const render = (  data:PublicationComponentTemplateData ) => {
 
               filepath = replaceFilepath(filepath,data)
 
-              logger.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
+              //logger.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
 
               return ({
                 filepath,

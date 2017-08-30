@@ -25,7 +25,7 @@ exports.mapCLIArgsToTemplateData = function (args) {
 };
 exports.render = function (data) {
     var templateDir = path.join(TEMPLATE_DIR, kio_ng2_data_1.KioNodeType[data.type]);
-    var templateData = __assign({}, data, { contentType: kio_ng2_data_1.KioNodeType[data.type] });
+    var templateData = __assign({}, data, { contentType: kio_ng2_data_1.KioNodeType[data.type], modifiers: JSON.stringify(data.modifiers, null, '  '), childTypes: JSON.stringify(data.childTypes, null, '  ') });
     logger.log('template data', templateData);
     return rxfs.find(['-type', 'file'], templateDir).map(function (data) { return "" + data; })
         .map(function (filepath) { return path.join(templateDir, filepath); })
@@ -39,7 +39,7 @@ exports.render = function (data) {
         .map(function (_a) {
         var filepath = _a.filepath, content = _a.content;
         filepath = replaceFilepath(filepath, data);
-        logger.log('render "%s"', filepath, '\n---------\n', content, '\n--------\n');
+        //logger.log('render "%s"', filepath , '\n---------\n', content, '\n--------\n')
         return ({
             filepath: filepath,
             content: content

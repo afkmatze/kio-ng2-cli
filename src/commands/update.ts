@@ -34,7 +34,7 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
     const [ command, projectName ] = args._ 
 
     const {
-      target
+      target, force
     } = args
         
 
@@ -58,7 +58,7 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
         return Observable.from(store.get('components'))
           .flatMap ( (component:NamedComponent) => {
             const p = project.resolveComponentPath(component)
-            if ( project.namedComponentExists(component) )
+            if ( project.namedComponentExists(component) && force === false )
             {
               logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type,component.name))
               return Observable.empty()
@@ -66,6 +66,8 @@ export const updateProjectCommand = ():yargs.CommandModule => ({
             {
               logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type,component.name))
               const data = project.dataForNamedFragmentComponent(pathToStructureComponents,component)
+              logger.log('modifiers', data.modifiers)
+              logger.log('childTypes', data.childTypes)
               return project.writeComponent(data,target).map ( res => component )
             }
             else

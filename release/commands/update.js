@@ -28,7 +28,7 @@ exports.updateProjectCommand = function () { return ({
     },
     handler: function (args) {
         var _a = args._, command = _a[0], projectName = _a[1];
-        var target = args.target;
+        var target = args.target, force = args.force;
         logger.log('Init env at "%s"', target);
         return kio_ng2_env_1.env(target)
             .catch(function (error) {
@@ -42,13 +42,15 @@ exports.updateProjectCommand = function () { return ({
             return rxjs_1.Observable.from(store.get('components'))
                 .flatMap(function (component) {
                 var p = project.resolveComponentPath(component);
-                if (project.namedComponentExists(component)) {
+                if (project.namedComponentExists(component) && force === false) {
                     logger.log('Component "%s" already exists at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     return rxjs_1.Observable.empty();
                 }
                 else if (project.isNamedFragmentComponentStructure(component)) {
                     logger.log('Write FragmentComponent "%s" at %s', component.name, project.pathForNamedComponent(component.type, component.name));
                     var data = project.dataForNamedFragmentComponent(pathToStructureComponents, component);
+                    logger.log('modifiers', data.modifiers);
+                    logger.log('childTypes', data.childTypes);
                     return project.writeComponent(data, target).map(function (res) { return component; });
                 }
                 else {
