@@ -1,3 +1,4 @@
 import { mock } from 'kio-ng2-component-routing'
-
-export const Fixture = mock.mockType ('<%= contentType %><% for(var i=0; i<modifiers.length; i++) {%>.<%= modifiers[i] %><% } %>',[<% for(var i=0; i<childTypes.length; i++) {%><%= i > 0 ? "," : "" %>'<%= childTypes[i] %>'<% } %>])
+<% mods = JSON.parse(modifiers) %>
+<% childs = JSON.parse(childTypes) %>
+export const Fixture = mock.mockType ('<%= contentType %><% for(var i=0; i<mods.length; i++) {%>.<%= mods[i] %><% } %>',[<% for(var i=0; i<childs.length; i++) {%><%= i > 0 ? "," : "" %>'<%= childs[i] %>'<% } %>])
